@@ -89,7 +89,8 @@ Por quê? Todo prompt Dev parte de `main` atualizado (`git checkout main && git 
 | Merge #8 antes de começar #9? | **Sim** |
 | Merge #9 antes de começar #10? | **Sim** |
 | Posso abrir #9 sem mergear #8? | Só se criar a branch **a partir de** `feat/issue-008-...` (empilhamento). Não recomendado no V0.1 — conflitos em cascata no merge final. |
-| QA da Onda 5 inteira? | QA **por issue** antes de cada merge; smoke completo (#8+#9+#10) após #10 em `main`. |
+| QA da Onda 5 inteira? | QA **por issue** (#8, #9, #10) antes de cada merge; smoke integrado só após #10 em `main`. |
+| QA de várias issues juntas? | **Não** — exceto smoke gates (Onda 5 completa, Onda 6 F1–F6). |
 
 ### Recuperação: Onda 2 feita sem branches
 
@@ -126,7 +127,9 @@ Todo prompt Dev segue esta estrutura:
 2. **Contexto** — docs e skills
 3. **Escopo** — o que fazer / não fazer
 4. **Aceite** — critérios BACKLOG
-5. **Handoff** — QA, sem fechar issue
+5. **Handoff** — QA (uma issue por sessão), sem fechar issue
+
+> **QA:** cada issue tem prompt próprio em `docs/DEVELOPMENT_WAVES.md`. Smoke gates integrados (Onda 5, Onda 6, F1–F6) são exceção explícita.
 
 ---
 
@@ -136,13 +139,22 @@ Todo prompt Dev segue esta estrutura:
 
 **Issue:** #1 · **Branch:** `feat/issue-001-bootstrap` (já em main)
 
-### QA (retroativo se ainda aberta)
+### Prompt QA Onda 0 — Issue #1 (retroativo)
 
 ```
-QA Agent: valide ISSUE-001 (GitHub #1).
-npm run build && npm run lint && npm run dev
-Rotas: / /dashboard /chat /api/health
-MCP Browser Cursor (`cursor-ide-browser`). Relatório pass/fail.
+QA Agent: valide ISSUE-001 retroativamente (código em main).
+
+Issue: GitHub #1
+Critérios: docs/BACKLOG.md ISSUE-001.
+
+Verificar:
+- npm run build && npm run lint && npm run dev
+- Rotas respondem: / /login /dashboard /chat /api/health
+- Estrutura src/modules, src/agents, drizzle, tests existe
+
+MCP Browser Cursor (`cursor-ide-browser`) nas rotas públicas.
+
+Relatório: ✅ marcar issue done | ❌ abrir correção
 ```
 
 ---
@@ -153,12 +165,41 @@ MCP Browser Cursor (`cursor-ide-browser`). Relatório pass/fail.
 
 **Issues:** #2 → #3 (sequencial) · Feito em `main`
 
-### QA retroativo
+### Prompt QA Onda 1.1 — Issue #2 (retroativo)
 
 ```
-QA Agent: valide #2 e #3 retroativamente.
-#2: Supabase conecta; bucket knowledge existe (docs/SUPABASE_SETUP.md).
-#3: drizzle migrate OK; tabelas tenants, tenant_settings, users.
+QA Agent: valide ISSUE-002 retroativamente (código em main).
+
+Issue: GitHub #2
+Critérios: docs/BACKLOG.md ISSUE-002.
+
+Verificar:
+- Variáveis Supabase documentadas em .env.example
+- Clientes Supabase browser + server em src/lib/supabase/
+- Conexão com projeto Supabase OK
+- Bucket Storage `knowledge` existe (docs/SUPABASE_SETUP.md)
+
+npm run build && npm run lint.
+
+Relatório: ✅ marcar issue done | ❌ abrir correção
+```
+
+### Prompt QA Onda 1.2 — Issue #3 (retroativo)
+
+```
+QA Agent: valide ISSUE-003 retroativamente (código em main).
+
+Issue: GitHub #3
+Critérios: docs/BACKLOG.md ISSUE-003.
+
+Verificar:
+- Drizzle config e schema: tenants, tenant_settings, users
+- npm run db:migrate (ou drizzle-kit push) roda sem erro
+- Tipos exportados em src/lib/db/schema
+
+npm run build && npm run lint.
+
+Relatório: ✅ marcar issue done | ❌ abrir correção
 ```
 
 ---
@@ -169,13 +210,41 @@ QA Agent: valide #2 e #3 retroativamente.
 
 **Issues:** #4 ‖ #6 · Feito em `main` (sem branches — recuperado)
 
-### QA retroativo
+### Prompt QA Onda 2.1 — Issue #4 (retroativo)
 
 ```
-QA Agent: valide #4 e #6 retroativamente.
-#4: middleware resolve tenant dev; getTenant() funciona.
-#6: migrations 0001/0002 RLS; query cross-tenant falha no SQL.
-Arquivos: src/middleware.ts, drizzle/migrations/0001_*.sql
+QA Agent: valide ISSUE-004 retroativamente (código em main).
+
+Issue: GitHub #4
+Critérios: docs/BACKLOG.md ISSUE-004.
+
+Verificar:
+- src/middleware.ts resolve tenant em dev (localhost)
+- getTenant() retorna tenant_id correto
+- Request sem tenant válido → 404 ou erro esperado
+- src/lib/tenant/ e src/modules/tenants/repository.ts
+
+npm run build && npm run lint.
+
+Relatório: ✅ marcar issue done | ❌ abrir correção
+```
+
+### Prompt QA Onda 2.2 — Issue #6 (retroativo)
+
+```
+QA Agent: valide ISSUE-006 retroativamente (código em main).
+
+Issue: GitHub #6
+Critérios: docs/BACKLOG.md ISSUE-006.
+
+Verificar:
+- Migrations RLS em drizzle/migrations/0001_*.sql (e fixes se houver)
+- RLS ativo em tenants, tenant_settings, users
+- Query cross-tenant falha no SQL (testar no Supabase ou script)
+
+Arquivos: drizzle/migrations/, políticas por tenant_id.
+
+Relatório: ✅ marcar issue done | ❌ abrir correção
 ```
 
 ---
@@ -226,12 +295,24 @@ git push -u origin feat/issue-005-auth
 Relatório handoff QA. Não mergear. Não fechar issue.
 ```
 
-### Prompt QA Onda 3
+### Prompt QA Onda 3 — Issue #5
 
 ```
 QA Agent: valide ISSUE-005 na branch feat/issue-005-auth.
-Login → /dashboard OK. Logout ou sessão inválida → /login.
-MCP Browser Cursor (`cursor-ide-browser`). npm run build && npm run lint.
+
+Branch: feat/issue-005-auth
+Issue: GitHub #5
+Critérios: docs/BACKLOG.md ISSUE-005.
+
+Checkout da branch, npm run build, npm run lint, npm run dev.
+
+Verificar (MCP Browser Cursor — cursor-ide-browser):
+- /login funcional (email/senha)
+- Login owner → /dashboard OK
+- Sessão inválida ou logout → redirect /login
+- users.tenant_id vinculado ao tenant resolvido
+
+Relatório: ✅ aprovar merge em main | ❌ devolver ao Dev Agent
 ```
 
 ---
@@ -280,11 +361,26 @@ git push -u origin feat/issue-007-schema-leads
 Handoff QA. Não mergear.
 ```
 
-### Prompt QA Onda 4
+### Prompt QA Onda 4 — Issue #7
 
 ```
-QA Agent: valide ISSUE-007.
-Tabelas existem no Supabase; RLS ativo; migrate roda limpo.
+QA Agent: valide ISSUE-007 na branch feat/issue-007-schema-leads.
+
+Branch: feat/issue-007-schema-leads
+Issue: GitHub #7
+Critérios: docs/BACKLOG.md ISSUE-007.
+
+Checkout da branch, npm run build, npm run lint.
+
+Verificar:
+- Tabelas leads, conversations, messages existem no Supabase
+- tenant_id em todas as colunas; FKs corretas
+- Enums leads.status e leads.score
+- Migration RLS nas 3 tabelas (0003 ou equivalente)
+- npm run db:migrate roda limpo
+- Query cross-tenant falha no banco
+
+Relatório: ✅ aprovar merge em main | ❌ devolver ao Dev Agent
 ```
 
 ---
@@ -347,6 +443,30 @@ git push -u origin feat/issue-008-repositories
 Handoff QA.
 ```
 
+### Prompt QA Onda 5.1 — Issue #8
+
+```
+QA Agent: valide ISSUE-008 na branch feat/issue-008-repositories.
+
+Branch: feat/issue-008-repositories
+Issue: GitHub #8
+
+Checkout da branch, npm run build, npm run lint.
+Critérios: docs/BACKLOG.md ISSUE-008.
+
+Verificar:
+- src/modules/leads/ e src/modules/conversations/ com repository + service
+- import "server-only" nos services
+- Toda query filtra tenant_id (não vazar cross-tenant)
+- CRUD leads e messages via service layer (script, teste ou route temporária)
+
+Não exigir: UI /settings (#9), seed (#10), chat (#15).
+
+MCP Browser Cursor (`cursor-ide-browser`) se houver rota temporária para testar.
+
+Relatório: ✅ aprovar merge em main | ❌ devolver ao Dev Agent
+```
+
 ---
 
 ## ONDA 5.2 — Issue #9
@@ -377,6 +497,30 @@ Leia: docs/DESIGN.md, skill agency-os-widget-ui.
 git commit -m "feat(panel): tenant settings CRUD (#9)"
 git push -u origin feat/issue-009-settings
 Handoff QA.
+```
+
+### Prompt QA Onda 5.2 — Issue #9
+
+```
+QA Agent: valide ISSUE-009 na branch feat/issue-009-settings.
+
+Branch: feat/issue-009-settings
+Issue: GitHub #9
+
+Pré-requisito: #8 já mergeado em main (esta branch deve incluir os services).
+
+Checkout da branch, npm run build, npm run lint, npm run dev.
+Critérios: docs/BACKLOG.md ISSUE-009.
+
+Verificar (MCP Browser Cursor — cursor-ide-browser):
+- Login como owner → acessar /settings
+- Formulário: company_name, whatsapp, city, services, system_prompt
+- Salvar → reload → dados persistem
+- Usuário não autenticado não edita settings de outro tenant
+
+Não exigir: seed (#10), chat, widget embed.
+
+Relatório: ✅ aprovar merge em main | ❌ devolver ao Dev Agent
 ```
 
 ---
@@ -410,12 +554,42 @@ git push -u origin feat/issue-010-seed
 Handoff QA.
 ```
 
-### Prompt QA Onda 5 (completa)
+### Prompt QA Onda 5.3 — Issue #10
 
 ```
-QA Agent: valide #8, #9, #10 após merges em main.
-Fluxo: login com seed → /settings edita → services criam lead de teste.
-Gate Onda 6: só liberar trilhos A/B/C se este QA passar.
+QA Agent: valide ISSUE-010 na branch feat/issue-010-seed.
+
+Branch: feat/issue-010-seed
+Issue: GitHub #10
+
+Pré-requisito: #8 e #9 já mergeados em main.
+
+Checkout da branch, npm run build, npm run lint.
+Critérios: docs/BACKLOG.md ISSUE-010.
+
+Verificar:
+- npm run db:seed executa sem erro
+- Idempotente: rodar 2x não duplica tenant/user
+- Tenant dev "Belluci Acabamentos" com public_key fixa
+- Login com user owner do seed → /dashboard OK
+- /settings mostra dados de exemplo do seed (se #9 mergeado)
+
+MCP Browser Cursor (`cursor-ide-browser`) para login e /settings após seed.
+
+Relatório: ✅ aprovar merge em main | ❌ devolver ao Dev Agent
+```
+
+### Smoke gate Onda 6 (após #10 mergeado em main)
+
+Smoke **integrado** — só roda quando #8, #9 e #10 já estão em `main`. Não substitui o QA individual de cada issue.
+
+```
+QA Agent: smoke gate Onda 5 completo (main atualizado, #8+#9+#10 mergeados).
+
+npm run db:seed && npm run dev
+Fluxo: login com seed → /settings edita e persiste → criar lead de teste via service/script.
+
+Gate Onda 6: só liberar trilhos A/B/C se este smoke passar.
 ```
 
 ---
@@ -469,7 +643,7 @@ Três trilhos **após** Onda 5. Cada issue = branch própria (exceto quando indi
 | #18 | `feat/issue-018-embed-js` |
 | #19 | `feat/issue-019-whatsapp-button` |
 
-### Prompt #12 (exemplo com branch)
+### Prompt #12
 
 ```
 Dev Agent: implemente ISSUE-012 (GitHub #12).
@@ -486,6 +660,25 @@ git push -u origin feat/issue-012-prompt-builder
 Handoff QA.
 ```
 
+### Prompt QA Onda 6A — Issue #12
+
+```
+QA Agent: valide ISSUE-012 na branch feat/issue-012-prompt-builder.
+
+Branch: feat/issue-012-prompt-builder
+Issue: GitHub #12
+Critérios: docs/BACKLOG.md ISSUE-012.
+
+Verificar:
+- prompt-builder monta 4 camadas (system, platform, tenant, agent)
+- Dados de tenant_settings entram no prompt dinamicamente
+- Teste unitário ou script isolado passa
+
+npm run build && npm run lint.
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
 ### Prompt #13 (pode rodar ‖ #12 em outra sessão)
 
 ```
@@ -497,10 +690,194 @@ git checkout main && git pull && git checkout -b feat/issue-013-tools
 ## Escopo
 src/tools/create-lead.ts, update-lead.ts, build-whatsapp-link.ts — Zod, sem import de agents.
 
+git commit -m "feat(tools): createLead updateLead whatsapp link (#13)"
+git push -u origin feat/issue-013-tools
 Handoff QA.
 ```
 
-*(Demais prompts #11–#19 seguem o mesmo padrão Git + branch da tabela acima. Ver docs/BACKLOG.md para aceite.)*
+### Prompt QA Onda 6A — Issue #13
+
+```
+QA Agent: valide ISSUE-013 na branch feat/issue-013-tools.
+
+Branch: feat/issue-013-tools
+Issue: GitHub #13
+Critérios: docs/BACKLOG.md ISSUE-013.
+
+Verificar:
+- Tools em src/tools/ com validação Zod
+- Tools NÃO importam agents
+- createLead, updateLead, buildWhatsAppLink funcionam isoladamente
+
+npm run build && npm run lint && npm run test (se existir).
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #11 (após #12 e #13 mergeados)
+
+```
+Dev Agent: implemente ISSUE-011 (GitHub #11).
+Branch: feat/issue-011-agents
+
+## Escopo
+Orchestrator + Sales Agent (agent.ts, prompt.ts, rules.ts, tools.ts).
+Leia: docs/AGENTS.md
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #11
+
+```
+QA Agent: valide ISSUE-011 na branch feat/issue-011-agents.
+
+Pré-requisito: #12 e #13 mergeados em main.
+
+Verificar:
+- Orchestrator roteia intenção comercial para Sales
+- Sales usa prompt-builder e importa tools (não o contrário)
+- Resposta de teste com prompt montado
+
+npm run build && npm run lint.
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #14
+
+```
+Dev Agent: implemente ISSUE-014 (GitHub #14).
+Branch: feat/issue-014-openai-streaming
+OpenAI client + helper SSE + function calling para tools.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #14
+
+```
+QA Agent: valide ISSUE-014 na branch feat/issue-014-openai-streaming.
+
+Verificar: stream de tokens em teste isolado; function calling invoca tools.
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #15
+
+```
+Dev Agent: implemente ISSUE-015 (GitHub #15).
+Branch: feat/issue-015-api-chat
+POST /api/chat — CORS, public_key, persiste messages, retorna SSE.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #15
+
+```
+QA Agent: valide ISSUE-015 na branch feat/issue-015-api-chat.
+
+Verificar:
+- POST /api/chat com public_key válida
+- Ciclo mensagem → resposta → persistência em messages
+- CORS para origem do widget
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #16
+
+```
+Dev Agent: implemente ISSUE-016 (GitHub #16).
+Branch: feat/issue-016-chat-ui
+UI chat em /chat — input, histórico, streaming, loading.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #16
+
+```
+QA Agent: valide ISSUE-016 na branch feat/issue-016-chat-ui.
+
+MCP Browser Cursor em /chat?key= (tenant dev):
+- Enviar mensagem → resposta aparece
+- Streaming ou loading state visível
+- Sem erros no console
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #17
+
+```
+Dev Agent: implemente ISSUE-017 (GitHub #17).
+Branch: feat/issue-017-widget-config
+GET /api/widget/config por public_key.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #17
+
+```
+QA Agent: valide ISSUE-017 na branch feat/issue-017-widget-config.
+
+Verificar:
+- GET /api/widget/config?key= retorna branding público
+- Sem dados sensíveis (sem system_prompt completo, etc.)
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #18
+
+```
+Dev Agent: implemente ISSUE-018 (GitHub #18).
+Branch: feat/issue-018-embed-js
+public/widget/embed.js — botão + iframe/modal.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #18
+
+```
+QA Agent: valide ISSUE-018 na branch feat/issue-018-embed-js.
+
+Verificar:
+- embed.js carrega em HTML estático externo
+- Abre chat com public_key correta
+- Limitação MCP: testar /chat?key= direto se iframe inacessível
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #19
+
+```
+Dev Agent: implemente ISSUE-019 (GitHub #19).
+Branch: feat/issue-019-whatsapp-button
+Botão WhatsApp após captura de lead; metadata de clique.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6A — Issue #19
+
+```
+QA Agent: valide ISSUE-019 na branch feat/issue-019-whatsapp-button.
+
+Pré-requisito: #16 e #13 mergeados.
+
+MCP Browser Cursor:
+- Após lead capturado, link wa.me com mensagem pré-preenchida
+- Clique registrado em metadata
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
 
 **Dependências cruzadas 6A↔6B:**
 - #23 só após #15 (6A) + #22 (6B)
@@ -533,17 +910,147 @@ git checkout main && git pull && git checkout -b feat/issue-020-knowledge-schema
 knowledge_documents + knowledge_chunks + pgvector + RLS.
 Skill: agency-os-knowledge.
 
+git commit -m "feat(db): knowledge schema pgvector (#20)"
+git push -u origin feat/issue-020-knowledge-schema
 Handoff QA.
 ```
 
-### Prompt #21 e #22 (paralelo — 2 sessões, 2 branches)
+### Prompt QA Onda 6B — Issue #20
 
 ```
-# Sessão 1 — branch feat/issue-021-faq-crud
-Dev Agent: implemente ISSUE-021. CRUD FAQ em /knowledge.
+QA Agent: valide ISSUE-020 na branch feat/issue-020-knowledge-schema.
 
-# Sessão 2 — branch feat/issue-022-search-knowledge
-Dev Agent: implemente ISSUE-022. Tool searchKnowledge top-K.
+Verificar:
+- Tabelas knowledge_documents e knowledge_chunks com pgvector
+- RLS por tenant_id
+- Migration habilita vector search
+
+npm run db:migrate && npm run build && npm run lint.
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #21 (sessão paralela 1)
+
+```
+Dev Agent: implemente ISSUE-021 (GitHub #21).
+Branch: feat/issue-021-faq-crud
+CRUD FAQ em /knowledge — texto, type=faq.
+
+git commit -m "feat(panel): FAQ CRUD (#21)"
+git push -u origin feat/issue-021-faq-crud
+Handoff QA.
+```
+
+### Prompt QA Onda 6B — Issue #21
+
+```
+QA Agent: valide ISSUE-021 na branch feat/issue-021-faq-crud.
+
+Pré-requisito: #20 mergeado.
+
+MCP Browser Cursor:
+- Login → /knowledge
+- Cadastrar pergunta/resposta FAQ
+- Conteúdo persiste após reload
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #22 (sessão paralela 2 — pode rodar ‖ #21)
+
+```
+Dev Agent: implemente ISSUE-022 (GitHub #22).
+Branch: feat/issue-022-search-knowledge
+Tool searchKnowledge top-K por tenant_id.
+
+git commit -m "feat(ai): searchKnowledge tool (#22)"
+git push -u origin feat/issue-022-search-knowledge
+Handoff QA.
+```
+
+### Prompt QA Onda 6B — Issue #22
+
+```
+QA Agent: valide ISSUE-022 na branch feat/issue-022-search-knowledge.
+
+Pré-requisito: #20 mergeado.
+
+Verificar:
+- searchKnowledge retorna chunks relevantes para query de teste
+- Filtra por tenant_id
+- Fallback texto se sem embedding
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #23
+
+```
+Dev Agent: implemente ISSUE-023 (GitHub #23).
+Branch: feat/issue-023-rag-sales
+Sales Agent chama searchKnowledge; não inventa sem contexto.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6B — Issue #23
+
+```
+QA Agent: valide ISSUE-023 na branch feat/issue-023-rag-sales.
+
+Pré-requisito: #15 e #22 mergeados.
+
+MCP Browser Cursor em /chat:
+- FAQ cadastrado (#21) refletido na resposta
+- Pergunta fora do FAQ → não inventa fatos
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #24
+
+```
+Dev Agent: implemente ISSUE-024 (GitHub #24).
+Branch: feat/issue-024-pdf-pipeline
+Upload PDF → extract → chunk → embed → pgvector.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6B — Issue #24
+
+```
+QA Agent: valide ISSUE-024 na branch feat/issue-024-pdf-pipeline.
+
+Verificar:
+- Upload PDF no painel ou API
+- Pipeline processa e grava chunks com embedding
+- Conteúdo do PDF consultável via searchKnowledge/chat
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #25
+
+```
+Dev Agent: implemente ISSUE-025 (GitHub #25).
+Branch: feat/issue-025-knowledge-panel
+/knowledge — lista docs, status, delete, re-index.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6B — Issue #25
+
+```
+QA Agent: valide ISSUE-025 na branch feat/issue-025-knowledge-panel.
+
+MCP Browser Cursor em /knowledge:
+- Lista documentos e status de processamento
+- Delete e re-index funcionam
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
 ```
 
 ---
@@ -559,27 +1066,117 @@ Dev Agent: implemente ISSUE-022. Tool searchKnowledge top-K.
 | #28 | `feat/issue-028-conversations-page` |
 | #29 | `feat/issue-029-embed-generator` |
 
-### Prompt #26, #27, #28 (3 sessões paralelas)
+### Prompt #26 (sessão paralela 1)
 
 ```
-# Sessão 1
-Dev Agent: ISSUE-026. Branch feat/issue-026-dashboard.
-Substituir placeholder: cards com SQL count (conversas, leads, semana).
+Dev Agent: implemente ISSUE-026 (GitHub #26).
+Branch: feat/issue-026-dashboard
+Cards com SQL count: conversas, leads, leads da semana.
 
-# Sessão 2
-Dev Agent: ISSUE-027. Branch feat/issue-027-leads-page.
+git commit -m "feat(panel): dashboard metrics (#26)"
+git push -u origin feat/issue-026-dashboard
+Handoff QA.
+```
+
+### Prompt QA Onda 6C — Issue #26
+
+```
+QA Agent: valide ISSUE-026 na branch feat/issue-026-dashboard.
+
+Pré-requisito: #8 mergeado (services).
+
+MCP Browser Cursor:
+- Login → /dashboard
+- Números batem com dados do tenant (não placeholder)
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #27 (sessão paralela 2)
+
+```
+Dev Agent: implemente ISSUE-027 (GitHub #27).
+Branch: feat/issue-027-leads-page
 Tabela Shadcn + editar status CRM.
 
-# Sessão 3
-Dev Agent: ISSUE-028. Branch feat/issue-028-conversations-page.
-Lista + detalhe messages.
+git commit -m "feat(panel): leads page CRM (#27)"
+git push -u origin feat/issue-027-leads-page
+Handoff QA.
 ```
 
-### Prompt #29 (após merges 26–28)
+### Prompt QA Onda 6C — Issue #27
 
 ```
-Dev Agent: ISSUE-029. Branch feat/issue-029-embed-generator.
+QA Agent: valide ISSUE-027 na branch feat/issue-027-leads-page.
+
+MCP Browser Cursor em /leads:
+- Lista leads do tenant
+- Editar status CRM persiste
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #28 (sessão paralela 3)
+
+```
+Dev Agent: implemente ISSUE-028 (GitHub #28).
+Branch: feat/issue-028-conversations-page
+Lista conversas + detalhe com messages.
+
+git commit -m "feat(panel): conversations page (#28)"
+git push -u origin feat/issue-028-conversations-page
+Handoff QA.
+```
+
+### Prompt QA Onda 6C — Issue #28
+
+```
+QA Agent: valide ISSUE-028 na branch feat/issue-028-conversations-page.
+
+MCP Browser Cursor em /conversations:
+- Lista conversas
+- Detalhe mostra histórico completo de messages
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Prompt #29 (após #26–#28 mergeados)
+
+```
+Dev Agent: implemente ISSUE-029 (GitHub #29).
+Branch: feat/issue-029-embed-generator
 Snippet <script> copiável em /settings com public_key.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 6C — Issue #29
+
+```
+QA Agent: valide ISSUE-029 na branch feat/issue-029-embed-generator.
+
+Pré-requisito: #26, #27, #28 mergeados.
+
+MCP Browser Cursor em /settings:
+- Snippet embed visível e copiável
+- data-key corresponde ao public_key do tenant
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
+```
+
+### Smoke gate Onda 6 (após trilhos A+B+C em main)
+
+Smoke **integrado** — só roda quando issues críticas de 6A, 6B e 6C estão mergeadas. Não substitui QA individual.
+
+```
+QA Agent: smoke gate Onda 6 completo (main atualizado).
+
+Critérios: docs/QA_PLAN.md F1–F6.
+npm run db:seed && npm run dev
+
+Fluxo: widget/chat → lead capturado → /leads → FAQ no chat → WhatsApp link.
+
+Gate Onda 7: só liberar deploy (#30) se este smoke passar.
 ```
 
 ---
@@ -600,7 +1197,26 @@ Snippet <script> copiável em /settings com public_key.
 ```
 Dev Agent: ISSUE-030. Branch feat/issue-030-deploy.
 Vercel + Supabase prod + docs/DEPLOY.md.
-Handoff QA em URL produção.
+
+git commit -m "chore(deploy): production setup (#30)"
+git push -u origin feat/issue-030-deploy
+Handoff QA.
+```
+
+### Prompt QA Onda 7 — Issue #30
+
+```
+QA Agent: valide ISSUE-030 na branch feat/issue-030-deploy.
+
+Verificar em URL de produção:
+- App acessível (Vercel)
+- Supabase prod conectado
+- Variáveis de ambiente corretas
+- docs/DEPLOY.md completo
+
+MCP Browser Cursor na URL produção: login, /dashboard, /chat básico.
+
+Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
 ```
 
 ### Prompt #31
@@ -608,6 +1224,21 @@ Handoff QA em URL produção.
 ```
 Dev Agent: ISSUE-031. Branch docs/issue-031-onboarding.
 Criar docs/ONBOARDING.md com checklist 1º cliente. Executar com usuário.
+
+Handoff QA.
+```
+
+### Prompt QA Onda 7 — Issue #31
+
+```
+QA Agent: valide ISSUE-031 na branch docs/issue-031-onboarding.
+
+Verificar:
+- docs/ONBOARDING.md existe e cobre: tenant, settings, FAQ, widget, lead real
+- Checklist executável passo a passo
+- Evidência de execução com usuário (ou simulação documentada)
+
+Relatório: ✅ aprovar merge / marcar V0.1 done | ❌ devolver ao Dev Agent
 ```
 
 ---
@@ -652,14 +1283,21 @@ NÃO mergear. NÃO fechar issue.
 
 # Prompt mestre QA
 
+**Regra:** um prompt QA = **uma issue**. Não combinar #8+#9+#10 nem #2+#3 na mesma sessão.
+
+Exceções (smoke integrado, explícito no doc):
+- Smoke gate Onda 5 (após #10 em main)
+- Smoke gate Onda 6 (F1–F6, antes da Onda 7)
+- Retroativo: cada issue ainda tem prompt próprio, mesmo que código já esteja em main
+
 ```
 Atue como QA Agent (skill agency-os-qa-agent).
 
 Branch: feat/issue-NNN-nome
-Issue: GitHub #N
+Issue: GitHub #N  ← uma só
 
 Checkout da branch, npm run build, npm run lint, MCP Browser Cursor (`cursor-ide-browser`).
-Critérios: docs/BACKLOG.md + gate da onda em docs/DEVELOPMENT_WAVES.md.
+Critérios: docs/BACKLOG.md ISSUE-NNN + gate da onda em docs/DEVELOPMENT_WAVES.md.
 
 Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent
 ```

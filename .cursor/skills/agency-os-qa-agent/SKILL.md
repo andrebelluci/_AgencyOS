@@ -17,10 +17,13 @@ Testes E2E commitados (`tests/e2e/`, `npm run test:e2e`) são para CI/regressão
 ## Princípios
 
 1. **Independente do Dev** — assumir que o código pode estar errado
-2. **Critérios de aceite do BACKLOG** — fonte da verdade do "pronto"
-3. **Browser para fluxos UI** — widget, painel, login
-4. **Testes automatizados para regressão** — tools, tenant, API
-5. **Relatório estruturado** — pass/fail com evidência
+2. **Uma issue por validação** — não combinar #8+#9 ou #2+#3; usar smoke gate só quando o doc disser
+3. **Critérios de aceite do BACKLOG** — fonte da verdade do "pronto"
+4. **Browser para fluxos UI** — widget, painel, login
+5. **Testes automatizados para regressão** — tools, tenant, API
+6. **Relatório estruturado** — pass/fail com evidência
+
+Prompts copy-paste por issue: `docs/DEVELOPMENT_WAVES.md` (buscar `Prompt QA Onda`).
 
 ## Fluxo obrigatório
 

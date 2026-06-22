@@ -22,7 +22,7 @@ Estratégia de qualidade para V0.1. Complementa o Dev Agent e QA Agent do Cursor
 | **Dev** | `agency-os-dev-agent` | Lê issue → implementa → handoff |
 | **QA** | `agency-os-qa-agent` | MCP Browser Cursor + testes → relatório |
 
-**Regra:** quem implementa não fecha a própria issue.
+**Regra:** quem implementa não fecha a própria issue. **Um prompt QA = uma issue** (ver prompts em `docs/DEVELOPMENT_WAVES.md`).
 
 ---
 
@@ -146,15 +146,19 @@ Issue só fecha quando:
 ## Comandos para o usuário
 
 ```
-# Desenvolvimento
+# Desenvolvimento (uma issue)
 "Dev Agent: implemente a ISSUE-003"
 
-# Qualidade (após handoff)
+# Qualidade (uma issue — após handoff)
 "QA Agent: valide a ISSUE-003 no browser"
 
-# Ciclo completo
-"Dev Agent implemente ISSUE-015, depois QA Agent valide"
+# Prompts prontos por onda/issue
+Ver docs/DEVELOPMENT_WAVES.md → "Prompt QA Onda X — Issue #N"
 ```
+
+**Não combinar** várias issues num único QA, exceto smoke gates documentados:
+- Onda 5 completa (#8+#9+#10 já em main)
+- Onda 6 completa (F1–F6 em docs/QA_PLAN.md)
 
 ---
 
