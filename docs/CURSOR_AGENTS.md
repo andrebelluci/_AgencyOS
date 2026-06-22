@@ -7,7 +7,7 @@ Dois agentes operacionais para o ciclo de entrega:
 | **Dev Agent** | `agency-os-dev-agent` | "Dev Agent: implemente ISSUE-003" |
 | **QA Agent** | `agency-os-qa-agent` | "QA Agent: valide ISSUE-003" ou `/agency-os-qa-agent` |
 
-Fluxo: **Dev implementa → handoff → QA valida (browser + testes) → issue fecha**.
+Fluxo: **Dev implementa → handoff → QA valida (MCP Browser Cursor + testes) → issue fecha**.
 
 Detalhes: [QA_PLAN.md](QA_PLAN.md)
 
@@ -54,7 +54,7 @@ Ele define os agentes de IA que rodam dentro da plataforma Agency OS.
 | `agency-os-knowledge` | Agency OS | RAG, PDF |
 | `agency-os-widget-ui` | Agency OS | UI widget + painel |
 | `agency-os-dev-agent` | Agency OS | Lê issues, implementa, handoff QA |
-| `agency-os-qa-agent` | Agency OS | Browser MCP + testes, relatório QA |
+| `agency-os-qa-agent` | Agency OS | MCP Browser Cursor + testes, relatório QA |
 | `ui-ux-pro-max` | Comunidade | `/ui-ux-pro-max` — landing, paletas |
 | `supabase` | Supabase oficial | Auth, Storage, migrations |
 | `supabase-postgres-best-practices` | Supabase | RLS, índices, SQL |
@@ -72,7 +72,7 @@ Complementam as regras `agency-os-*.mdc`. Em conflito, **agency-os prevalece**.
 Frases que ativam o contexto certo:
 
 - **"Dev Agent: implemente ISSUE-001"** → agency-os-dev-agent + implement-sprint
-- **"QA Agent: valide ISSUE-001"** → agency-os-qa-agent + MCP Playwright
+- **"QA Agent: valide ISSUE-001"** → agency-os-qa-agent + MCP Browser (`cursor-ide-browser`)
 - **"Implemente o Bloco 0 do DEV_PLAN"** → lê DEV_PLAN + skill implement-sprint
 - **"Crie o Sales Agent"** → lê AGENTS.md + regra agency-os-ai-agents
 - **"Adicione tabela X"** → lê DATABASE.md MVP + regra database
@@ -88,7 +88,7 @@ Para acelerar, trate o Cursor como diferentes papéis conforme a tarefa:
 | Papel | Foco | Documentos |
 |-------|------|------------|
 | **Dev Agent** | Issues, implementação, handoff | DEV_PLAN, BACKLOG, implement-sprint |
-| **QA Agent** | Browser, testes, relatório | QA_PLAN, Playwright MCP |
+| **QA Agent** | Browser, testes, relatório | QA_PLAN, MCP cursor-ide-browser |
 | **CTO** | Escopo, prioridade, decisões | DEV_PLAN, NON_NEGOTIABLES, KILL_LIST |
 | **Architect** | Estrutura, módulos, ADRs | ARCHITECTURE, decisions/ |
 | **Backend** | DB, services, API | DATABASE, MULTITENANCY |
@@ -97,6 +97,17 @@ Para acelerar, trate o Cursor como diferentes papéis conforme a tarefa:
 | **Product** | O que validar | MVP, PRODUCTS |
 
 Peça explicitamente: *"Atue como AI Engineer e implemente o searchKnowledge tool"*.
+
+---
+
+# MCP — Browser para QA
+
+| Servidor | Uso |
+|----------|-----|
+| **cursor-ide-browser** | QA exploratório (nativo Cursor, sem config extra) |
+| ~~playwright MCP~~ | Removido — não usar |
+
+Testes E2E em CI continuam via `@playwright/test` commitado em `tests/e2e/` (não é MCP).
 
 ---
 

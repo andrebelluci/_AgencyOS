@@ -1,0 +1,40 @@
+---
+description: Agentes de IA do produto — orchestrator, sales, tools, prompts
+globs: src/agents/**,src/tools/**,src/ai/**
+alwaysApply: false
+---
+
+# AI Agents (Produto)
+
+## Agentes V0.1
+
+- **Orchestrator:** classifica intenção, roteia para Sales
+- **Sales:** atendimento, qualificação, captura lead, WhatsApp
+
+Knowledge = pipeline RAG (`searchKnowledge` tool), não agente conversacional no V0.1.
+
+## Estrutura por agente
+
+```
+agent.ts, prompt.ts, rules.ts, tools.ts, types.ts
+```
+
+## Prompt (4 camadas V0.1)
+
+system + platform + tenant + agent → via `prompt-builder.ts`
+
+Nunca hardcodar dados do tenant no prompt.
+
+## Tools desacopladas
+
+`src/tools/create-lead.ts`, `search-knowledge.ts`, `build-whatsapp-link.ts`
+
+Tools não importam agents. Agents importam tools.
+
+## Regras
+
+- Nunca inventar preços, prazos ou políticas
+- Preferir tool call sobre simulação
+- Confiança baixa → sugerir WhatsApp humano
+
+Consulte `docs/AGENTS.md` e `docs/PROMPT_SYSTEM.md`.

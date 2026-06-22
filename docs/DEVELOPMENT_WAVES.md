@@ -1,6 +1,6 @@
 # Ondas de Desenvolvimento — V0.1
 
-Plano **sequencial obrigatório** das issues #1–#31.  
+Plano **sequencial obrigatório** das issues #1–#31.
 Cada prompt inclui **criação de branch**. Cada onda termina com **QA** antes de merge.
 
 > **Regra de ouro:** a **Onda 6** (Chat, Knowledge, Painel avançado) só começa quando as **Ondas 1–5** estiverem ✅. Não pular.
@@ -121,7 +121,7 @@ Todo prompt Dev segue esta estrutura:
 QA Agent: valide ISSUE-001 (GitHub #1).
 npm run build && npm run lint && npm run dev
 Rotas: / /dashboard /chat /api/health
-MCP Playwright. Relatório pass/fail.
+MCP Browser Cursor (`cursor-ide-browser`). Relatório pass/fail.
 ```
 
 ---
@@ -155,10 +155,10 @@ Arquivos: src/middleware.ts, drizzle/migrations/0001_*.sql
 
 ---
 
-# ONDA 3 — Auth ⬜ PRÓXIMA
+# ONDA 3 — Auth ✅
 
-**Pré-requisito:** #4 + #6 ✅  
-**Issue:** #5 (uma issue, uma branch)  
+**Pré-requisito:** #4 + #6 ✅
+**Issue:** #5 (uma issue, uma branch)
 **Gate:** owner loga e acessa `/dashboard`
 
 ### Prompt #5 — copiar e colar
@@ -204,15 +204,15 @@ Relatório handoff QA. Não mergear. Não fechar issue.
 ```
 QA Agent: valide ISSUE-005 na branch feat/issue-005-auth.
 Login → /dashboard OK. Logout ou sessão inválida → /login.
-MCP Playwright. npm run build && npm run lint.
+MCP Browser Cursor (`cursor-ide-browser`). npm run build && npm run lint.
 ```
 
 ---
 
-# ONDA 4 — Schema operacional ⬜
+# ONDA 4 — Schema operacional ⬜ PRÓXIMA
 
-**Pré-requisito:** Onda 3 (#5) mergeada  
-**Issues:** #7 (+ extensão RLS das 3 tabelas novas)  
+**Pré-requisito:** Onda 3 (#5) mergeada
+**Issues:** #7 (+ extensão RLS das 3 tabelas novas)
 **Branch:** `feat/issue-007-schema-leads`
 
 ### Prompt #7
@@ -262,8 +262,8 @@ Tabelas existem no Supabase; RLS ativo; migrate roda limpo.
 
 # ONDA 5 — Services + Settings + Seed ⬜
 
-**Pré-requisito:** Onda 4 mergeada  
-**Issues:** #8 → #9 → #10 (**sequencial**, uma branch por issue)  
+**Pré-requisito:** Onda 4 mergeada
+**Issues:** #8 → #9 → #10 (**sequencial**, uma branch por issue)
 **Gate para Onda 6:** login + seed + settings + CRUD services OK
 
 > ⚠️ **A Onda 6 não começa até #10 estar mergeado e QA aprovado.**
@@ -308,7 +308,7 @@ Handoff QA.
 
 ## ONDA 5.2 — Issue #9
 
-**Pré-requisito:** #8 mergeado  
+**Pré-requisito:** #8 mergeado
 **Branch:** `feat/issue-009-settings`
 
 ```
@@ -338,7 +338,7 @@ Handoff QA.
 
 ## ONDA 5.3 — Issue #10
 
-**Pré-requisito:** #9 mergeado  
+**Pré-requisito:** #9 mergeado
 **Branch:** `feat/issue-010-seed`
 
 ```
@@ -601,7 +601,7 @@ Atue como QA Agent (skill agency-os-qa-agent).
 Branch: feat/issue-NNN-nome
 Issue: GitHub #N
 
-Checkout da branch, npm run build, npm run lint, MCP Playwright.
+Checkout da branch, npm run build, npm run lint, MCP Browser Cursor (`cursor-ide-browser`).
 Critérios: docs/BACKLOG.md + gate da onda em docs/DEVELOPMENT_WAVES.md.
 
 Relatório: ✅ aprovar merge | ❌ devolver ao Dev Agent

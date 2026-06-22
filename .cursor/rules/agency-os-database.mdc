@@ -1,0 +1,31 @@
+---
+description: Banco de dados — Drizzle, tenant_id, schema MVP, migrations
+globs: drizzle/**,src/lib/db/**
+alwaysApply: false
+---
+
+# Database Rules
+
+## Schema V0.1 (8 tabelas apenas)
+
+`tenants`, `tenant_settings`, `users`, `leads`, `conversations`, `messages`, `knowledge_documents`, `knowledge_chunks`
+
+Não criar tabelas futuras (opportunities, workflows, events) sem issue explícita V0.2+.
+
+## Campos obrigatórios
+
+`id`, `tenant_id`, `created_at`, `updated_at` em tabelas operacionais.
+
+## CRM V0.1
+
+Status no `leads.status`: novo, qualificado, proposta, fechado, perdido.
+
+## Embeddings
+
+Coluna `embedding` em `knowledge_chunks`. Sem tabela `embeddings` separada.
+
+## Migrations
+
+Drizzle kit. Toda migration deve funcionar para todos os tenants.
+
+Consulte `docs/DATABASE.md` seção MVP.

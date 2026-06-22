@@ -77,7 +77,7 @@ Pesquisa e decisões sobre extensões do Cursor para o Agency OS.
 | Recurso | Quando | Comando |
 |---------|--------|---------|
 | **agency-os-dev-agent** | Ciclo de issues | já em `.cursor/skills/` |
-| **agency-os-qa-agent** | Validação browser | já em `.cursor/skills/` + MCP playwright |
+| **agency-os-qa-agent** | Validação browser | MCP **cursor-ide-browser** (nativo Cursor) |
 | **saas-ui-skills** (param087) | V0.2 painel mais complexo | `npx saas-ui-skills install --target cursor` |
 | **ui-design-brain** | Alternativa leve ao ui-ux-pro-max | clone em `.cursor/skills/ui-design-brain` |
 | **saas-starter-skills** restantes | V0.3 billing | `payments-stripe`, `subscription-billing` |

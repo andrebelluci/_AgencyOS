@@ -1,0 +1,32 @@
+---
+description: Padrões Next.js — Server Components, Server Actions, Zod, páginas finas
+globs: src/**
+alwaysApply: false
+---
+
+# Next.js Patterns
+
+## Páginas finas
+
+`page.tsx` orquestra apenas. Lógica em `src/modules/*/services/`.
+
+## Server Components por padrão
+
+Client Components só para interatividade (chat, forms).
+
+## Validação
+
+Zod em inputs, forms e API payloads. React Hook Form nos formulários.
+
+## API vs Server Actions
+
+- **Painel admin:** Server Actions
+- **Widget público:** Route Handlers com CORS (`/api/chat`, `/api/widget/config`)
+
+## Tipagem
+
+Sem `any`. Tipos em `*.types.ts` por módulo.
+
+## Componentes
+
+Um componente = uma responsabilidade. Shadcn para UI base.

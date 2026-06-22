@@ -1,0 +1,35 @@
+---
+description: Princípios core do Agency OS — multi-tenant, hierarquia docs, escopo MVP
+alwaysApply: true
+---
+
+# Agency OS — Core
+
+## Hierarquia documental
+
+Em conflito: NON_NEGOTIABLES → DEV_PLAN.md → MVP.md → ADRs → demais.
+
+Leia `docs/DEV_PLAN.md` antes de implementar qualquer feature.
+
+## Multi-tenant obrigatório
+
+- Toda tabela operacional tem `tenant_id`
+- Toda query filtra por `tenant_id`
+- RLS no Supabase, não só na app
+- Nunca `if (cliente === "x")` — usar configuração
+
+## Escopo V0.1
+
+Entra: widget, chat, leads, WhatsApp link, knowledge/RAG, painel básico, Orchestrator + Sales.
+
+Proibido até cliente pagante: orçamentos, Estimator, follow-up, event store, workflows, domínio customizado, monorepo.
+
+## Stack
+
+Next.js App Router, TypeScript, Tailwind, Shadcn, Drizzle, Supabase, OpenAI, pgvector.
+
+Monólito modular em `src/modules/`. Sem microsserviços.
+
+## Idioma
+
+Respostas ao usuário em Português do Brasil. Código e commits em inglês.

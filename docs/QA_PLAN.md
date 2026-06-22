@@ -20,7 +20,7 @@ Estratégia de qualidade para V0.1. Complementa o Dev Agent e QA Agent do Cursor
 | Agente | Skill | Responsabilidade |
 |--------|-------|------------------|
 | **Dev** | `agency-os-dev-agent` | Lê issue → implementa → handoff |
-| **QA** | `agency-os-qa-agent` | Browser MCP + testes → relatório |
+| **QA** | `agency-os-qa-agent` | MCP Browser Cursor + testes → relatório |
 
 **Regra:** quem implementa não fecha a própria issue.
 
@@ -33,7 +33,7 @@ Estratégia de qualidade para V0.1. Complementa o Dev Agent e QA Agent do Cursor
 | **Unit** | Vitest | tools, tenant, validators, prompt-builder | Alta |
 | **Integration** | Vitest + DB test | services/repositories com tenant_id | Média |
 | **E2E commitado** | Playwright (`tests/e2e/`) | Fluxos críticos em CI | Média (pós Bloco 3) |
-| **Exploratório** | MCP Playwright no Cursor | Cada issue antes de fechar | Alta |
+| **Exploratório** | **MCP Browser Cursor** (`cursor-ide-browser`) | Cada issue antes de fechar | Alta |
 | **Manual** | Checklist onboarding | 1º cliente real | Alta |
 
 Não buscar 100% coverage no V0.1. Cobrir **caminhos que geram receita**.
@@ -71,25 +71,38 @@ Não buscar 100% coverage no V0.1. Cobrir **caminhos que geram receita**.
 
 ---
 
-## MCP Playwright no Cursor
+## MCP Browser do Cursor (QA exploratório)
 
-Servidor configurado: **playwright** (`user-playwright`).
+**Servidor:** `cursor-ide-browser` (integrado ao Cursor — aba Browser nativa). Único MCP de browser do projeto.
 
-Uso pelo QA Agent:
-1. `browser_navigate` → URL local ou preview Vercel
-2. `browser_snapshot` → entender DOM acessível
-3. Interagir (`click`, `type`, `fill_form`)
-4. `browser_console_messages` → capturar erros
-5. `browser_take_screenshot` → evidência em falhas
+### Workflow
 
-**Quando usar MCP vs Playwright commitado:**
+```
+browser_tabs (list) → browser_navigate → browser_lock → snapshot/click/fill → screenshot → unlock
+```
+
+### Ferramentas
+
+| Tool | Uso |
+|------|-----|
+| `browser_navigate` | `http://localhost:3000` ou preview Vercel |
+| `browser_snapshot` | Ler DOM acessível |
+| `browser_click` / `browser_fill` | Interações |
+| `browser_take_screenshot` | Evidência em falhas |
+| `browser_cdp` | Console/network via `Runtime.evaluate` se necessário |
+
+### Limitação importante
+
+**Iframes não são acessíveis** pelo MCP Browser. Para validar embed (#18), testar `/chat?key=` direto até haver workaround.
+
+### MCP Browser vs Playwright commitado
 
 | Situação | Ferramenta |
 |----------|------------|
-| Validar issue pontual | MCP (rápido, exploratório) |
+| Validar issue pontual no Cursor | **MCP cursor-ide-browser** |
 | Regressão em CI | Playwright em `tests/e2e/` |
-| Debug visual | MCP screenshot |
-| PR merge gate | CI com `test` + `test:e2e` |
+| Debug visual | `browser_take_screenshot` |
+| PR merge gate | `npm run test` + `npm run test:e2e` |
 
 ---
 
@@ -156,7 +169,7 @@ Quando houver código estável:
 - npm run test:e2e  # com playwright install
 ```
 
-Até lá: QA via MCP no Cursor é suficiente.
+Até lá: QA via **MCP Browser do Cursor** (`cursor-ide-browser`) é suficiente.
 
 ---
 

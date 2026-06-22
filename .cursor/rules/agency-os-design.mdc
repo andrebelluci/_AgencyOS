@@ -1,0 +1,42 @@
+---
+description: Design system Agency OS — widget, painel, Shadcn, acessibilidade
+globs: src/components/**,src/app/**
+alwaysApply: false
+---
+
+# Agency OS Design
+
+Leia `docs/DESIGN.md` antes de criar UI.
+
+## Referências visuais
+
+Linear, Stripe, Vercel — profissional, limpo, sem "AI slop".
+
+## Stack
+
+Tailwind + Shadcn apenas. Sem inline styles.
+
+## Widget
+
+- Botão flutuante canto inferior direito
+- Bolhas: user (primary/tenant), assistant (muted)
+- Mobile-first, max-w-md
+- Loading e erro com feedback claro
+
+## Painel
+
+- Sidebar + conteúdo
+- Cards métrica: número grande + label
+- Tabelas com empty state
+
+## Tenant branding
+
+Widget usa `primary_color` de tenant_settings. Painel neutro com accent no logo.
+
+## Skill complementar
+
+Para decisões de layout/paleta avançadas, invocar `/ui-ux-pro-max`.
+
+## A11y
+
+focus-visible, aria-live no chat, contraste AA.
