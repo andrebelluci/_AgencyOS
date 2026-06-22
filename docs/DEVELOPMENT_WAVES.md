@@ -16,11 +16,11 @@ Cada prompt inclui **criação de branch**. Cada onda termina com **QA** antes d
 | #3 | Drizzle base | 1 | `feat/issue-003-drizzle-base` | ✅ Feito (em `main`) |
 | #4 | Tenant middleware | 2 | `feat/issue-004-tenant-middleware` | ✅ Feito (em `main` — sem branch) |
 | #6 | RLS base | 2 | `feat/issue-006-rls-base` | ✅ Feito (em `main` — sem branch) |
-| #5 | Auth + login | 3 | `feat/issue-005-auth` | ⬜ **PRÓXIMA** |
-| #7 | Schema leads/messages | 4 | `feat/issue-007-schema-leads` | ⬜ Bloqueada por #5 |
-| #8 | Repositories/services | 5 | `feat/issue-008-repositories` | ⬜ |
-| #9 | Settings CRUD | 5 | `feat/issue-009-settings` | ⬜ |
-| #10 | Seed dev | 5 | `feat/issue-010-seed` | ⬜ |
+| #5 | Auth + login | 3 | `feat/issue-005-auth` | ✅ Feito (em `main`) |
+| #7 | Schema leads/messages | 4 | `feat/issue-007-schema-leads` | ✅ Feito (em `main`) |
+| #8 | Repositories/services | 5 | `feat/issue-008-repositories` | ⬜ **EM ANDAMENTO** |
+| #9 | Settings CRUD | 5 | `feat/issue-009-settings` | ⬜ Bloqueada por #8 mergeado |
+| #10 | Seed dev | 5 | `feat/issue-010-seed` | ⬜ Bloqueada por #9 mergeado |
 | #11–#19 | Chat/IA | 6A | ver trilho A | 🔒 Bloqueada |
 | #20–#25 | Knowledge | 6B | ver trilho B | 🔒 Bloqueada |
 | #26–#29 | Painel dados | 6C | ver trilho C | 🔒 Bloqueada |
@@ -72,6 +72,25 @@ git push -u origin feat/issue-NNN-nome
 | Duas issues na mesma sessão em `main` | Uma issue = uma branch = uma sessão Cursor |
 | Duas issues na mesma branch | Cada issue sua branch; merge na ordem |
 
+### Merge entre issues sequenciais (ex.: Onda 5)
+
+**Sim — após QA aprovar, faça merge em `main` antes de iniciar a issue seguinte.**
+
+Ciclo por issue:
+
+```
+implementar → QA na branch → merge em main → pull main → próxima branch
+```
+
+Por quê? Todo prompt Dev parte de `main` atualizado (`git checkout main && git pull`). Se #8 ainda não estiver em `main`, a branch de #9 nasce **sem** os repositories/services de #8 — e #9 (settings) ou #10 (seed) podem depender indiretamente dessa base.
+
+| Pergunta | Resposta |
+|----------|----------|
+| Merge #8 antes de começar #9? | **Sim** |
+| Merge #9 antes de começar #10? | **Sim** |
+| Posso abrir #9 sem mergear #8? | Só se criar a branch **a partir de** `feat/issue-008-...` (empilhamento). Não recomendado no V0.1 — conflitos em cascata no merge final. |
+| QA da Onda 5 inteira? | QA **por issue** antes de cada merge; smoke completo (#8+#9+#10) após #10 em `main`. |
+
 ### Recuperação: Onda 2 feita sem branches
 
 O trabalho de #4 e #6 já está em `main`. **Não refazer.** A partir de agora:
@@ -88,9 +107,9 @@ O trabalho de #4 e #6 já está em `main`. **Não refazer.** A partir de agora:
 ONDA 0  #1 ✅
 ONDA 1  #2 → #3 ✅
 ONDA 2  #4 ‖ #6 ✅ (feito em main)
-ONDA 3  #5 ──────────────────────────────► VOCÊ ESTÁ AQUI
-ONDA 4  #7
-ONDA 5  #8 → #9 → #10
+ONDA 3  #5 ✅
+ONDA 4  #7 ✅
+ONDA 5  #8 → #9 → #10 ───────────────────► VOCÊ ESTÁ AQUI
          │
          ▼  GATE: auth + seed + services funcionando
 ONDA 6  Trilho A (#11–#19) ‖ Trilho B (#20–#25) ‖ Trilho C (#26–#29)
@@ -113,6 +132,8 @@ Todo prompt Dev segue esta estrutura:
 
 # ONDA 0 — Bootstrap ✅
 
+> **O que faz:** Coloca o esqueleto do app de pé — Next.js, TypeScript, Tailwind, Shadcn e a estrutura de pastas (`src/modules`, `src/agents`, rotas placeholder). Nada de negócio ainda; só garantir que o projeto compila, faz lint e as rotas `/`, `/dashboard`, `/chat` existem como casca.
+
 **Issue:** #1 · **Branch:** `feat/issue-001-bootstrap` (já em main)
 
 ### QA (retroativo se ainda aberta)
@@ -128,6 +149,8 @@ MCP Browser Cursor (`cursor-ide-browser`). Relatório pass/fail.
 
 # ONDA 1 — Supabase + Drizzle ✅
 
+> **O que faz:** Conecta o app ao banco. Configura o cliente Supabase (browser + server), cria o bucket de arquivos da base de conhecimento e define as **primeiras tabelas** com Drizzle: `tenants` (cada cliente da plataforma), `tenant_settings` (configurações da empresa) e `users` (donos que logam no painel). Sem isso, não há onde persistir dados.
+
 **Issues:** #2 → #3 (sequencial) · Feito em `main`
 
 ### QA retroativo
@@ -141,6 +164,8 @@ QA Agent: valide #2 e #3 retroativamente.
 ---
 
 # ONDA 2 — Tenant + RLS ✅
+
+> **O que faz:** Implementa o **multi-tenant** de verdade. O middleware identifica qual empresa está sendo acessada (subdomínio ou chave pública) e injeta o `tenant_id` no contexto. Em paralelo, o **RLS** (Row Level Security) no Postgres garante que, mesmo com SQL direto, um tenant nunca lê ou escreve dados de outro. É a fundação de segurança do SaaS.
 
 **Issues:** #4 ‖ #6 · Feito em `main` (sem branches — recuperado)
 
@@ -156,6 +181,8 @@ Arquivos: src/middleware.ts, drizzle/migrations/0001_*.sql
 ---
 
 # ONDA 3 — Auth ✅
+
+> **O que faz:** O dono da agência consegue **entrar no painel**. Login com Supabase Auth (email/senha), callback de sessão, proteção das rotas `(dashboard)/*` — quem não está logado vai para `/login`. O usuário autenticado fica vinculado ao `tenant_id` correto. Sem auth, o painel é só placeholder aberto.
 
 **Pré-requisito:** #4 + #6 ✅
 **Issue:** #5 (uma issue, uma branch)
@@ -209,7 +236,9 @@ MCP Browser Cursor (`cursor-ide-browser`). npm run build && npm run lint.
 
 ---
 
-# ONDA 4 — Schema operacional ⬜ PRÓXIMA
+# ONDA 4 — Schema operacional ✅
+
+> **O que faz:** Cria as **tabelas de negócio** no banco: `leads` (oportunidades comerciais com status de CRM), `conversations` (sessões de chat) e `messages` (histórico de mensagens). Define enums, chaves estrangeiras e estende o RLS para essas tabelas. Ainda não há UI nem API de chat — só o modelo de dados pronto para os services da Onda 5.
 
 **Pré-requisito:** Onda 3 (#5) mergeada
 **Issues:** #7 (+ extensão RLS das 3 tabelas novas)
@@ -260,17 +289,31 @@ Tabelas existem no Supabase; RLS ativo; migrate roda limpo.
 
 ---
 
-# ONDA 5 — Services + Settings + Seed ⬜
+# ONDA 5 — Services + Settings + Seed ⬜ VOCÊ ESTÁ AQUI
+
+> **O que faz:** Transforma o schema em **código utilizável** e deixa o ambiente de desenvolvimento **testável de ponta a ponta**. Em três passos sequenciais: (1) repositories e services que leem/escrevem leads e mensagens sempre filtrando `tenant_id`; (2) formulário de configuração da empresa em `/settings` (nome, WhatsApp, cidade, serviços, prompt); (3) script de seed que popula um tenant de dev com dados de exemplo para você logar e testar sem cadastrar tudo na mão. **Gate da Onda 6:** login + seed + settings + services funcionando juntos em `main`.
 
 **Pré-requisito:** Onda 4 mergeada
-**Issues:** #8 → #9 → #10 (**sequencial**, uma branch por issue)
+**Issues:** #8 → #9 → #10 (**sequencial**, uma branch por issue, **merge em `main` após cada uma**)
 **Gate para Onda 6:** login + seed + settings + CRUD services OK
 
 > ⚠️ **A Onda 6 não começa até #10 estar mergeado e QA aprovado.**
 
+### Fluxo Onda 5 (merge obrigatório entre etapas)
+
+```
+#8 implementar → QA → merge main
+    ↓
+#9 implementar (a partir de main com #8) → QA → merge main
+    ↓
+#10 implementar (a partir de main com #8+#9) → QA → merge main → liberar Onda 6
+```
+
 ---
 
 ## ONDA 5.1 — Issue #8
+
+> **Sub-etapa:** Camada de acesso a dados — `repository` + `service` para leads e conversas/mensagens, com `import "server-only"` e filtro `tenant_id` em toda query. É o código que o chat (#15) e o painel (#27) vão chamar depois.
 
 **Branch:** `feat/issue-008-repositories`
 
@@ -308,7 +351,9 @@ Handoff QA.
 
 ## ONDA 5.2 — Issue #9
 
-**Pré-requisito:** #8 mergeado
+> **Sub-etapa:** Tela `/settings` funcional — o dono edita nome da empresa, WhatsApp, cidade, lista de serviços e prompt do sistema. React Hook Form + Zod + Server Action. Só funciona bem se #8 já estiver em `main` (auth + tenant context já existem desde ondas anteriores).
+
+**Pré-requisito:** #8 mergeado em `main` (não só QA aprovado na branch)
 **Branch:** `feat/issue-009-settings`
 
 ```
@@ -338,7 +383,9 @@ Handoff QA.
 
 ## ONDA 5.3 — Issue #10
 
-**Pré-requisito:** #9 mergeado
+> **Sub-etapa:** Script `npm run db:seed` — cria o tenant "Belluci Acabamentos", usuário owner, settings de exemplo e `public_key` fixa para testar o widget. Idempotente (rodar 2× não duplica). Depende de auth (#5) e, na prática, de settings (#9) para o fluxo completo de teste.
+
+**Pré-requisito:** #9 mergeado em `main`
 **Branch:** `feat/issue-010-seed`
 
 ```
@@ -375,6 +422,8 @@ Gate Onda 6: só liberar trilhos A/B/C se este QA passar.
 
 # ONDA 6 — Features avançadas 🔒
 
+> **O que faz:** Entrega o **produto visível** — o Funcionário Digital de verdade. Três trilhos em paralelo (cada um em branch separada): **6A Chat** (agentes IA, streaming OpenAI, API `/api/chat`, widget embed, botão WhatsApp); **6B Knowledge** (upload FAQ/PDF, embeddings pgvector, busca semântica para o Sales Agent); **6C Painel** (dashboard com números reais, lista de leads, histórico de conversas, gerador de snippet embed). As páginas existem desde a Onda 0, mas aqui passam a mostrar dados e comportamento reais.
+
 ## ⛔ BLOQUEIO
 
 **Não iniciar Onda 6 se qualquer item abaixo for falso:**
@@ -405,6 +454,8 @@ Três trilhos **após** Onda 5. Cada issue = branch própria (exceto quando indi
 ---
 
 ## TRILHO 6A — Chat/IA
+
+> Prompt builder em camadas, tools (`createLead`, `updateLead`, WhatsApp link), Orchestrator + Sales Agent, streaming SSE, UI do chat, config do widget e `embed.js` para colar no site do cliente.
 
 | Issue | Branch |
 |-------|--------|
@@ -459,6 +510,8 @@ Handoff QA.
 
 ## TRILHO 6B — Knowledge
 
+> Base de conhecimento RAG — schema de documentos e chunks com pgvector, CRUD de FAQ no painel, tool `searchKnowledge`, integração no Sales Agent e pipeline de PDF.
+
 | Issue | Branch |
 |-------|--------|
 | #20 | `feat/issue-020-knowledge-schema` |
@@ -497,6 +550,8 @@ Dev Agent: implemente ISSUE-022. Tool searchKnowledge top-K.
 
 ## TRILHO 6C — Painel com dados reais
 
+> Substitui placeholders por telas que consomem os services da Onda 5 — contagens no dashboard, tabela de leads com CRM, detalhe de conversas e gerador de código embed em settings.
+
 | Issue | Branch |
 |-------|--------|
 | #26 | `feat/issue-026-dashboard` |
@@ -531,6 +586,8 @@ Snippet <script> copiável em /settings com public_key.
 
 # ONDA 7 — Go-live 🔒
 
+> **O que faz:** Leva o MVP para **produção** e documenta o onboarding do primeiro cliente pago. Deploy Vercel + Supabase prod, variáveis de ambiente, checklist de smoke em URL real (`docs/QA_PLAN.md` F1–F6) e `docs/ONBOARDING.md` com o passo a passo para configurar um tenant novo.
+
 **Pré-requisito:** Onda 6 completa + smoke F1–F6 (docs/QA_PLAN.md)
 
 | Issue | Branch |
@@ -562,9 +619,9 @@ Criar docs/ONBOARDING.md com checklist 1º cliente. Executar com usuário.
 | 0 | ✅ | #1 |
 | 1 | ✅ sequencial | #2 → #3 |
 | 2 | ✅ paralelo (2 branches) | #4 ‖ #6 |
-| **3** | **⬜ sequencial** | **#5** |
-| **4** | **⬜ sequencial** | **#7** |
-| **5** | **⬜ sequencial** | **#8 → #9 → #10** |
+| 3 | ✅ sequencial | #5 |
+| 4 | ✅ sequencial | #7 |
+| **5** | **⬜ sequencial + merge entre cada** | **#8 → #9 → #10** |
 | 6 | 🔒 3 trilhos ‖ | A / B / C |
 | 7 | 🔒 sequencial | #30 → #31 |
 
