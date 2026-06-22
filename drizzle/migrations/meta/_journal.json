@@ -29,6 +29,20 @@
       "when": 1782144200000,
       "tag": "0003_tenant_anon_public_lookup",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782156412825,
+      "tag": "0004_soft_wonder_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782156500000,
+      "tag": "0005_rls_wave2_leads_conversations_messages",
+      "breakpoints": true
     }
   ]
 }
