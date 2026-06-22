@@ -1,5 +1,9 @@
 # DATABASE
 
+> **V0.1 usa apenas 8 tabelas** — ver seção [Schema MVP](#schema-mvp-v01) abaixo.  
+> O restante deste documento descreve a **plataforma completa** (V0.3+).  
+> Implementação: [DEV_PLAN.md](DEV_PLAN.md).
+
 ## Objetivo
 
 Definir a estrutura de dados do Agency OS.
@@ -22,6 +26,25 @@ id
 tenant_id
 created_at
 updated_at
+
+---
+
+# Schema MVP (V0.1)
+
+Apenas estas tabelas devem existir na versão 0.1:
+
+| Tabela | Notas |
+|--------|-------|
+| `tenants` | + campo `public_key` para widget |
+| `tenant_settings` | company_name, whatsapp, city, services (jsonb), system_prompt, cores, logo |
+| `users` | role `owner` apenas no V0.1 |
+| `leads` | status CRM: novo, qualificado, proposta, fechado, perdido; score: baixo, médio, alto |
+| `conversations` | visitor_id anônimo, lead_id nullable |
+| `messages` | role: user, assistant, system |
+| `knowledge_documents` | type: faq, pdf, text |
+| `knowledge_chunks` | embedding vector (pgvector) na coluna |
+
+**Não criar no V0.1:** opportunities, agents, agent_runs, embeddings, quotes, services, pricing_tables, tasks, workflows, events, analytics_events, tenant_features, audit_logs.
 
 ---
 

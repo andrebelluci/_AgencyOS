@@ -129,11 +129,7 @@ Não conversa.
 
 ## CRM GENÉRICO
 
-Não vamos competir com:
-
-:contentReference[oaicite:0]{index=0}
-
-:contentReference[oaicite:1]{index=1}
+Não vamos competir com HubSpot, Pipedrive, RD Station como produto principal.
 
 O CRM existe para apoiar os agentes.
 
@@ -143,11 +139,7 @@ Não é o produto principal.
 
 ## AUTOMAÇÃO GENÉRICA
 
-Não vamos competir com:
-
-:contentReference[oaicite:2]{index=2}
-
-:contentReference[oaicite:3]{index=3}
+Não vamos competir com Zapier, Make, n8n como produto principal.
 
 Automações existem para suportar operações.
 
