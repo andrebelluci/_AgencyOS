@@ -1,5 +1,8 @@
 # ROADMAP
 
+> **Visão de longo prazo.** Para implementação imediata, use [DEV_PLAN.md](DEV_PLAN.md).  
+> **Correção:** Multi-tenant é V0.1 (NON_NEGOTIABLES), não Fase 2. Orçamento automático é V0.3, não Fase 1.
+
 ## Objetivo
 
 Transformar o Agency OS de um MVP validado em uma plataforma SaaS multi-tenant capaz de operar empresas através de IA.
@@ -94,15 +97,7 @@ Necessário:
 
 ### Orçamento Automático
 
-Objetivo:
-
-Eliminar orçamento manual simples.
-
-Necessário:
-
-- Tabelas de preço
-- Cálculos
-- Geração de orçamento
+> **Movido para V0.3** (Estimator Agent). Não faz parte do V0.1. Ver [DEV_PLAN.md](DEV_PLAN.md).
 
 ---
 
@@ -153,6 +148,8 @@ Prazo:
 
 ## Multi-Tenant
 
+> **Base desde V0.1** (subdomínio + public_key). Domínio customizado e branding avançado nesta fase.
+
 Objetivo:
 
 Um sistema.
@@ -161,7 +158,7 @@ Múltiplos clientes.
 
 Cada cliente possui:
 
-- domínio próprio
+- domínio próprio (customizado em V0.2+)
 - identidade visual
 - base de conhecimento
 - configurações

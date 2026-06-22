@@ -1,5 +1,9 @@
 # MVP
 
+> **Implementação:** decisões e ordem de desenvolvimento em [DEV_PLAN.md](DEV_PLAN.md).  
+> **Issues:** [BACKLOG.md](BACKLOG.md).  
+> Em conflito de escopo com ROADMAP Fase 1, prevalece este documento + DEV_PLAN.
+
 ## Nome do Produto
 
 Funcionário Digital
@@ -142,6 +146,8 @@ O cliente não precisa migrar seu site.
 ---
 
 ## 2. Hero Conversacional
+
+> **Versão:** V0.2 (não V0.1). Ver [DEV_PLAN.md](DEV_PLAN.md).
 
 Objetivo:
 

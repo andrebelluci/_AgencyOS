@@ -156,24 +156,22 @@ Objetivo:
 
 # ESTRUTURA
 
-apps/
+## V0.1 — Monólito único (ADR-004)
 
-web/
-admin/
-api/
+Ver estrutura completa em [DEV_PLAN.md](DEV_PLAN.md).
 
-packages/
+```
+src/app/, src/modules/, src/agents/, src/tools/, drizzle/
+```
 
-ui/
-ai/
-crm/
-analytics/
-automation/
-agents/
+## V1+ — Monorepo (futuro)
 
-knowledge/
+```
+apps/web, apps/admin, apps/api
+packages/ui, ai, crm, analytics, automation, agents, knowledge, clients
+```
 
-clients/
+Não implementar monorepo antes de 20 clientes ativos.
 
 ---
 

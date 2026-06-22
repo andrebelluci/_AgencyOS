@@ -1,5 +1,9 @@
 # AGENTS
 
+> **Este documento define agentes de IA do produto** (runtime — atendem visitantes).  
+> Para regras e skills do **Cursor IDE** (desenvolvimento), veja [CURSOR_AGENTS.md](CURSOR_AGENTS.md).  
+> Escopo por versão: [DEV_PLAN.md](DEV_PLAN.md).
+
 ## Objetivo
 
 Os agentes são os funcionários digitais do Agency OS.
