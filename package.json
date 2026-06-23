@@ -13,6 +13,7 @@
     "db:seed": "tsx --env-file=.env.local scripts/seed-dev-tenant.ts",
     "db:test-rls": "tsx --env-file=.env.local scripts/test-rls-wave1.ts",
     "db:test-services": "tsx --env-file=.env.local scripts/test-services-issue-008.ts",
+    "test:prompt-builder": "tsx scripts/test-prompt-builder-issue-012.ts",
     "db:push": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs push --config=drizzle.config.ts",
     "db:studio": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs studio --config=drizzle.config.ts"
   },
