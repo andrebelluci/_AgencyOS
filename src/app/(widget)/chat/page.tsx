@@ -1,16 +1,22 @@
+import { ChatWidgetLoader } from "@/components/chat/chat-widget-loader";
 import { getTenant } from "@/lib/tenant/get-tenant";
+import { getTenantSettings } from "@/modules/settings/service";
+
+const DEFAULT_WELCOME =
+  "Olá! Como posso ajudar você hoje?";
 
 export default async function ChatWidgetPage() {
-  await getTenant();
+  const tenant = await getTenant();
+  const settings = await getTenantSettings(tenant.id);
 
   return (
-    <div className="flex min-h-full flex-1 items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-2 text-center">
-        <h1 className="text-xl font-semibold tracking-tight">Chat</h1>
-        <p className="text-sm text-muted-foreground">
-          Widget conversacional — ISSUE-016
-        </p>
-      </div>
-    </div>
+    <ChatWidgetLoader
+      config={{
+        publicKey: tenant.publicKey,
+        companyName: settings?.companyName ?? tenant.name,
+        welcomeMessage: settings?.welcomeMessage ?? DEFAULT_WELCOME,
+        primaryColor: settings?.primaryColor,
+      }}
+    />
   );
 }
