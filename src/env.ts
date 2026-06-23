@@ -78,3 +78,7 @@ export function hasSupabaseConfig(): boolean {
       process.env.SUPABASE_SERVICE_ROLE_KEY,
   );
 }
+
+export function hasOpenAIConfig(): boolean {
+  return Boolean(process.env.OPENAI_API_KEY?.trim());
+}
