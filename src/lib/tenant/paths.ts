@@ -2,6 +2,7 @@ const TENANT_EXEMPT_PREFIXES = [
   "/_next",
   "/favicon.ico",
   "/api/health",
+  "/api/chat",
   "/auth",
 ] as const;
 
@@ -22,7 +23,6 @@ const TENANT_REQUIRED_PREFIXES = [
   "/knowledge",
   "/settings",
   "/chat",
-  "/api/chat",
   "/api/widget",
   "/api/leads",
   "/api/knowledge",

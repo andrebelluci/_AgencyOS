@@ -19,6 +19,7 @@ export type ToolExecutor = (
 ) => Promise<unknown>;
 
 export type StreamChatEvent =
+  | { type: "meta"; conversationId: string }
   | { type: "token"; content: string }
   | { type: "tool_call_start"; id: string; name: string }
   | { type: "tool_call_end"; id: string; name: string; result: unknown }
