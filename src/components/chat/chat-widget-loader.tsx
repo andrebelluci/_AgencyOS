@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import type { ChatWidgetConfig } from "@/lib/chat/types";
 
@@ -11,12 +11,16 @@ type ChatWidgetLoaderProps = {
   config: ChatWidgetConfig;
 };
 
-export function ChatWidgetLoader({ config }: ChatWidgetLoaderProps) {
-  const [mounted, setMounted] = useState(false);
+function useIsClient(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export function ChatWidgetLoader({ config }: ChatWidgetLoaderProps) {
+  const mounted = useIsClient();
 
   if (!mounted) {
     return <ChatWidgetSkeleton config={config} />;
