@@ -4,10 +4,10 @@ Dois agentes operacionais para o ciclo de entrega:
 
 | Agente | Skill | Invocação |
 |--------|-------|-----------|
-| **Dev Agent** | `agency-os-dev-agent` | "Dev Agent: implemente ISSUE-003" |
-| **QA Agent** | `agency-os-qa-agent` | "QA Agent: valide ISSUE-003" ou `/agency-os-qa-agent` |
+| **Dev Agent** | `agency-os-dev-agent` | "Dev Agent: implemente e valide ISSUE-003" |
+| **QA Agent** | `agency-os-qa-agent` | Fase 2 do Dev, ou "QA Agent: valide ISSUE-003" |
 
-Fluxo: **Dev implementa → handoff → QA valida (MCP Browser Cursor + testes) → issue fecha**.
+Fluxo padrão: **Dev implementa + QA + auto-fix (máx 3 ciclos)** em um prompt → você faz merge.
 
 Detalhes: [QA_PLAN.md](QA_PLAN.md)
 
@@ -53,7 +53,7 @@ Ele define os agentes de IA que rodam dentro da plataforma Agency OS.
 | `agency-os-chat` | Agency OS | Chat, widget, API |
 | `agency-os-knowledge` | Agency OS | RAG, PDF |
 | `agency-os-widget-ui` | Agency OS | UI widget + painel |
-| `agency-os-dev-agent` | Agency OS | Lê issues, implementa, handoff QA |
+| `agency-os-dev-agent` | Agency OS | Implementa, QA, auto-fix, entrega |
 | `agency-os-qa-agent` | Agency OS | MCP Browser Cursor + testes, relatório QA |
 | `ui-ux-pro-max` | Comunidade | `/ui-ux-pro-max` — landing, paletas |
 | `supabase` | Supabase oficial | Auth, Storage, migrations |
@@ -71,8 +71,7 @@ Complementam as regras `agency-os-*.mdc`. Em conflito, **agency-os prevalece**.
 
 Frases que ativam o contexto certo:
 
-- **"Dev Agent: implemente ISSUE-001"** → agency-os-dev-agent + implement-sprint
-- **"QA Agent: valide ISSUE-001"** → agency-os-qa-agent + MCP Browser (`cursor-ide-browser`)
+- **"Dev Agent: implemente e valide ISSUE-017"** → agency-os-dev-agent (prompt em DEVELOPMENT_WAVES.md)
 - **"Implemente o Bloco 0 do DEV_PLAN"** → lê DEV_PLAN + skill implement-sprint
 - **"Crie o Sales Agent"** → lê AGENTS.md + regra agency-os-ai-agents
 - **"Adicione tabela X"** → lê DATABASE.md MVP + regra database
@@ -87,7 +86,7 @@ Para acelerar, trate o Cursor como diferentes papéis conforme a tarefa:
 
 | Papel | Foco | Documentos |
 |-------|------|------------|
-| **Dev Agent** | Issues, implementação, handoff | DEV_PLAN, BACKLOG, implement-sprint |
+| **Dev Agent** | Issues, implementação, QA, auto-fix | DEV_PLAN, BACKLOG, DEVELOPMENT_WAVES |
 | **QA Agent** | Browser, testes, relatório | QA_PLAN, MCP cursor-ide-browser |
 | **CTO** | Escopo, prioridade, decisões | DEV_PLAN, NON_NEGOTIABLES, KILL_LIST |
 | **Architect** | Estrutura, módulos, ADRs | ARCHITECTURE, decisions/ |

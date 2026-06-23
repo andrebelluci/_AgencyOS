@@ -17,13 +17,14 @@ Testes E2E commitados (`tests/e2e/`, `npm run test:e2e`) são para CI/regressão
 ## Princípios
 
 1. **Independente do Dev** — assumir que o código pode estar errado
-2. **Uma issue por validação** — não combinar #8+#9 ou #2+#3; usar smoke gate só quando o doc disser
-3. **Critérios de aceite do BACKLOG** — fonte da verdade do "pronto"
-4. **Browser para fluxos UI** — widget, painel, login
-5. **Testes automatizados para regressão** — tools, tenant, API
-6. **Relatório estruturado** — pass/fail com evidência
+2. **Uma issue por validação** — smoke gates (#8+#9+#10, F1–F6) são exceção
+3. **Modo combinado** — quando o Dev Agent roda Fase 2 no mesmo prompt, aplicar este checklist e reportar pass/fail para o auto-fix (Fase 3)
+4. **Critérios de aceite do BACKLOG** — fonte da verdade do "pronto"
+5. **Browser para fluxos UI** — widget, painel, login
+6. **Testes automatizados para regressão** — tools, tenant, API
+7. **Relatório estruturado** — pass/fail com evidência
 
-Prompts copy-paste por issue: `docs/DEVELOPMENT_WAVES.md` (buscar `Prompt QA Onda`).
+Prompts copy-paste: `docs/DEVELOPMENT_WAVES.md` (formato Dev+QA combinado).
 
 ## Fluxo obrigatório
 
