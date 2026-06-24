@@ -33,3 +33,16 @@ export const messageRoleEnum = pgEnum("message_role", [
   "assistant",
   "system",
 ]);
+
+export const knowledgeDocumentTypeEnum = pgEnum("knowledge_document_type", [
+  "faq",
+  "pdf",
+  "text",
+]);
+
+export const knowledgeDocumentStatusEnum = pgEnum("knowledge_document_status", [
+  "pending",
+  "processing",
+  "ready",
+  "failed",
+]);

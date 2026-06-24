@@ -1,5 +1,7 @@
 export * from "./conversations";
 export * from "./enums";
+export * from "./knowledge-chunks";
+export * from "./knowledge-documents";
 export * from "./leads";
 export * from "./messages";
 export * from "./tenant-settings";
