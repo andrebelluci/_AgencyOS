@@ -3,9 +3,11 @@ export { withTenantContext } from "./tenant-context";
 export * from "./schema";
 export type {
   Conversation,
+  KnowledgeDocument,
   Lead,
   Message,
   NewConversation,
+  NewKnowledgeDocument,
   NewLead,
   NewMessage,
   NewTenant,

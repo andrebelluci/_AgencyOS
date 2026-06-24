@@ -2,6 +2,7 @@ import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 import type {
   conversations,
+  knowledgeDocuments,
   leads,
   messages,
   tenantSettings,
@@ -26,3 +27,6 @@ export type NewConversation = InferInsertModel<typeof conversations>;
 
 export type Message = InferSelectModel<typeof messages>;
 export type NewMessage = InferInsertModel<typeof messages>;
+
+export type KnowledgeDocument = InferSelectModel<typeof knowledgeDocuments>;
+export type NewKnowledgeDocument = InferInsertModel<typeof knowledgeDocuments>;
