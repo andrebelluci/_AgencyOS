@@ -7,6 +7,7 @@ import type { ChatWidgetConfig } from "@/lib/chat/types";
 import { ChatInput } from "./chat-input";
 import { ChatMessageList } from "./chat-message-list";
 import { useChatStream } from "./use-chat-stream";
+import { WhatsAppCta } from "./whatsapp-cta";
 
 type ChatWidgetProps = {
   config: ChatWidgetConfig;
@@ -21,6 +22,8 @@ export function ChatWidget({ config }: ChatWidgetProps) {
     isLoading,
     error,
     dismissError,
+    whatsappUrl,
+    trackWhatsAppClick,
   } = useChatStream(config);
 
   const brandingStyle = config.primaryColor
@@ -62,6 +65,10 @@ export function ChatWidget({ config }: ChatWidgetProps) {
             Fechar
           </button>
         </div>
+      ) : null}
+
+      {whatsappUrl ? (
+        <WhatsAppCta url={whatsappUrl} onClick={trackWhatsAppClick} />
       ) : null}
 
       <ChatInput

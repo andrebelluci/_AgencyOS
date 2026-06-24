@@ -16,6 +16,7 @@ export default async function ChatWidgetPage() {
         companyName: settings?.companyName ?? tenant.name,
         welcomeMessage: settings?.welcomeMessage ?? DEFAULT_WELCOME,
         primaryColor: settings?.primaryColor,
+        whatsapp: settings?.whatsapp,
       }}
     />
   );
