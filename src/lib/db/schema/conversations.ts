@@ -1,4 +1,6 @@
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+
+import type { ConversationMetadata } from "@/lib/db/conversation-metadata";
 
 import { conversationStatusEnum } from "./enums";
 import { leads } from "./leads";
@@ -14,6 +16,10 @@ export const conversations = pgTable(
     leadId: uuid("lead_id").references(() => leads.id, { onDelete: "set null" }),
     visitorId: text("visitor_id").notNull(),
     status: conversationStatusEnum("status").notNull().default("active"),
+    metadata: jsonb("metadata")
+      .$type<ConversationMetadata>()
+      .default({})
+      .notNull(),
     startedAt: timestamp("started_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

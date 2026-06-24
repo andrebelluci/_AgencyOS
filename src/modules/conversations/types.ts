@@ -10,6 +10,7 @@ export type UpdateConversationInput = {
   leadId?: string | null;
   status?: Conversation["status"];
   endedAt?: Date | null;
+  metadata?: Conversation["metadata"];
 };
 
 export type CreateMessageInput = {

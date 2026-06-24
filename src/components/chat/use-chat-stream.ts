@@ -8,6 +8,7 @@ import {
 } from "@/lib/chat/conversation-storage";
 import { readChatSSEStream } from "@/lib/chat/sse-client";
 import type { ChatUiMessage, ChatWidgetConfig } from "@/lib/chat/types";
+import { extractWhatsAppUrlFromToolResult } from "@/lib/chat/whatsapp-from-tool";
 import { getOrCreateVisitorId } from "@/lib/chat/visitor-id";
 
 const WELCOME_MESSAGE_ID = "welcome";
@@ -37,6 +38,8 @@ type UseChatStreamResult = {
   isLoading: boolean;
   error: string | null;
   dismissError: () => void;
+  whatsappUrl: string | null;
+  trackWhatsAppClick: () => void;
 };
 
 export function useChatStream(config: ChatWidgetConfig): UseChatStreamResult {
@@ -46,6 +49,7 @@ export function useChatStream(config: ChatWidgetConfig): UseChatStreamResult {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
 
   const conversationIdRef = useRef<string | null>(null);
   const visitorIdRef = useRef<string | null>(null);
@@ -53,6 +57,25 @@ export function useChatStream(config: ChatWidgetConfig): UseChatStreamResult {
   useEffect(() => {
     conversationIdRef.current = getStoredConversationId(config.publicKey);
     visitorIdRef.current = getOrCreateVisitorId(config.publicKey);
+  }, [config.publicKey]);
+
+  const trackWhatsAppClick = useCallback(() => {
+    const conversationId = conversationIdRef.current;
+
+    if (!conversationId) {
+      return;
+    }
+
+    void fetch("/api/chat/whatsapp-click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        public_key: config.publicKey,
+        conversation_id: conversationId,
+      }),
+    }).catch(() => {
+      // Non-blocking analytics — opening WhatsApp must not depend on this call.
+    });
   }, [config.publicKey]);
 
   const sendMessage = useCallback(async () => {
@@ -124,6 +147,19 @@ export function useChatStream(config: ChatWidgetConfig): UseChatStreamResult {
           continue;
         }
 
+        if (event.type === "tool_call_end") {
+          const url = extractWhatsAppUrlFromToolResult(
+            event.name,
+            event.result,
+            config.whatsapp,
+          );
+
+          if (url) {
+            setWhatsappUrl(url);
+          }
+          continue;
+        }
+
         if (event.type === "token") {
           assistantContent += event.content;
           setMessages((current) =>
@@ -189,7 +225,7 @@ export function useChatStream(config: ChatWidgetConfig): UseChatStreamResult {
     } finally {
       setIsLoading(false);
     }
-  }, [config.publicKey, input, isLoading]);
+  }, [config.publicKey, config.whatsapp, input, isLoading]);
 
   return {
     messages,
@@ -199,5 +235,7 @@ export function useChatStream(config: ChatWidgetConfig): UseChatStreamResult {
     isLoading,
     error,
     dismissError: () => setError(null),
+    whatsappUrl,
+    trackWhatsAppClick,
   };
 }

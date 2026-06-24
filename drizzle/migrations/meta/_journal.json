@@ -43,6 +43,13 @@
       "when": 1782156500000,
       "tag": "0005_rls_wave2_leads_conversations_messages",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782156600000,
+      "tag": "0006_conversations_metadata",
+      "breakpoints": true
     }
   ]
 }

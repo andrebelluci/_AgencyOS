@@ -10,4 +10,5 @@ export type ChatWidgetConfig = {
   companyName: string;
   welcomeMessage: string;
   primaryColor?: string | null;
+  whatsapp?: string | null;
 };

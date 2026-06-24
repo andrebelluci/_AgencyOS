@@ -1,5 +1,8 @@
 import "server-only";
 
+import type { Lead } from "@/lib/db";
+import { updateConversation } from "@/modules/conversations/service";
+
 import { runSalesPipeline } from "@/agents/sales/agent";
 import { SALES_TOOL_DEFINITIONS } from "@/agents/sales/tool-definitions";
 import { executeSalesTool } from "@/agents/sales/tools";
@@ -33,6 +36,19 @@ export async function* streamSalesAgent(
         name as SalesToolName,
         args,
       );
+
+      if (
+        result.ok &&
+        result.tool === "createLead" &&
+        result.data &&
+        typeof result.data === "object" &&
+        "id" in result.data
+      ) {
+        await updateConversation(input.tenantId, input.conversationId, {
+          leadId: (result.data as Lead).id,
+        });
+      }
+
       return result;
     },
   });
