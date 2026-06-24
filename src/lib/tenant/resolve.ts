@@ -17,10 +17,19 @@ function getHostname(request: NextRequest): string {
   return host.split(":")[0] ?? "";
 }
 
+const WIDGET_KEY_QUERY_PARAM = "key";
+
 function getPublicKeyFromRequest(request: NextRequest): string | null {
   const fromHeader = request.headers.get(PUBLIC_KEY_HEADER)?.trim();
   if (fromHeader) {
     return fromHeader;
+  }
+
+  const fromWidgetKey = request.nextUrl.searchParams
+    .get(WIDGET_KEY_QUERY_PARAM)
+    ?.trim();
+  if (fromWidgetKey) {
+    return fromWidgetKey;
   }
 
   const fromQuery = request.nextUrl.searchParams.get(PUBLIC_KEY_QUERY_PARAM)?.trim();
