@@ -45,6 +45,64 @@ Um colaborador virtual treinado para atender, qualificar, responder dúvidas e g
 
 ---
 
+# WIDGET vs PRODUTO
+
+| | Widget embeddable (V0.1) | Funcionário Digital (produto) |
+|--|--------------------------|-------------------------------|
+| **Papel** | Distribuição, onboarding, validação de mercado | Operação comercial da empresa |
+| **O que é** | Script no site do cliente (`embed.js`) | Agentes + knowledge + CRM + painel |
+| **Futuro** | Um dos modos de interface | Núcleo permanente da plataforma |
+
+O widget valida adoção. O destino é **Site Adaptativo → Site Conversacional → Digital Twin Público** ([VISION.md](VISION.md)).
+
+---
+
+# EVOLUÇÃO ESTRATÉGICA (V0.1 → V0.5)
+
+> Narrativa de longo prazo. Não altera escopo V0.1 nem issues em [BACKLOG.md](BACKLOG.md).
+
+## V0.1 — Funcionário Digital + Widget
+
+**Objetivo:** validar aquisição de leads.
+
+Entrega: chat, captura, knowledge, painel, `embed.js`.
+
+---
+
+## V0.2 — Hero Conversacional + Widget Hardening
+
+**Hero Conversacional:** chat inline na hero, onboarding conversacional, perguntas contextuais, estados pré-definidos (issues #33–#34).
+
+**Widget Hardening** (tema estratégico — issues futuras): rate limiting, abuse protection, quotas por tenant, timeout strategy, observabilidade.
+
+---
+
+## V0.3 — Site Adaptativo
+
+A IA **não gera páginas**. A IA **seleciona estados** (ex.: residencial, comercial, arquiteto, construtora).
+
+Cada perfil recebe conteúdo, provas sociais, CTAs e componentes diferentes.
+
+**Implementação:** Estados + Componentes + Regras + Contexto + IA.
+
+> Milestone GitHub `V0.3 — Orçamentista IA` (issues #42–#49) cobre **automação comercial** em paralelo. Ver [BACKLOG.md](BACKLOG.md).
+
+---
+
+## V0.4 — Site Conversacional
+
+O visitante conversa com a empresa. A conversa substitui **parte** da navegação tradicional. A IA guia a experiência.
+
+---
+
+## V0.5 — Digital Twin Público
+
+O visitante fala com uma **representação operacional** da empresa — serviços, processos, histórico, conhecimento e contexto integrados.
+
+Produto alinhado ao plano **Enterprise** e ao Digital Twin Agent ([AGENTS.md](AGENTS.md)).
+
+---
+
 # PRODUTO PRINCIPAL
 
 ## Funcionário Digital
@@ -347,9 +405,11 @@ Todos os agentes
 
 # FUTURO
 
-## Site Conversacional
+## Site Conversacional (V0.4)
 
-Produto separado.
+> Primeiro passo na hero: V0.2. Visão completa em [VISION.md](VISION.md).
+
+Produto de experiência.
 
 ---
 
@@ -361,15 +421,15 @@ Navegação tradicional.
 
 Solução:
 
-Experiência baseada em conversa.
+Experiência baseada em conversa e intenção — **sem HTML gerado por LLM**.
 
 ---
 
 # FUTURO
 
-## Gêmeo Digital
+## Gêmeo Digital (V0.5 — Digital Twin Público)
 
-Produto premium.
+Produto premium (Enterprise).
 
 ---
 

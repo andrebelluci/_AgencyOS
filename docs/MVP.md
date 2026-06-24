@@ -4,6 +4,16 @@
 > **Issues:** [BACKLOG.md](BACKLOG.md).  
 > Em conflito de escopo com ROADMAP Fase 1, prevalece este documento + DEV_PLAN.
 
+## Posicionamento V0.1
+
+**Entregamos:** Site do cliente + Widget embeddable + Funcionário Digital (chat, leads, knowledge, painel).
+
+**Não entregamos no V0.1:** Hero inline, site adaptativo, site conversacional completo, Digital Twin público.
+
+O widget é **mecanismo de distribuição** — o produto é o Funcionário Digital. Visão V0.2–V0.5 em [VISION.md](VISION.md).
+
+---
+
 ## Nome do Produto
 
 Funcionário Digital
@@ -103,19 +113,16 @@ Empresas perdem oportunidades porque:
 
 # Solução MVP
 
-Site Conversacional
+**Funcionário Digital** no site do cliente via **widget embeddable** (distribuição e onboarding).
 
-*
+Componentes V0.1:
 
-Funcionário Digital
+* Widget Conversacional (`embed.js`)
+* Chat IA + captura de leads
+* CRM Básico (`leads.status`)
+* Painel do Cliente
 
-*
-
-CRM Básico
-
-*
-
-Painel do Cliente
+> **Não é** Site Conversacional completo (V0.4) nem Hero inline (V0.2). O widget valida mercado; o produto é o Funcionário Digital. Ver [VISION.md](VISION.md).
 
 ---
 
@@ -461,35 +468,50 @@ Não fazem parte do MVP:
 
 # Roadmap
 
+> **Estratégico:** evolução completa V0.1–V0.5 em [VISION.md](VISION.md). Milestones GitHub em [BACKLOG.md](BACKLOG.md) **não foram alterados**.
+
 ## V0.1
 
-Funcionário Digital
+Funcionário Digital + Widget
 
-* Widget
+* Widget (`embed.js`)
 * Chat
 * Leads
 * WhatsApp
 * Conhecimento
 * Painel
 
+**Objetivo:** validar aquisição de leads.
+
 ---
 
 ## V0.2
 
-Site Conversacional
+Hero Conversacional + Widget Hardening
 
-* Hero Conversacional
-* Conteúdo adaptativo
+* Hero Conversacional (chat inline, estados pré-definidos) — issues #33–#34
+* Widget Hardening (rate limit, abuse, quotas) — tema estratégico
 
 ---
 
 ## V0.3
 
-Estimator Agent
+Site Adaptativo (visão) + Orçamentista IA (backlog #42–#49)
 
-* Serviços
-* Preços
-* Orçamentos
+* Estados + componentes + regras por perfil
+* Estimator Agent, orçamentos, pipeline
+
+---
+
+## V0.4
+
+Site Conversacional — conversa substitui parte da navegação.
+
+---
+
+## V0.5
+
+Digital Twin Público — representação operacional da empresa.
 
 ---
 
@@ -597,3 +619,5 @@ Mesmo que todo o restante ainda não exista.
 Não estamos construindo o Agency OS completo.
 
 Estamos construindo a menor versão possível capaz de provar que o Agency OS merece existir.
+
+O widget é mecanismo de distribuição. O produto é o Funcionário Digital. Evolução V0.2–V0.5 em [VISION.md](VISION.md).

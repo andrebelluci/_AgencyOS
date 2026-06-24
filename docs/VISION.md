@@ -12,6 +12,38 @@ O site é apenas uma interface.
 
 O produto real é um sistema composto por IA, automações, conhecimento estruturado e agentes especializados.
 
+**Importante:** o widget embeddable (V0.1) é mecanismo de **distribuição e onboarding** — não é o produto final. O produto é o **Funcionário Digital**: uma empresa operável por IA.
+
+---
+
+# De navegação a intenção
+
+**Hoje (web tradicional):**
+
+Visitante → Navega → Procura informação → Encontra contato
+
+**Destino (Agency OS):**
+
+Visitante → Expressa intenção → IA entende contexto → Experiência se adapta → Objetivo é concluído
+
+Não estamos construindo um chatbot para site. Estamos construindo uma **empresa operável por IA**. O site é uma das interfaces.
+
+---
+
+# Evolução do produto (versões)
+
+| Versão | Nome estratégico | Objetivo |
+|--------|------------------|----------|
+| **V0.1** | Site + Widget + Funcionário Digital | Validar aquisição de leads |
+| **V0.2** | Hero Conversacional + Widget Hardening | Experiência guiada na hero; API pública resiliente |
+| **V0.3** | Site Adaptativo | IA seleciona estados (perfil → conteúdo/CTA/componentes) |
+| **V0.4** | Site Conversacional | Conversa substitui parte da navegação |
+| **V0.5** | Digital Twin Público | Visitante fala com representação operacional da empresa |
+
+Sequência: **Widget → Hero → Site Adaptativo → Site Conversacional → Digital Twin Público**
+
+Detalhamento em [ROADMAP.md](ROADMAP.md), [PRODUCTS.md](PRODUCTS.md) e [DEV_PLAN.md](DEV_PLAN.md). Implementação V0.1 inalterada.
+
 ---
 
 # Problema
@@ -124,14 +156,40 @@ Vender:
 
 Agency OS deve evoluir para uma plataforma onde cada empresa possui:
 
-- Site Inteligente
-- Base de Conhecimento
+- Site Inteligente (adaptativo e conversacional)
+- Base de Conhecimento (ativo principal)
 - CRM
 - Agentes Especializados
 - Automações
-- Gêmeo Digital
+- Gêmeo Digital (destino final)
 
 A empresa passa a operar através da plataforma.
+
+---
+
+# Diretrizes arquiteturais futuras
+
+Estas diretrizes orientam decisões **após V0.1**. Não alteram escopo, backlog ou cronograma atual.
+
+## Modelo de IA é substituível
+
+O Agency OS não deve depender de OpenAI, Gemini, Claude ou qualquer fornecedor específico. O modelo é intercambiável via camada de abstração em `src/ai/`.
+
+## Conhecimento é o ativo principal
+
+O ativo mais valioso não é o modelo — é o **conhecimento estruturado da empresa**. Priorizar captura, organização, recuperação e evolução contínua.
+
+## RAG privado por padrão
+
+Fluxo preferencial: Pergunta → Knowledge Base da empresa → RAG → Resposta. Não: Pergunta → Internet → Resposta. O conhecimento empresarial vem da própria empresa.
+
+## Site conversacional ≠ HTML gerado por IA
+
+A IA **não gera páginas inteiras** em tempo real. A visão é: **Estados + Componentes + Regras + Contexto + IA**. A IA seleciona experiências; não monta toda a interface do zero.
+
+## Digital Twin é o destino final
+
+O visitante deixa de conversar com um chatbot genérico e passa a interagir com uma **representação operacional** da empresa — serviços, processos, histórico e conhecimento integrados.
 
 ---
 
@@ -151,9 +209,11 @@ Aumentar conversão.
 
 ## 2. Site Conversacional
 
+> **Versão estratégica completa:** V0.4. Primeiro passo (Hero guiado) em V0.2. Ver evolução em [VISION.md](VISION.md).
+
 O visitante conversa em vez de navegar.
 
-A IA conduz toda a experiência.
+A IA conduz a experiência.
 
 Objetivo:
 

@@ -3,7 +3,7 @@
 ## Status
 
 Documento mestre de implementação.  
-Última revisão: 2026-06-22.
+Última revisão: 2026-06-22 (alinhamento estratégico V0.1–V0.5; escopo V0.1 inalterado).
 
 ---
 
@@ -26,7 +26,33 @@ Estas decisões resolvem conflitos entre documentos e não encurtam prazos — a
 | D11 | **Embeddings na coluna de `knowledge_chunks`** | Sem tabela `embeddings` separada no V0.1. |
 | D12 | **1 usuário owner por tenant no V0.1** | RBAC completo em V0.2. |
 | D13 | **API pública para widget** | Route Handlers `/api/chat`, `/api/widget/config`. Server Actions no painel. |
-| D14 | **Hero Conversacional = V0.2** | MVP.md seção 2 movida para V0.2 neste plano. |
+| D14 | **Hero Conversacional = V0.2** | MVP.md seção 2 movida para V0.2 neste plano. Primeiro passo da evolução de interface (antes do Site Adaptativo V0.3 e Site Conversacional V0.4). |
+
+---
+
+# Visão estratégica (referência)
+
+Esta seção **não altera** escopo V0.1, waves, backlog (#1–#31) nem ordem de implementação abaixo.
+
+| Versão | Foco estratégico |
+|--------|------------------|
+| V0.1 | Widget + Funcionário Digital — validar leads |
+| V0.2 | Hero Conversacional + Widget Hardening |
+| V0.3 | Site Adaptativo (Estados + Componentes + Regras) |
+| V0.4 | Site Conversacional |
+| V0.5 | Digital Twin Público |
+
+Sequência: **Widget → Hero → Site Adaptativo → Site Conversacional → Digital Twin**.
+
+Detalhamento: [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md).
+
+### Diretrizes arquiteturais futuras (pós-V0.1)
+
+- **Modelo de IA substituível** — abstração em `src/ai/`; sem lock-in em fornecedor
+- **Conhecimento = ativo principal** — captura, organização, RAG, evolução contínua
+- **RAG privado por padrão** — resposta da knowledge base da empresa, não da internet
+- **IA seleciona estados** — não gera HTML/páginas inteiras em tempo real
+- **Digital Twin = destino final** — representação operacional, não chatbot genérico
 
 ---
 
@@ -157,13 +183,23 @@ Detalhamento de campos em DATABASE.md.
 
 # V0.2 — Pós 1º pagante
 
-Domínio customizado, Hero conversacional, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent separado.
+**Interface (estratégico):** Hero conversacional — chat inline na hero, onboarding conversacional, perguntas contextuais, estados pré-definidos (issues #33–#34).
+
+**Resiliência (estratégico):** Widget Hardening — rate limiting, abuse protection, quotas por tenant, timeout strategy, observabilidade (tema para issues futuras; não antecipar no V0.1).
+
+**Backlog existente (#32–#41):** domínio customizado, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG.
+
+> Milestone GitHub `V0.2 — Site Conversacional` agrupa estas issues. Site Conversacional **completo** = V0.4 na visão estratégica.
 
 ---
 
 # V0.3 — Pós 3–10 pagantes
 
-Estimator Agent, pricing_tables, quotes, opportunities, follow-up, event store leve, analytics, WhatsApp API (se ROI).
+**Interface (estratégico):** Site Adaptativo — IA seleciona estados/perfil; conteúdo, CTA e componentes por regras (sem HTML gerado por LLM). Issues dedicadas ainda não criadas.
+
+**Automação comercial (backlog #42–#49):** Estimator Agent, pricing_tables, quotes, opportunities, follow-up, event store leve, analytics, WhatsApp API (se ROI).
+
+> Milestone GitHub `V0.3 — Orçamentista IA` refere-se à trilha de automação, não ao Site Adaptativo.
 
 ---
 

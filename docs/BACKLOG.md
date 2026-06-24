@@ -7,6 +7,12 @@ Importar manualmente ou via `gh issue create`.
 
 **Milestones:** `V0.1 — Funcionário Digital`, `V0.2 — Site Conversacional`, `V0.3 — Orçamentista IA`
 
+> **Nota estratégica (2026-06):** Os milestones GitHub **não foram renomeados** para preservar issues e cronograma. Na visão de longo prazo ([VISION.md](VISION.md)):
+> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening — issues #32–#41 no milestone `V0.2`
+> - **V0.3 (estratégico)** = Site Adaptativo — ainda sem issues dedicadas
+> - **V0.4 (estratégico)** = Site Conversacional completo
+> - Milestone `V0.3 — Orçamentista IA` = automação comercial (#42–#49), paralelo ao Site Adaptativo
+
 ---
 
 ## Como importar no GitHub Projects

@@ -3,6 +3,33 @@
 > **Visão de longo prazo.** Para implementação imediata, use [DEV_PLAN.md](DEV_PLAN.md).  
 > **Correção:** Multi-tenant é V0.1 (NON_NEGOTIABLES), não Fase 2. Orçamento automático é V0.3, não Fase 1.
 
+## Evolução de produto (versões V0.x)
+
+Roadmap **estratégico** de interface e experiência. Não substitui milestones de issues no GitHub.
+
+| Versão | Produto | O que entrega | Gate comercial |
+|--------|---------|---------------|----------------|
+| **V0.1** | Funcionário Digital + Widget | Chat, leads, knowledge, painel, `embed.js` | 1º cliente pagante |
+| **V0.2** | Hero Conversacional | Chat inline na hero, onboarding conversacional, perguntas contextuais; **Widget Hardening** (rate limit, abuse, quotas, timeout, observabilidade) | 3–10 pagantes |
+| **V0.3** | Site Adaptativo | Estados + componentes + regras (ex.: residencial, comercial, arquiteto); conteúdo/CTA/prova social por perfil — **sem HTML gerado por LLM** | Demanda comprovada |
+| **V0.4** | Site Conversacional | Conversa substitui parte da navegação; IA guia a jornada | Produto diferenciado |
+| **V0.5** | Digital Twin Público | Representação operacional da empresa para o visitante | Enterprise / premium |
+
+**Widget (V0.1)** = distribuição e validação de mercado. **Funcionário Digital** = produto.
+
+Issues V0.2/V0.3 no [BACKLOG.md](BACKLOG.md) permanecem; esta tabela alinha a **narrativa** de longo prazo (V0.4/V0.5 ainda sem issues).
+
+### Nota sobre milestones GitHub
+
+| Milestone no GitHub | Conteúdo real | Versão estratégica equivalente |
+|---------------------|--------------|-------------------------------|
+| `V0.2 — Site Conversacional` | Hero (#33), iFrame, RBAC, Support… | V0.2 Hero + hardening (Site Conversacional completo = **V0.4**) |
+| `V0.3 — Orçamentista IA` | Estimator, quotes, pipeline (#42–#49) | Automação comercial (paralelo ao **V0.3 Site Adaptativo**) |
+
+Não renomear milestones sem migração planejada de issues.
+
+---
+
 ## Objetivo
 
 Transformar o Agency OS de um MVP validado em uma plataforma SaaS multi-tenant capaz de operar empresas através de IA.
@@ -441,6 +468,18 @@ Perguntar:
 Se a resposta for não para todas:
 
 Não desenvolver agora.
+
+---
+
+# DIRETRIZES ARQUITETURAIS FUTURAS
+
+> Orientam decisões **após V0.1**. Não alteram escopo, backlog ou cronograma atual. Detalhes em [VISION.md](VISION.md).
+
+- **Modelo de IA substituível** — sem dependência de OpenAI, Gemini, Claude ou fornecedor único
+- **Conhecimento é o ativo principal** — captura, organização, recuperação e evolução do knowledge empresarial
+- **RAG privado por padrão** — Pergunta → Knowledge Base → RAG → Resposta (não internet)
+- **Site conversacional ≠ HTML por LLM** — Estados + Componentes + Regras + Contexto + IA
+- **Digital Twin = destino final** — representação operacional da empresa para o visitante
 
 ---
 

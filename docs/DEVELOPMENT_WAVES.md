@@ -5,6 +5,8 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 > **Regra de ouro:** a **Onda 6** (Chat, Knowledge, Painel avançado) só começa quando as **Ondas 1–5** estiverem ✅. Não pular.
 
+> **Visão estratégica (referência):** Este documento é o **plano operacional V0.1** (#1–#31). A evolução de produto V0.1→V0.5 (Widget → Hero → Site Adaptativo → Site Conversacional → Digital Twin) e as diretrizes arquiteturais estão em [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md) e [DEV_PLAN.md](DEV_PLAN.md). **Não alteram** ondas, prompts nem ordem abaixo. Milestones GitHub (`V0.2 — Site Conversacional`, `V0.3 — Orçamentista IA`) podem usar nomes diferentes da narrativa estratégica — ver nota em [BACKLOG.md](BACKLOG.md).
+
 ---
 
 ## Progresso atual (atualize após cada merge)
@@ -1259,3 +1261,10 @@ Relatório: ✅ aprovar merge | ❌ listar bugs para Dev corrigir
 # V0.2 / V0.3
 
 Issues #32–#49 só após #31. Mesma regra de branch: `feat/issue-0XX-...`
+
+| Milestone GitHub | Issues | Visão estratégica (referência) |
+|------------------|--------|--------------------------------|
+| `V0.2 — Site Conversacional` | #32–#41 (Hero #33, iFrame, RBAC…) | V0.2 Hero + Widget Hardening — [VISION.md](VISION.md) |
+| `V0.3 — Orçamentista IA` | #42–#49 (Estimator, quotes…) | Automação comercial; Site Adaptativo = trilha separada (sem issues ainda) |
+
+Prompts Dev+QA para #32+ serão adicionados quando V0.1 (#31) estiver ✅.
