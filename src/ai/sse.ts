@@ -1,3 +1,5 @@
+import { logPublicApiError, PUBLIC_API_ERRORS } from "@/lib/api/public-error";
+
 import type { StreamChatEvent } from "./types";
 
 export function formatSSEEvent(event: StreamChatEvent): string {
@@ -6,6 +8,11 @@ export function formatSSEEvent(event: StreamChatEvent): string {
 
 export function createSSEStream(
   source: AsyncIterable<StreamChatEvent>,
+  options?: {
+    requestId?: string;
+    tenantId?: string | null;
+    route?: string;
+  },
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
 
@@ -17,11 +24,16 @@ export function createSSEStream(
         }
         controller.close();
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Stream failed.";
+        logPublicApiError(options?.route ?? "/api/chat", error, {
+          requestId: options?.requestId,
+          tenantId: options?.tenantId,
+        });
         controller.enqueue(
           encoder.encode(
-            formatSSEEvent({ type: "error", message }),
+            formatSSEEvent({
+              type: "error",
+              message: PUBLIC_API_ERRORS.streamFailed,
+            }),
           ),
         );
         controller.close();

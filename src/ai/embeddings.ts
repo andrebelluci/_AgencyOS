@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getOpenAIClient } from "./client";
+import { recordEmbeddingFailure, recordEmbeddingJob } from "./metrics";
 
 export const DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small";
 
@@ -29,21 +30,28 @@ export async function createDocumentEmbeddings(
   const client = getOpenAIClient();
   const embeddings: number[][] = [];
 
-  for (let index = 0; index < inputs.length; index += EMBEDDING_BATCH_SIZE) {
-    const batch = inputs.slice(index, index + EMBEDDING_BATCH_SIZE);
-    const response = await client.embeddings.create({
-      model: DEFAULT_EMBEDDING_MODEL,
-      input: batch,
-    });
+  try {
+    for (let index = 0; index < inputs.length; index += EMBEDDING_BATCH_SIZE) {
+      const batch = inputs.slice(index, index + EMBEDDING_BATCH_SIZE);
+      recordEmbeddingJob(batch.length);
 
-    const sorted = [...response.data].sort((a, b) => a.index - b.index);
+      const response = await client.embeddings.create({
+        model: DEFAULT_EMBEDDING_MODEL,
+        input: batch,
+      });
 
-    for (const item of sorted) {
-      if (!item.embedding || item.embedding.length === 0) {
-        throw new Error("OpenAI returned an empty embedding.");
+      const sorted = [...response.data].sort((a, b) => a.index - b.index);
+
+      for (const item of sorted) {
+        if (!item.embedding || item.embedding.length === 0) {
+          throw new Error("OpenAI returned an empty embedding.");
+        }
+        embeddings.push(item.embedding);
       }
-      embeddings.push(item.embedding);
     }
+  } catch (error) {
+    recordEmbeddingFailure(error, { input_count: inputs.length });
+    throw error;
   }
 
   return embeddings;
