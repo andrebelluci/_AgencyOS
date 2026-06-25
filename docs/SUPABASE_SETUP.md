@@ -22,11 +22,14 @@ No dashboard: **Project Settings → API**
 
 No dashboard: **Project Settings → Database → Connection string → URI**
 
-Use o modo **Transaction** (porta 6543, pooler) para serverless/Vercel:
+Use o modo **Transaction** (porta **6543**) para serverless/Vercel:
 
 ```
-DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql://postgres:[password]@db.[ref].supabase.co:6543/postgres?pgbouncer=true
 ```
+
+> O app normaliza automaticamente URLs com porta `5432` para `6543` em runtime (`src/lib/db/client.ts`).
+> Para migrações locais (`npm run db:migrate`), a connection string direta `:5432` continua válida.
 
 > `DATABASE_URL` é **obrigatório** a partir da ISSUE-003 (`npm run db:migrate`).
 

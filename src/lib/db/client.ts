@@ -6,12 +6,32 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 function getDatabaseUrl(): string {
-  const url = process.env.DATABASE_URL?.trim();
+  const raw = process.env.DATABASE_URL?.trim();
 
-  if (!url) {
+  if (!raw) {
     throw new Error(
       "DATABASE_URL is required. Set it in .env.local — see docs/SUPABASE_SETUP.md.",
     );
+  }
+
+  return normalizeDatabaseUrl(raw);
+}
+
+/** Use Supabase transaction pooler (6543) when a direct session URL (5432) is set. */
+function normalizeDatabaseUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const isSupabaseDbHost = /db\.[a-z0-9]+\.supabase\.co$/i.test(
+      parsed.hostname,
+    );
+
+    if (isSupabaseDbHost && (parsed.port === "5432" || parsed.port === "")) {
+      parsed.port = "6543";
+      parsed.searchParams.set("pgbouncer", "true");
+      return parsed.toString();
+    }
+  } catch {
+    // keep original if URL parsing fails
   }
 
   return url;
