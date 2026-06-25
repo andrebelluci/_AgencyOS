@@ -13,7 +13,9 @@ import {
 import type {
   CreateFaqInput,
   FaqItem,
+  KnowledgeDocumentStatus,
   KnowledgeSearchChunk,
+  PdfDocumentItem,
   UpdateFaqInput,
 } from "./types";
 
@@ -216,6 +218,153 @@ export async function deleteFaqById(
     .returning();
 
   return row !== undefined;
+}
+
+function toPdfDocumentItem(document: KnowledgeDocument): PdfDocumentItem {
+  return {
+    id: document.id,
+    title: document.title,
+    status: document.status,
+    fileUrl: document.fileUrl,
+    createdAt: document.createdAt,
+    updatedAt: document.updatedAt,
+  };
+}
+
+export async function findPdfDocumentsByTenant(
+  tenantId: string,
+): Promise<PdfDocumentItem[]> {
+  const rows = await getDb()
+    .select()
+    .from(knowledgeDocuments)
+    .where(
+      and(
+        eq(knowledgeDocuments.tenantId, tenantId),
+        eq(knowledgeDocuments.type, "pdf"),
+      ),
+    )
+    .orderBy(desc(knowledgeDocuments.createdAt));
+
+  return rows.map(toPdfDocumentItem);
+}
+
+export async function findPdfDocumentById(
+  tenantId: string,
+  id: string,
+): Promise<PdfDocumentItem | undefined> {
+  const [document] = await getDb()
+    .select()
+    .from(knowledgeDocuments)
+    .where(
+      and(
+        eq(knowledgeDocuments.id, id),
+        eq(knowledgeDocuments.tenantId, tenantId),
+        eq(knowledgeDocuments.type, "pdf"),
+      ),
+    )
+    .limit(1);
+
+  return document ? toPdfDocumentItem(document) : undefined;
+}
+
+export async function insertPdfDocument(
+  tenantId: string,
+  title: string,
+): Promise<PdfDocumentItem> {
+  const [document] = await getDb()
+    .insert(knowledgeDocuments)
+    .values({
+      tenantId,
+      title,
+      type: "pdf",
+      status: "pending",
+    })
+    .returning();
+
+  if (!document) {
+    throw new Error("Failed to create PDF document.");
+  }
+
+  return toPdfDocumentItem(document);
+}
+
+export async function updateDocumentStatus(
+  tenantId: string,
+  documentId: string,
+  status: KnowledgeDocumentStatus,
+  fileUrl?: string | null,
+): Promise<PdfDocumentItem | undefined> {
+  const [document] = await getDb()
+    .update(knowledgeDocuments)
+    .set({
+      status,
+      ...(fileUrl !== undefined ? { fileUrl } : {}),
+    })
+    .where(
+      and(
+        eq(knowledgeDocuments.id, documentId),
+        eq(knowledgeDocuments.tenantId, tenantId),
+      ),
+    )
+    .returning();
+
+  return document ? toPdfDocumentItem(document) : undefined;
+}
+
+export async function deleteChunksByDocumentId(
+  tenantId: string,
+  documentId: string,
+): Promise<void> {
+  await getDb()
+    .delete(knowledgeChunks)
+    .where(
+      and(
+        eq(knowledgeChunks.documentId, documentId),
+        eq(knowledgeChunks.tenantId, tenantId),
+      ),
+    );
+}
+
+type ChunkInsert = {
+  content: string;
+  position: number;
+  embedding?: number[];
+};
+
+export async function insertChunks(
+  tenantId: string,
+  documentId: string,
+  chunks: ChunkInsert[],
+): Promise<void> {
+  if (chunks.length === 0) {
+    return;
+  }
+
+  const db = getDb();
+
+  for (const chunk of chunks) {
+    if (chunk.embedding) {
+      const vector = formatVectorForPg(chunk.embedding);
+      await db.execute(sql`
+        INSERT INTO knowledge_chunks (tenant_id, document_id, content, position, embedding)
+        VALUES (
+          ${tenantId}::uuid,
+          ${documentId}::uuid,
+          ${chunk.content},
+          ${chunk.position},
+          ${vector}::vector
+        )
+      `);
+      continue;
+    }
+
+    await db.insert(knowledgeChunks).values({
+      tenantId,
+      documentId,
+      content: chunk.content,
+      position: chunk.position,
+    });
+  }
 }
 
 export async function countEmbeddedChunks(tenantId: string): Promise<number> {

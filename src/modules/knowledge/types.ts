@@ -28,3 +28,23 @@ export type KnowledgeSearchResult = {
   chunks: KnowledgeSearchChunk[];
   source: KnowledgeSearchSource | "none";
 };
+
+export type KnowledgeDocumentStatus =
+  | "pending"
+  | "processing"
+  | "ready"
+  | "failed";
+
+export type PdfDocumentItem = {
+  id: string;
+  title: string;
+  status: KnowledgeDocumentStatus;
+  fileUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type UploadPdfInput = {
+  buffer: Buffer;
+  filename: string;
+};

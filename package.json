@@ -17,6 +17,7 @@
     "test:agents": "tsx scripts/test-agents-issue-011.ts",
     "test:openai-streaming": "tsx --env-file=.env.local scripts/test-openai-streaming-issue-014.ts",
     "test:search-knowledge": "tsx --env-file=.env.local scripts/test-search-knowledge-issue-022.ts",
+    "test:pdf-pipeline": "tsx --env-file=.env.local scripts/test-pdf-pipeline-issue-024.ts",
     "db:push": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs push --config=drizzle.config.ts",
     "db:studio": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs studio --config=drizzle.config.ts"
   },
@@ -31,6 +32,7 @@
     "lucide-react": "^1.21.0",
     "next": "16.2.9",
     "openai": "^6.44.0",
+    "pdf-parse": "^2.4.5",
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -44,12 +46,14 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "pdf-lib": "^1.17.1",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5"

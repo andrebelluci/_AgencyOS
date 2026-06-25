@@ -9,10 +9,20 @@ import {
   deleteFaq,
   updateFaq,
 } from "@/modules/knowledge/service";
+import {
+  MAX_PDF_BYTES,
+  uploadAndProcessPdf,
+} from "@/modules/knowledge/pdf-pipeline";
 
 export type FaqActionState = {
   error?: string;
   success?: boolean;
+};
+
+export type PdfUploadActionState = {
+  error?: string;
+  success?: boolean;
+  documentId?: string;
 };
 
 export async function createFaqAction(
@@ -86,5 +96,41 @@ export async function deleteFaqAction(id: string): Promise<FaqActionState> {
     return { success: true };
   } catch {
     return { error: "Não foi possível excluir a FAQ." };
+  }
+}
+
+export async function uploadPdfAction(
+  formData: FormData,
+): Promise<PdfUploadActionState> {
+  const file = formData.get("file");
+
+  if (!(file instanceof File)) {
+    return { error: "Selecione um arquivo PDF." };
+  }
+
+  if (file.type !== "application/pdf") {
+    return { error: "Apenas arquivos PDF são aceitos." };
+  }
+
+  if (file.size > MAX_PDF_BYTES) {
+    return { error: "Arquivo muito grande (máx. 10 MB)." };
+  }
+
+  try {
+    const { tenant } = await requireOwnerTenant();
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const document = await uploadAndProcessPdf(tenant.id, {
+      buffer,
+      filename: file.name,
+    });
+
+    revalidatePath("/knowledge");
+    return { success: true, documentId: document.id };
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Não foi possível processar o PDF.";
+    return { error: message };
   }
 }
