@@ -1,5 +1,13 @@
 export { DEFAULT_CHAT_MODEL, getOpenAIClient } from "./client";
 export {
+  getOpenAIMetricsSnapshot,
+  recordEmbeddingFailure,
+  recordEmbeddingJob,
+  recordOpenAIChatCall,
+  recordOpenAIChatError,
+  recordOpenAIChatUsage,
+} from "./metrics";
+export {
   createQueryEmbedding,
   DEFAULT_EMBEDDING_MODEL,
   formatVectorForPg,

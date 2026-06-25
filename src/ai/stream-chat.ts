@@ -3,7 +3,14 @@ import type {
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
 
+import { PUBLIC_API_ERRORS } from "@/lib/api/public-error";
+
 import { DEFAULT_CHAT_MODEL, getOpenAIClient } from "./client";
+import {
+  recordOpenAIChatCall,
+  recordOpenAIChatError,
+  recordOpenAIChatUsage,
+} from "./metrics";
 import type {
   OpenAIToolDefinition,
   StreamChatEvent,
@@ -85,40 +92,70 @@ export async function* streamChat(
   let finalContent = "";
 
   for (let round = 0; round < maxToolRounds; round += 1) {
-    const stream = await client.chat.completions.create({
-      model,
-      messages,
-      tools,
-      stream: true,
-    });
+    let stream;
+
+    try {
+      recordOpenAIChatCall(model);
+      stream = await client.chat.completions.create({
+        model,
+        messages,
+        tools,
+        stream: true,
+        stream_options: { include_usage: true },
+      });
+    } catch (error) {
+      recordOpenAIChatError(model, error);
+      yield {
+        type: "error",
+        message: PUBLIC_API_ERRORS.streamFailed,
+      };
+      return;
+    }
 
     let roundContent = "";
     const toolCalls = new Map<number, AccumulatedToolCall>();
 
-    for await (const chunk of stream) {
-      const choice = chunk.choices[0];
-      const delta = choice?.delta;
+    try {
+      for await (const chunk of stream) {
+        if (chunk.usage) {
+          recordOpenAIChatUsage(model, {
+            promptTokens: chunk.usage.prompt_tokens,
+            completionTokens: chunk.usage.completion_tokens,
+            totalTokens: chunk.usage.total_tokens,
+          });
+        }
 
-      if (!delta) {
-        continue;
-      }
+        const choice = chunk.choices[0];
+        const delta = choice?.delta;
 
-      if (delta.content) {
-        roundContent += delta.content;
-        yield { type: "token", content: delta.content };
-      }
+        if (!delta) {
+          continue;
+        }
 
-      if (delta.tool_calls) {
-        for (const toolCall of delta.tool_calls) {
-          accumulateToolCallDelta(
-            toolCalls,
-            toolCall.index,
-            toolCall.id,
-            toolCall.function?.name,
-            toolCall.function?.arguments,
-          );
+        if (delta.content) {
+          roundContent += delta.content;
+          yield { type: "token", content: delta.content };
+        }
+
+        if (delta.tool_calls) {
+          for (const toolCall of delta.tool_calls) {
+            accumulateToolCallDelta(
+              toolCalls,
+              toolCall.index,
+              toolCall.id,
+              toolCall.function?.name,
+              toolCall.function?.arguments,
+            );
+          }
         }
       }
+    } catch (error) {
+      recordOpenAIChatError(model, error);
+      yield {
+        type: "error",
+        message: PUBLIC_API_ERRORS.streamFailed,
+      };
+      return;
     }
 
     finalContent += roundContent;

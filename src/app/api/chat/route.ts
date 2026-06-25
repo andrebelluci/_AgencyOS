@@ -4,6 +4,14 @@ import {
   jsonWithCors,
   sseWithCors,
 } from "@/lib/api/cors";
+import {
+  beginPublicApiRequest,
+  finishPublicApiResponse,
+} from "@/lib/api/public-guards";
+import {
+  logPublicApiError,
+  PUBLIC_API_ERRORS,
+} from "@/lib/api/public-error";
 import { hasOpenAIConfig } from "@/env";
 import { chatRequestSchema } from "@/modules/chat/schema";
 import {
@@ -11,6 +19,8 @@ import {
   prepareChatContext,
   streamChatResponse,
 } from "@/modules/chat/service";
+
+const ROUTE = "/api/chat";
 
 export async function OPTIONS(request: Request) {
   return corsPreflightResponse(request);
@@ -22,12 +32,35 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return jsonWithCors(request, { error: "Invalid JSON body." }, { status: 400 });
+    const guard = beginPublicApiRequest(request, ROUTE);
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const response = jsonWithCors(
+      request,
+      { error: "Invalid JSON body." },
+      { status: 400 },
+    );
+    return finishPublicApiResponse(request, guard.ctx, response);
   }
 
   const parsed = chatRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonWithCors(
+    const guard = beginPublicApiRequest(request, ROUTE, {
+      publicKey:
+        typeof body === "object" &&
+        body !== null &&
+        "public_key" in body &&
+        typeof (body as { public_key?: unknown }).public_key === "string"
+          ? (body as { public_key: string }).public_key
+          : null,
+    });
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const response = jsonWithCors(
       request,
       {
         error: "Invalid request.",
@@ -35,14 +68,23 @@ export async function POST(request: Request) {
       },
       { status: 400 },
     );
+    return finishPublicApiResponse(request, guard.ctx, response);
+  }
+
+  const guard = beginPublicApiRequest(request, ROUTE, {
+    publicKey: parsed.data.public_key,
+  });
+  if (!guard.ok) {
+    return guard.response;
   }
 
   if (!hasOpenAIConfig()) {
-    return jsonWithCors(
+    const response = jsonWithCors(
       request,
       { error: "Chat service is not configured." },
       { status: 503 },
     );
+    return finishPublicApiResponse(request, guard.ctx, response);
   }
 
   try {
@@ -53,22 +95,41 @@ export async function POST(request: Request) {
       visitorId: parsed.data.visitor_id,
     });
 
+    guard.ctx.tenantId = context.tenantId;
+
     const stream = createSSEStream(
       streamChatResponse(context, parsed.data.message),
+      {
+        requestId: guard.ctx.requestId,
+        tenantId: context.tenantId,
+        route: ROUTE,
+      },
     );
 
-    return sseWithCors(request, stream);
+    const response = sseWithCors(request, stream);
+    return finishPublicApiResponse(request, guard.ctx, response, 200, {
+      stream: true,
+    });
   } catch (error) {
     if (error instanceof ChatApiError) {
-      return jsonWithCors(request, { error: error.message }, { status: error.status });
+      const response = jsonWithCors(
+        request,
+        { error: error.message },
+        { status: error.status },
+      );
+      return finishPublicApiResponse(request, guard.ctx, response);
     }
 
-    console.error("[POST /api/chat]", error);
+    logPublicApiError(ROUTE, error, {
+      requestId: guard.ctx.requestId,
+      tenantId: guard.ctx.tenantId,
+    });
 
-    return jsonWithCors(
+    const response = jsonWithCors(
       request,
-      { error: "Failed to process chat message." },
+      { error: PUBLIC_API_ERRORS.chatFailed },
       { status: 500 },
     );
+    return finishPublicApiResponse(request, guard.ctx, response);
   }
 }
