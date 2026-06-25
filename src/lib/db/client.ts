@@ -27,9 +27,14 @@ function normalizeDatabaseUrl(url: string): string {
 
     if (isSupabaseDbHost && (parsed.port === "5432" || parsed.port === "")) {
       parsed.port = "6543";
-      parsed.searchParams.set("pgbouncer", "true");
-      return parsed.toString();
     }
+
+    if (isSupabaseDbHost) {
+      parsed.searchParams.set("pgbouncer", "true");
+      parsed.searchParams.set("sslmode", "require");
+    }
+
+    return parsed.toString();
   } catch {
     // keep original if URL parsing fails
   }
@@ -48,8 +53,9 @@ function getSql() {
   if (!globalForDb.sql) {
     globalForDb.sql = postgres(getDatabaseUrl(), {
       prepare: false,
-      ssl: "require",
       max: 1,
+      idle_timeout: 20,
+      connect_timeout: 15,
     });
   }
 
