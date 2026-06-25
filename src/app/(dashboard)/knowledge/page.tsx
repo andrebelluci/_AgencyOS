@@ -1,9 +1,18 @@
 import { requireOwnerTenant } from "@/lib/auth/require-owner";
 import { listPdfDocuments } from "@/modules/knowledge/pdf-pipeline";
 import { listFaqs } from "@/modules/knowledge/service";
+import type { PdfDocumentListItem } from "@/modules/knowledge/types";
 
 import { FaqManager } from "./faq-manager";
 import { PdfUpload } from "./pdf-upload";
+
+function formatDocumentDate(date: Date): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "America/Sao_Paulo",
+  }).format(date);
+}
 
 export default async function KnowledgePage() {
   const { tenant } = await requireOwnerTenant();
@@ -11,6 +20,13 @@ export default async function KnowledgePage() {
     listFaqs(tenant.id),
     listPdfDocuments(tenant.id),
   ]);
+
+  const pdfDocumentItems: PdfDocumentListItem[] = pdfDocuments.map(
+    (document) => ({
+      ...document,
+      createdAtLabel: formatDocumentDate(document.createdAt),
+    }),
+  );
 
   return (
     <div className="space-y-10">
@@ -21,7 +37,7 @@ export default async function KnowledgePage() {
         </p>
       </div>
 
-      <PdfUpload documents={pdfDocuments} />
+      <PdfUpload documents={pdfDocumentItems} />
       <FaqManager faqs={faqs} />
     </div>
   );

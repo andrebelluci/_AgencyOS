@@ -267,6 +267,24 @@ export async function findPdfDocumentById(
   return document ? toPdfDocumentItem(document) : undefined;
 }
 
+export async function deletePdfDocumentById(
+  tenantId: string,
+  id: string,
+): Promise<PdfDocumentItem | undefined> {
+  const [row] = await getDb()
+    .delete(knowledgeDocuments)
+    .where(
+      and(
+        eq(knowledgeDocuments.id, id),
+        eq(knowledgeDocuments.tenantId, tenantId),
+        eq(knowledgeDocuments.type, "pdf"),
+      ),
+    )
+    .returning();
+
+  return row ? toPdfDocumentItem(row) : undefined;
+}
+
 export async function insertPdfDocument(
   tenantId: string,
   title: string,

@@ -14,19 +14,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { PdfDocumentItem } from "@/modules/knowledge/types";
+import type { PdfDocumentListItem } from "@/modules/knowledge/types";
 
 import { uploadPdfAction } from "./actions";
+import { PdfDocumentList } from "./pdf-document-list";
 
 type PdfUploadProps = {
-  documents: PdfDocumentItem[];
-};
-
-const statusLabels: Record<PdfDocumentItem["status"], string> = {
-  pending: "Pendente",
-  processing: "Processando",
-  ready: "Pronto",
-  failed: "Falhou",
+  documents: PdfDocumentListItem[];
 };
 
 export function PdfUpload({ documents }: PdfUploadProps) {
@@ -117,32 +111,7 @@ export function PdfUpload({ documents }: PdfUploadProps) {
         </form>
       </Card>
 
-      <div className="space-y-3">
-        <h2 className="text-lg font-medium">
-          Documentos PDF ({documents.length})
-        </h2>
-
-        {documents.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Nenhum PDF enviado ainda.
-          </p>
-        ) : (
-          <ul className="space-y-3">
-            {documents.map((document) => (
-              <li key={document.id}>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">{document.title}</CardTitle>
-                    <CardDescription>
-                      Status: {statusLabels[document.status]}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <PdfDocumentList documents={documents} />
     </div>
   );
 }

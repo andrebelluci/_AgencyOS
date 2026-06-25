@@ -7,6 +7,7 @@ import { chunkText } from "./chunking";
 import { extractPdfText } from "./pdf-extract";
 import {
   deleteChunksByDocumentId,
+  deletePdfDocumentById,
   findPdfDocumentById,
   findPdfDocumentsByTenant,
   insertChunks,
@@ -14,6 +15,7 @@ import {
   updateDocumentStatus,
 } from "./repository";
 import {
+  deletePdfFromStorage,
   downloadPdfFromStorage,
   getKnowledgeStoragePath,
   MAX_PDF_BYTES,
@@ -112,6 +114,28 @@ export async function uploadAndProcessPdf(
     await updateDocumentStatus(tenantId, document.id, "failed", storagePath);
     throw error;
   }
+}
+
+export async function deletePdfDocument(
+  tenantId: string,
+  documentId: string,
+): Promise<boolean> {
+  const document = await findPdfDocumentById(tenantId, documentId);
+
+  if (!document) {
+    return false;
+  }
+
+  if (document.fileUrl) {
+    try {
+      await deletePdfFromStorage(document.fileUrl);
+    } catch {
+      // Storage file may already be missing; continue with DB cleanup.
+    }
+  }
+
+  const deleted = await deletePdfDocumentById(tenantId, documentId);
+  return deleted !== undefined;
 }
 
 export async function reprocessPdfDocument(

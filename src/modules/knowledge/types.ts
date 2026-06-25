@@ -44,6 +44,10 @@ export type PdfDocumentItem = {
   updatedAt: Date;
 };
 
+export type PdfDocumentListItem = PdfDocumentItem & {
+  createdAtLabel: string;
+};
+
 export type UploadPdfInput = {
   buffer: Buffer;
   filename: string;

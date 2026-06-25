@@ -10,7 +10,9 @@ import {
   updateFaq,
 } from "@/modules/knowledge/service";
 import {
+  deletePdfDocument,
   MAX_PDF_BYTES,
+  reprocessPdfDocument,
   uploadAndProcessPdf,
 } from "@/modules/knowledge/pdf-pipeline";
 
@@ -23,6 +25,11 @@ export type PdfUploadActionState = {
   error?: string;
   success?: boolean;
   documentId?: string;
+};
+
+export type PdfDocumentActionState = {
+  error?: string;
+  success?: boolean;
 };
 
 export async function createFaqAction(
@@ -131,6 +138,42 @@ export async function uploadPdfAction(
       error instanceof Error
         ? error.message
         : "Não foi possível processar o PDF.";
+    return { error: message };
+  }
+}
+
+export async function deletePdfAction(
+  id: string,
+): Promise<PdfDocumentActionState> {
+  try {
+    const { tenant } = await requireOwnerTenant();
+    const deleted = await deletePdfDocument(tenant.id, id);
+
+    if (!deleted) {
+      return { error: "Documento não encontrado." };
+    }
+
+    revalidatePath("/knowledge");
+    return { success: true };
+  } catch {
+    return { error: "Não foi possível excluir o documento." };
+  }
+}
+
+export async function reindexPdfAction(
+  id: string,
+): Promise<PdfDocumentActionState> {
+  try {
+    const { tenant } = await requireOwnerTenant();
+    await reprocessPdfDocument(tenant.id, id);
+
+    revalidatePath("/knowledge");
+    return { success: true };
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Não foi possível reindexar o documento.";
     return { error: message };
   }
 }

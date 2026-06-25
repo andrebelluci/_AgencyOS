@@ -48,3 +48,14 @@ export async function downloadPdfFromStorage(
 
   return Buffer.from(await data.arrayBuffer());
 }
+
+export async function deletePdfFromStorage(storagePath: string): Promise<void> {
+  const supabase = createAdminClient();
+  const { error } = await supabase.storage
+    .from(KNOWLEDGE_BUCKET)
+    .remove([storagePath]);
+
+  if (error) {
+    throw new Error(`Failed to delete PDF: ${error.message}`);
+  }
+}
