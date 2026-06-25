@@ -11,6 +11,7 @@
     "db:generate": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs generate --config=drizzle.config.ts",
     "db:migrate": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs migrate --config=drizzle.config.ts",
     "db:seed": "tsx --env-file=.env.local scripts/seed-dev-tenant.ts",
+    "provision:tenant": "tsx --env-file=.env.local scripts/provision-tenant.ts",
     "db:test-rls": "tsx --env-file=.env.local scripts/test-rls-wave1.ts",
     "db:test-services": "tsx --env-file=.env.local scripts/test-services-issue-008.ts",
     "test:prompt-builder": "tsx scripts/test-prompt-builder-issue-012.ts",
