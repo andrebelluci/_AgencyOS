@@ -22,3 +22,12 @@ export type CreateMessageInput = {
 export type UpdateMessageInput = {
   content: string;
 };
+
+export type ConversationListItem = Conversation & {
+  startedAtLabel: string;
+  leadName: string | null;
+};
+
+export type MessageListItem = Message & {
+  createdAtLabel: string;
+};
