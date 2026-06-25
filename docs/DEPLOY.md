@@ -162,9 +162,17 @@ Scripts CLI estão excluídos do `tsconfig.json` (`exclude: ["scripts"]`). Se o 
 
 Falta `NEXT_PUBLIC_APP_URL` ou chaves Supabase no dashboard Vercel. Redeploy após adicionar.
 
-### Chat sem resposta
+### `database.ok: false` com `ENOTFOUND db.*.supabase.co`
 
-Verifique `OPENAI_API_KEY` e logs Vercel. Respostas públicas não expõem stack trace (hardening #38).
+A Vercel (IPv4) pode não resolver o host direto `db.[ref].supabase.co` (IPv6-only).
+
+**Solução (escolha uma):**
+
+1. **IPv4 add-on** no Supabase → Project Settings → Add-ons → IPv4 → habilitar. Use a nova connection string IPv4 no `DATABASE_URL` da Vercel.
+2. Copiar a connection string **Transaction pool** exata do dashboard Supabase (Settings → Database → Connection string) — não montar manualmente.
+3. Validar: `GET /api/health` deve retornar `"database": { "ok": true }`.
+
+> O app normaliza porta `5432` → `6543` e adiciona `pgbouncer=true` + `sslmode=require` para hosts `db.*.supabase.co`.
 
 ---
 
