@@ -11,6 +11,10 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 ## Progresso atual (atualize após cada merge)
 
+> **📍 Você está aqui (2026-06-25):** Onda 6 concluída em `main` (#11–#29 mergeados). **Smoke gate Onda 6 F1–F6 ✅ aprovado** (pós-fixes: histórico no reload, `sendBeacon` WhatsApp, hydration widget). Fixes do smoke ainda **sem commit** em `main` — commitar antes do deploy.
+>
+> **Próximo passo:** Onda 7 → **#30 Deploy** (`feat/issue-030-deploy`). Gate liberado. Depois #31 onboarding.
+
 | Issue | Título | Onda | Branch esperada | Status |
 |-------|--------|------|-----------------|--------|
 | #1 | Bootstrap Next.js | 0 | `feat/issue-001-bootstrap` | ✅ Feito (em `main`) |
@@ -20,13 +24,15 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 | #6 | RLS base | 2 | `feat/issue-006-rls-base` | ✅ Feito (em `main` — sem branch) |
 | #5 | Auth + login | 3 | `feat/issue-005-auth` | ✅ Feito (em `main`) |
 | #7 | Schema leads/messages | 4 | `feat/issue-007-schema-leads` | ✅ Feito (em `main`) |
-| #8 | Repositories/services | 5 | `feat/issue-008-repositories` | ⬜ **EM ANDAMENTO** |
-| #9 | Settings CRUD | 5 | `feat/issue-009-settings` | ⬜ Bloqueada por #8 mergeado |
-| #10 | Seed dev | 5 | `feat/issue-010-seed` | ⬜ Bloqueada por #9 mergeado |
-| #11–#19 | Chat/IA | 6A | ver trilho A | 🔒 Bloqueada |
-| #20–#25 | Knowledge | 6B | ver trilho B | 🔒 Bloqueada |
-| #26–#29 | Painel dados | 6C | ver trilho C | 🔒 Bloqueada |
-| #30–#31 | Go-live | 7 | `feat/issue-030-deploy` | 🔒 Bloqueada |
+| #8 | Repositories/services | 5 | `feat/issue-008-repositories` | ✅ Feito (em `main`) |
+| #9 | Settings CRUD | 5 | `feat/issue-009-settings` | ✅ Feito (em `main`) |
+| #10 | Seed dev | 5 | `feat/issue-010-seed` | ✅ Feito (em `main`) |
+| #11–#19 | Chat/IA | 6A | ver trilho A | ✅ Feito (em `main`) |
+| #20–#25 | Knowledge | 6B | ver trilho B | ✅ Feito (em `main`) |
+| #26–#29 | Painel dados | 6C | ver trilho C | ✅ Feito (em `main`) |
+| — | Smoke gate Onda 6 (F1–F6) | 6 | — | ✅ Aprovado (2026-06-25) |
+| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | ⬜ **PRÓXIMO** |
+| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30 |
 
 **Legenda:** ✅ mergeado · ⬜ pendente · 🔒 aguarda ondas anteriores
 
@@ -112,11 +118,11 @@ ONDA 1  #2 → #3 ✅
 ONDA 2  #4 ‖ #6 ✅ (feito em main)
 ONDA 3  #5 ✅
 ONDA 4  #7 ✅
-ONDA 5  #8 → #9 → #10 ───────────────────► VOCÊ ESTÁ AQUI
+ONDA 5  #8 → #9 → #10 ✅
+ONDA 6  Trilho A (#11–#19) ‖ Trilho B (#20–#25) ‖ Trilho C (#26–#29) ✅
          │
-         ▼  GATE: auth + seed + services funcionando
-ONDA 6  Trilho A (#11–#19) ‖ Trilho B (#20–#25) ‖ Trilho C (#26–#29)
-ONDA 7  #30 → #31
+         ▼  GATE: smoke F1–F6 ✅ (2026-06-25)
+ONDA 7  #30 → #31 ───────────────────────► VOCÊ ESTÁ AQUI
 ```
 
 ---
@@ -1113,6 +1119,8 @@ Relatório ✅/❌.
 
 Smoke **integrado** — só roda quando issues críticas de 6A, 6B e 6C estão mergeadas. Não substitui QA individual.
 
+**Status:** ✅ **Aprovado** em 2026-06-25 (fixes pós-reprovação: `GET /api/chat/history`, `sendBeacon` no clique WhatsApp, `ChatPageClient` sem hydration). Commit dos fixes pendente em `main`.
+
 ```
 QA Agent: smoke gate Onda 6 completo (main atualizado).
 
@@ -1126,11 +1134,13 @@ Gate Onda 7: só liberar deploy (#30) se este smoke passar.
 
 ---
 
-# ONDA 7 — Go-live 🔒
+# ONDA 7 — Go-live ⬜
 
 > **O que faz:** Leva o MVP para **produção** e documenta o onboarding do primeiro cliente pago. Deploy Vercel + Supabase prod, variáveis de ambiente, checklist de smoke em URL real (`docs/QA_PLAN.md` F1–F6) e `docs/ONBOARDING.md` com o passo a passo para configurar um tenant novo.
 
-**Pré-requisito:** Onda 6 completa + smoke F1–F6 (docs/QA_PLAN.md)
+**Pré-requisito:** Onda 6 completa + smoke F1–F6 ✅ (liberado em 2026-06-25)
+
+**Antes de #30:** commitar em `main` os fixes do smoke gate (histórico, WhatsApp click, widget hydration).
 
 | Issue | Branch |
 |-------|--------|
@@ -1202,8 +1212,8 @@ Relatório ✅ marcar V0.1 done | ❌ bloqueio.
 | 3 | ✅ sequencial | #5 |
 | 4 | ✅ sequencial | #7 |
 | 5 | ✅ sequencial + merge entre cada | #8 → #9 → #10 |
-| **6** | **⬜ trilhos A/B/C** | **#11–#29** |
-| 7 | 🔒 sequencial | #30 → #31 |
+| 6 | ✅ trilhos A/B/C + smoke F1–F6 | #11–#29 |
+| **7** | **⬜ sequencial** | **#30 → #31** ← você está aqui |
 
 ---
 

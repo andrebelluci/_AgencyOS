@@ -10,11 +10,26 @@ export async function OPTIONS(request: Request) {
   return corsPreflightResponse(request);
 }
 
+async function parseRequestBody(request: Request): Promise<unknown> {
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (contentType.includes("application/json")) {
+    return request.json();
+  }
+
+  const text = await request.text();
+  if (!text.trim()) {
+    throw new SyntaxError("Empty body.");
+  }
+
+  return JSON.parse(text) as unknown;
+}
+
 export async function POST(request: Request) {
   let body: unknown;
 
   try {
-    body = await request.json();
+    body = await parseRequestBody(request);
   } catch {
     return jsonWithCors(request, { error: "Invalid JSON body." }, { status: 400 });
   }

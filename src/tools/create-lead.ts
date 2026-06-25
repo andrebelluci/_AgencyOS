@@ -55,6 +55,9 @@ export async function createLead(
       ...parsed.data,
       source: parsed.data.source ?? "chat",
       status: parsed.data.status ?? "novo",
+      score:
+        parsed.data.score ??
+        (parsed.data.phone && parsed.data.name ? "médio" : null),
     });
 
     return { ok: true, data };

@@ -13,3 +13,15 @@ export type PrepareChatInput = {
   conversationId?: string;
   visitorId?: string;
 };
+
+export type ChatHistoryMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type ChatHistoryResult = {
+  conversationId: string;
+  messages: ChatHistoryMessage[];
+  whatsappUrl: string | null;
+};

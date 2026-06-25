@@ -1,16 +1,15 @@
-import { ChatWidgetLoader } from "@/components/chat/chat-widget-loader";
+import { ChatPageClient } from "@/components/chat/chat-page-client";
 import { getTenant } from "@/lib/tenant/get-tenant";
 import { getTenantSettings } from "@/modules/settings/service";
 
-const DEFAULT_WELCOME =
-  "Olá! Como posso ajudar você hoje?";
+const DEFAULT_WELCOME = "Olá! Como posso ajudar você hoje?";
 
 export default async function ChatWidgetPage() {
   const tenant = await getTenant();
   const settings = await getTenantSettings(tenant.id);
 
   return (
-    <ChatWidgetLoader
+    <ChatPageClient
       config={{
         publicKey: tenant.publicKey,
         companyName: settings?.companyName ?? tenant.name,

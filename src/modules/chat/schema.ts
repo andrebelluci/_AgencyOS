@@ -17,3 +17,10 @@ export const whatsappClickRequestSchema = z.object({
 export type WhatsAppClickRequestInput = z.infer<
   typeof whatsappClickRequestSchema
 >;
+
+export const chatHistoryQuerySchema = z.object({
+  public_key: z.string().trim().min(1, "public_key is required."),
+  conversation_id: z.string().uuid("conversation_id must be a valid UUID."),
+});
+
+export type ChatHistoryQueryInput = z.infer<typeof chatHistoryQuerySchema>;

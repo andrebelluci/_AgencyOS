@@ -12,10 +12,12 @@ import {
   getConversation,
   listMessages,
 } from "@/modules/conversations/service";
+import { getLead } from "@/modules/leads/service";
 import { getTenantSettings } from "@/modules/settings/service";
 import { findTenantByPublicKey } from "@/modules/tenants/repository";
+import { buildWhatsAppLink } from "@/tools/build-whatsapp-link";
 
-import type { ChatContext, PrepareChatInput } from "./types";
+import type { ChatContext, ChatHistoryResult, PrepareChatInput } from "./types";
 
 export class ChatApiError extends Error {
   constructor(
@@ -65,6 +67,57 @@ async function resolveOrCreateConversation(
   return {
     conversationId: conversation.id,
     leadId: conversation.leadId,
+  };
+}
+
+export async function getChatHistory(
+  publicKey: string,
+  conversationId: string,
+): Promise<ChatHistoryResult> {
+  const tenant = await findTenantByPublicKey(publicKey);
+
+  if (!tenant || tenant.status !== "active") {
+    throw new ChatApiError("Tenant not found.", 404);
+  }
+
+  const conversation = await getConversation(tenant.id, conversationId);
+
+  if (!conversation) {
+    throw new ChatApiError("Conversation not found.", 404);
+  }
+
+  const settings = await getTenantSettings(tenant.id);
+  const storedMessages = await listMessages(tenant.id, conversationId);
+
+  const messages = storedMessages
+    .filter((row) => row.role === "user" || row.role === "assistant")
+    .map((row) => ({
+      id: row.id,
+      role: row.role as "user" | "assistant",
+      content: row.content,
+    }));
+
+  let whatsappUrl: string | null = null;
+
+  if (settings?.whatsapp?.trim() && conversation.leadId) {
+    const lead = await getLead(tenant.id, conversation.leadId);
+
+    if (lead) {
+      const link = buildWhatsAppLink({
+        phone: settings.whatsapp,
+        leadName: lead.name?.trim() || undefined,
+      });
+
+      if (link.ok) {
+        whatsappUrl = link.url;
+      }
+    }
+  }
+
+  return {
+    conversationId,
+    messages,
+    whatsappUrl,
   };
 }
 

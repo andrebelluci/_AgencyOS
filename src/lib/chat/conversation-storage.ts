@@ -13,10 +13,14 @@ export function storeConversationId(
   conversationId: string,
 ): void {
   try {
-    sessionStorage.setItem(
-      `${CONVERSATION_ID_PREFIX}${publicKey}`,
-      conversationId,
-    );
+    const key = `${CONVERSATION_ID_PREFIX}${publicKey}`;
+
+    if (!conversationId) {
+      sessionStorage.removeItem(key);
+      return;
+    }
+
+    sessionStorage.setItem(key, conversationId);
   } catch {
     // sessionStorage unavailable — conversation continues in-memory only
   }

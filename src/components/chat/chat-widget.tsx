@@ -20,6 +20,7 @@ export function ChatWidget({ config }: ChatWidgetProps) {
     setInput,
     sendMessage,
     isLoading,
+    isLoadingHistory,
     error,
     dismissError,
     whatsappUrl,
@@ -75,7 +76,8 @@ export function ChatWidget({ config }: ChatWidgetProps) {
         value={input}
         onChange={setInput}
         onSubmit={sendMessage}
-        isLoading={isLoading}
+        isLoading={isLoading || isLoadingHistory}
+        disabled={isLoadingHistory}
       />
     </div>
   );
