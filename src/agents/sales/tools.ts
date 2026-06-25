@@ -2,6 +2,7 @@ import "server-only";
 
 import { buildWhatsAppLink } from "@/tools/build-whatsapp-link";
 import { createLead } from "@/tools/create-lead";
+import { searchKnowledge } from "@/tools/search-knowledge";
 import { updateLead } from "@/tools/update-lead";
 
 import type { SalesToolExecutionResult, SalesToolName } from "./types";
@@ -35,6 +36,13 @@ export async function executeSalesTool(
         return { ok: false, tool: toolName, error: result.error };
       }
       return { ok: true, tool: toolName, data: { url: result.url } };
+    }
+    case "searchKnowledge": {
+      const result = await searchKnowledge(tenantId, args);
+      if (!result.ok) {
+        return { ok: false, tool: toolName, error: result.error };
+      }
+      return { ok: true, tool: toolName, data: result.data };
     }
   }
 }

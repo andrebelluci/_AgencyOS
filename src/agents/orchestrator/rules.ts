@@ -58,8 +58,9 @@ export function routingHintsForIntent(intent: UserIntent): string[] {
     case "support":
       return [
         "O visitante tem dúvida operacional ou técnica.",
-        "Responda com base na base de conhecimento quando disponível.",
-        "Se a confiança for baixa, sugira contato humano via WhatsApp.",
+        "Chame searchKnowledge antes de responder perguntas factuais.",
+        "Responda apenas com base nos chunks retornados pela busca.",
+        "Se a busca não retornar contexto, admita a limitação e sugira contato humano via WhatsApp.",
       ];
     case "commercial":
       return [

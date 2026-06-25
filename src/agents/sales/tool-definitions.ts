@@ -76,6 +76,32 @@ export const SALES_TOOL_DEFINITIONS: SalesToolDefinition[] = [
   {
     type: "function",
     function: {
+      name: "searchKnowledge",
+      description:
+        "Busca na base de conhecimento da empresa (FAQ, documentos). Use em perguntas factuais sobre garantia, prazo, processo, políticas ou serviços antes de responder.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description:
+              "Pergunta ou termos de busca em linguagem natural.",
+          },
+          topK: {
+            type: "integer",
+            description: "Quantidade máxima de trechos (1-10). Padrão: 5.",
+            minimum: 1,
+            maximum: 10,
+          },
+        },
+        required: ["query"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "buildWhatsAppLink",
       description:
         "Gera link wa.me para continuar o atendimento no WhatsApp da empresa.",

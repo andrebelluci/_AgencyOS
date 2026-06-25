@@ -68,8 +68,16 @@ function main(): void {
     "sales prompt missing pricing routing hint",
   );
   assert(
-    pipeline.prepared.toolNames.length === 3,
-    "sales agent must expose 3 tools",
+    pipeline.prepared.toolNames.length === 4,
+    "sales agent must expose 4 tools",
+  );
+  assert(
+    pipeline.prepared.toolNames.includes("searchKnowledge"),
+    "sales agent must expose searchKnowledge tool",
+  );
+  assert(
+    pipeline.prepared.prompt.includes("searchKnowledge"),
+    "sales prompt missing RAG instructions",
   );
   assert(
     SALES_TOOL_DEFINITIONS.every((tool) => tool.type === "function"),

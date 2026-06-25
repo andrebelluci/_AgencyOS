@@ -21,7 +21,8 @@ export type SalesAgentPrepared = {
 export type SalesToolName =
   | "createLead"
   | "updateLead"
-  | "buildWhatsAppLink";
+  | "buildWhatsAppLink"
+  | "searchKnowledge";
 
 export type SalesToolExecutionResult =
   | { ok: true; tool: SalesToolName; data: unknown }
