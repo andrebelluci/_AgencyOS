@@ -2,10 +2,10 @@ import type { NextRequest } from "next/server";
 
 import {
   DEFAULT_PLATFORM_DOMAIN,
-  DEV_TENANT_SLUG,
   PUBLIC_KEY_HEADER,
   PUBLIC_KEY_QUERY_PARAM,
 } from "./constants";
+import { resolveSlugFromHostname } from "./resolve-hostname";
 import type { TenantResolution } from "./types";
 
 export function getPlatformDomain(): string {
@@ -37,25 +37,8 @@ function getPublicKeyFromRequest(request: NextRequest): string | null {
 }
 
 function resolveFromHostname(hostname: string): TenantResolution | null {
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return { kind: "slug", value: DEV_TENANT_SLUG };
-  }
-
-  const platformDomain = getPlatformDomain();
-
-  if (hostname === platformDomain || hostname === `www.${platformDomain}`) {
-    return null;
-  }
-
-  const suffix = `.${platformDomain}`;
-  if (hostname.endsWith(suffix)) {
-    const slug = hostname.slice(0, -suffix.length);
-    if (slug && !slug.includes(".")) {
-      return { kind: "slug", value: slug };
-    }
-  }
-
-  return null;
+  const slug = resolveSlugFromHostname(hostname);
+  return slug ? { kind: "slug", value: slug } : null;
 }
 
 /**

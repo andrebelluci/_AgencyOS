@@ -5,12 +5,11 @@ import { notFound } from "next/navigation";
 
 import type { Tenant } from "@/lib/db";
 import {
-  DEFAULT_PLATFORM_DOMAIN,
-  DEV_TENANT_SLUG,
   TENANT_HEADER_ID,
   TENANT_HEADER_PUBLIC_KEY,
   TENANT_HEADER_SLUG,
 } from "@/lib/tenant/constants";
+import { resolveSlugFromHostname } from "@/lib/tenant/resolve-hostname";
 import {
   findTenantById,
   findTenantByPublicKey,
@@ -23,29 +22,6 @@ function assertActiveTenant(tenant: Tenant | undefined): Tenant {
   }
 
   return tenant;
-}
-
-function resolveSlugFromHost(host: string): string | null {
-  if (host === "localhost" || host === "127.0.0.1") {
-    return DEV_TENANT_SLUG;
-  }
-
-  const platformDomain =
-    process.env.PLATFORM_DOMAIN?.trim() || DEFAULT_PLATFORM_DOMAIN;
-
-  if (host === platformDomain || host === `www.${platformDomain}`) {
-    return null;
-  }
-
-  const suffix = `.${platformDomain}`;
-  if (host.endsWith(suffix)) {
-    const slug = host.slice(0, -suffix.length);
-    if (slug && !slug.includes(".")) {
-      return slug;
-    }
-  }
-
-  return null;
 }
 
 /**
@@ -71,7 +47,7 @@ export async function resolveTenantForAuth(): Promise<Tenant> {
   }
 
   const host = headersList.get("host")?.split(":")[0] ?? "";
-  const slugFromHost = resolveSlugFromHost(host);
+  const slugFromHost = resolveSlugFromHostname(host);
 
   if (slugFromHost) {
     return assertActiveTenant(await findTenantBySlug(slugFromHost));
