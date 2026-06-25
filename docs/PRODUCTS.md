@@ -71,7 +71,7 @@ Entrega: chat, captura, knowledge, painel, `embed.js`.
 
 ## V0.2 — Hero Conversacional + Widget Hardening
 
-**Hero Conversacional:** chat inline na hero, onboarding conversacional, perguntas contextuais, estados pré-definidos (issues #33–#34).
+**Hero Conversacional:** chat inline na hero, onboarding conversacional, perguntas contextuais, estados pré-definidos (issues #36–#37).
 
 **Widget Hardening** (tema estratégico — issues futuras): rate limiting, abuse protection, quotas por tenant, timeout strategy, observabilidade.
 
@@ -85,7 +85,7 @@ Cada perfil recebe conteúdo, provas sociais, CTAs e componentes diferentes.
 
 **Implementação:** Estados + Componentes + Regras + Contexto + IA.
 
-> Milestone GitHub `V0.3 — Orçamentista IA` (issues #42–#49) cobre **automação comercial** em paralelo. Ver [BACKLOG.md](BACKLOG.md).
+> Milestone GitHub `V0.3 — Orçamentista IA` (issues #45–#52) cobre **automação comercial** em paralelo. Ver [BACKLOG.md](BACKLOG.md).
 
 ---
 

@@ -23,8 +23,8 @@ Issues V0.2/V0.3 no [BACKLOG.md](BACKLOG.md) permanecem; esta tabela alinha a **
 
 | Milestone no GitHub | Conteúdo real | Versão estratégica equivalente |
 |---------------------|--------------|-------------------------------|
-| `V0.2 — Site Conversacional` | Hero (#33), iFrame, RBAC, Support… | V0.2 Hero + hardening (Site Conversacional completo = **V0.4**) |
-| `V0.3 — Orçamentista IA` | Estimator, quotes, pipeline (#42–#49) | Automação comercial (paralelo ao **V0.3 Site Adaptativo**) |
+| `V0.2 — Site Conversacional` | Hero (#36), iFrame, RBAC, Support… (#35–#44) | V0.2 Hero + hardening restante (mínimo em Onda 7 #33) |
+| `V0.3 — Orçamentista IA` | Estimator, quotes, pipeline (#45–#52) | Automação comercial (paralelo ao **V0.3 Site Adaptativo**) |
 
 Não renomear milestones sem migração planejada de issues.
 

@@ -3,7 +3,7 @@
 ## Status
 
 Documento mestre de implementação.  
-Última revisão: 2026-06-22 (alinhamento estratégico V0.1–V0.5; escopo V0.1 inalterado).
+Última revisão: 2026-06-25 (expansão Onda 7 — operação pré-deploy #32–#34).
 
 ---
 
@@ -27,12 +27,14 @@ Estas decisões resolvem conflitos entre documentos e não encurtam prazos — a
 | D12 | **1 usuário owner por tenant no V0.1** | RBAC completo em V0.2. |
 | D13 | **API pública para widget** | Route Handlers `/api/chat`, `/api/widget/config`. Server Actions no painel. |
 | D14 | **Hero Conversacional = V0.2** | MVP.md seção 2 movida para V0.2 neste plano. Primeiro passo da evolução de interface (antes do Site Adaptativo V0.3 e Site Conversacional V0.4). |
+| D15 | **Onda 7 expandida — operação pré-deploy** | Antes do deploy oficial (#30), entram #34 Provisioning → (#32 Admin ‖ #33 Hardening). Sem billing, self-service ou RBAC avançado. V0.2 produto (#35+) só após #31. |
+| D16 | **Superadmin por allowlist** | `PLATFORM_ADMIN_EMAILS` (env). Sem tabela de roles nem RBAC multi-nível no V0.1. |
 
 ---
 
 # Visão estratégica (referência)
 
-Esta seção **não altera** escopo V0.1, waves, backlog (#1–#31) nem ordem de implementação abaixo.
+Esta seção **não altera** escopo V0.1 core (#1–#29). Issues #32–#34 fecham **operação** antes do go-live; V0.2 produto (#35+) permanece bloqueado até #31.
 
 | Versão | Foco estratégico |
 |--------|------------------|
@@ -73,9 +75,28 @@ Detalhamento: [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md).
 - Painel: dashboard, leads, conversas, knowledge, settings, código embed
 - WhatsApp: redirecionamento com mensagem pré-preenchida
 
+## Onda 7 — Operação e go-live (#30–#34)
+
+Fecha o V0.1 para **clientes reais**. Onboarding continua **assistido manualmente** — sem self-service, checkout, assinatura ou billing.
+
+| Issue | Entrega |
+|-------|---------|
+| **#34** Tenant Provisioning | Service/CLI: criar tenant, owner, `public_key`, settings vazias; checklist de onboarding manual |
+| **#32** Platform Admin | Área `(admin)` exclusiva: listar/criar tenants, criar owner, ativar/desativar, métricas básicas cross-tenant |
+| **#33** Production Hardening | Rate limit IP + `public_key`, logs estruturados, observabilidade OpenAI/embeddings, erros de produção |
+| **#30** Deploy produção | Vercel + Supabase prod (após #33 mergeado) |
+| **#31** Onboarding 1º cliente | Executar fluxo com #32+#34 em produção; lead real |
+
+**Ordem:** `#34 → (#32 ‖ #33) → #30 → #31`
+
+**Gate deploy (#30):** #33 ✅ (API pública endurecida).  
+**Gate V0.2 (#35+):** #31 ✅ + 1º cliente pagante.
+
+---
+
 ## Proibido até cliente pagante
 
-Orçamentos, Estimator Agent, Hero conversacional, WhatsApp API, follow-up automático, pipeline visual, analytics avançado, múltiplos usuários, feature flags, event store, workflow engine, domínio customizado, iFrame, Content Agent, Digital Twin, monorepo.
+Orçamentos, Estimator Agent, Hero conversacional, WhatsApp API, follow-up automático, pipeline visual, analytics avançado, múltiplos usuários, feature flags, event store, workflow engine, domínio customizado, iFrame, Content Agent, Digital Twin, monorepo, billing, self-service, checkout.
 
 ---
 
@@ -90,11 +111,12 @@ agency-os/
 │   ├── app/
 │   │   ├── (auth)/
 │   │   ├── (dashboard)/
+│   │   ├── (admin)/          # Onda 7 — #32 Platform Admin
 │   │   ├── (widget)/chat/
-│   │   └── api/{chat,leads,knowledge,widget}/
-│   ├── components/{ui,chat,leads,knowledge,dashboard}/
-│   ├── lib/{db,supabase,tenant,auth,utils}/
-│   ├── modules/{tenants,leads,conversations,knowledge,settings}/
+│   │   └── api/{chat,leads,knowledge,widget,admin}/
+│   ├── components/{ui,chat,leads,knowledge,dashboard,admin}/
+│   ├── lib/{db,supabase,tenant,auth,utils,rate-limit,logging}/
+│   ├── modules/{tenants,leads,conversations,knowledge,settings,provisioning}/
 │   ├── agents/{orchestrator,sales,shared}/
 │   ├── tools/
 │   └── ai/
@@ -161,12 +183,14 @@ Detalhamento de campos em DATABASE.md.
 24. Upload PDF + chunking + embeddings
 25. Painel /knowledge
 
-## Bloco 5 — Go-live (Semana 6)
+## Bloco 5 — Go-live (Semana 6–7)
 26. Dashboard
 27. /leads + /conversations
 28. /settings + embed generator
-29. Deploy produção
-30. Onboarding 1º cliente
+29. **#34** Tenant Provisioning
+30. **#32** Platform Admin ‖ **#33** Production Hardening
+31. **#30** Deploy produção
+32. **#31** Onboarding 1º cliente
 
 ### Gates entre blocos
 
@@ -177,17 +201,18 @@ Detalhamento de campos em DATABASE.md.
 | 2→3 | Chat responde no browser |
 | 3→4 | Widget externo captura lead |
 | 4→5 | Agente usa FAQ sem inventar |
-| 5→V0.2 | 1 cliente em produção com leads reais |
+| 5→7 | Provisioning + hardening antes de deploy |
+| 7→V0.2 | 1 cliente em produção com leads reais (#31 ✅) |
 
 ---
 
 # V0.2 — Pós 1º pagante
 
-**Interface (estratégico):** Hero conversacional — chat inline na hero, onboarding conversacional, perguntas contextuais, estados pré-definidos (issues #33–#34).
+**Interface (estratégico):** Hero conversacional — chat inline na hero, onboarding conversacional, perguntas contextuais, estados pré-definidos (issues #36–#37).
 
-**Resiliência (estratégico):** Widget Hardening — rate limiting, abuse protection, quotas por tenant, timeout strategy, observabilidade (tema para issues futuras; não antecipar no V0.1).
+**Resiliência (estratégico):** Widget Hardening completo (quotas por tenant, abuse avançado) — parte mínima antecipada em **#33** (Onda 7); restante em V0.2.
 
-**Backlog existente (#32–#41):** domínio customizado, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG.
+**Backlog existente (#35–#44):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG.
 
 > Milestone GitHub `V0.2 — Site Conversacional` agrupa estas issues. Site Conversacional **completo** = V0.4 na visão estratégica.
 
@@ -197,7 +222,7 @@ Detalhamento de campos em DATABASE.md.
 
 **Interface (estratégico):** Site Adaptativo — IA seleciona estados/perfil; conteúdo, CTA e componentes por regras (sem HTML gerado por LLM). Issues dedicadas ainda não criadas.
 
-**Automação comercial (backlog #42–#49):** Estimator Agent, pricing_tables, quotes, opportunities, follow-up, event store leve, analytics, WhatsApp API (se ROI).
+**Automação comercial (backlog #45–#52):** Estimator Agent, pricing_tables, quotes, opportunities, follow-up, event store leve, analytics, WhatsApp API (se ROI).
 
 > Milestone GitHub `V0.3 — Orçamentista IA` refere-se à trilha de automação, não ao Site Adaptativo.
 

@@ -489,14 +489,14 @@ Funcionário Digital + Widget
 
 Hero Conversacional + Widget Hardening
 
-* Hero Conversacional (chat inline, estados pré-definidos) — issues #33–#34
+* Hero Conversacional (chat inline, estados pré-definidos) — issues #36–#37
 * Widget Hardening (rate limit, abuse, quotas) — tema estratégico
 
 ---
 
 ## V0.3
 
-Site Adaptativo (visão) + Orçamentista IA (backlog #42–#49)
+Site Adaptativo (visão) + Orçamentista IA (backlog #45–#52)
 
 * Estados + componentes + regras por perfil
 * Estimator Agent, orçamentos, pipeline

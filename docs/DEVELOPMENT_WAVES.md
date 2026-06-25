@@ -1,19 +1,19 @@
 # Ondas de Desenvolvimento — V0.1
 
-Plano **sequencial obrigatório** das issues #1–#31.
+Plano **sequencial obrigatório** das issues #1–#34 (Onda 7 expandida).
 Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com relatório ✅/❌ antes de merge.
 
 > **Regra de ouro:** a **Onda 6** (Chat, Knowledge, Painel avançado) só começa quando as **Ondas 1–5** estiverem ✅. Não pular.
 
-> **Visão estratégica (referência):** Este documento é o **plano operacional V0.1** (#1–#31). A evolução de produto V0.1→V0.5 (Widget → Hero → Site Adaptativo → Site Conversacional → Digital Twin) e as diretrizes arquiteturais estão em [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md) e [DEV_PLAN.md](DEV_PLAN.md). **Não alteram** ondas, prompts nem ordem abaixo. Milestones GitHub (`V0.2 — Site Conversacional`, `V0.3 — Orçamentista IA`) podem usar nomes diferentes da narrativa estratégica — ver nota em [BACKLOG.md](BACKLOG.md).
+> **Visão estratégica (referência):** Este documento é o **plano operacional V0.1** (#1–#34). Issues #32–#34 = operação pré-deploy (não é V0.2). Evolução V0.1→V0.5 em [VISION.md](VISION.md). V0.2 produto = **#35+** após #31.
 
 ---
 
 ## Progresso atual (atualize após cada merge)
 
-> **📍 Você está aqui (2026-06-25):** Onda 6 concluída em `main` (#11–#29 mergeados). **Smoke gate Onda 6 F1–F6 ✅ aprovado** (pós-fixes: histórico no reload, `sendBeacon` WhatsApp, hydration widget). Fixes do smoke ainda **sem commit** em `main` — commitar antes do deploy.
+> **📍 Você está aqui (2026-06-25):** Onda 6 concluída (#11–#29). Smoke gate F1–F6 ✅.
 >
-> **Próximo passo:** Onda 7 → **#30 Deploy** (`feat/issue-030-deploy`). Gate liberado. Depois #31 onboarding.
+> **Próximo passo:** Onda 7 expandida → **#34 Provisioning** → **#32 Admin ‖ #33 Hardening** → **#30 Deploy** → **#31 Onboarding**.
 
 | Issue | Título | Onda | Branch esperada | Status |
 |-------|--------|------|-----------------|--------|
@@ -31,8 +31,11 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 | #20–#25 | Knowledge | 6B | ver trilho B | ✅ Feito (em `main`) |
 | #26–#29 | Painel dados | 6C | ver trilho C | ✅ Feito (em `main`) |
 | — | Smoke gate Onda 6 (F1–F6) | 6 | — | ✅ Aprovado (2026-06-25) |
-| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | ⬜ **PRÓXIMO** |
-| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30 |
+| #34 | Tenant Provisioning | 7 | `feat/issue-034-provisioning` | ⬜ **PRÓXIMO** |
+| #32 | Platform Admin | 7 | `feat/issue-032-platform-admin` | ⬜ Bloqueada por #34 |
+| #33 | Production Hardening | 7 | `feat/issue-033-hardening` | ⬜ Paralela após #34 |
+| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | ⬜ Bloqueada por #33 |
+| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30+#32+#34 |
 
 **Legenda:** ✅ mergeado · ⬜ pendente · 🔒 aguarda ondas anteriores
 
@@ -122,7 +125,10 @@ ONDA 5  #8 → #9 → #10 ✅
 ONDA 6  Trilho A (#11–#19) ‖ Trilho B (#20–#25) ‖ Trilho C (#26–#29) ✅
          │
          ▼  GATE: smoke F1–F6 ✅ (2026-06-25)
-ONDA 7  #30 → #31 ───────────────────────► VOCÊ ESTÁ AQUI
+ONDA 7  #34 → (#32 ‖ #33) → #30 → #31 ───► VOCÊ ESTÁ AQUI
+         │
+         ▼  GATE V0.2: #31 ✅ + 1º pagante
+V0.2     #35+ (produto — não iniciar agora)
 ```
 
 ---
@@ -1129,29 +1135,142 @@ npm run db:seed && npm run dev
 
 Fluxo: widget/chat → lead capturado → /leads → FAQ no chat → WhatsApp link.
 
-Gate Onda 7: só liberar deploy (#30) se este smoke passar.
+Gate Onda 7 deploy: só liberar **#30** se **#33** (hardening) estiver mergeado.
 ```
 
 ---
 
-# ONDA 7 — Go-live ⬜
+# ONDA 7 — Operação + Go-live ⬜
 
-> **O que faz:** Leva o MVP para **produção** e documenta o onboarding do primeiro cliente pago. Deploy Vercel + Supabase prod, variáveis de ambiente, checklist de smoke em URL real (`docs/QA_PLAN.md` F1–F6) e `docs/ONBOARDING.md` com o passo a passo para configurar um tenant novo.
+> **O que faz:** Prepara o Agency OS para **clientes reais** antes e durante o deploy. Provisioning assistido, painel superadmin, hardening da API pública, deploy e onboarding do 1º cliente.
+>
+> **Não inclui:** billing, self-service, checkout, assinatura, RBAC avançado, V0.2 produto (#35+).
 
-**Pré-requisito:** Onda 6 completa + smoke F1–F6 ✅ (liberado em 2026-06-25)
+**Pré-requisito:** Onda 6 completa + smoke F1–F6 ✅
 
-**Antes de #30:** commitar em `main` os fixes do smoke gate (histórico, WhatsApp click, widget hydration).
+### Ordem e paralelismo
 
-| Issue | Branch |
-|-------|--------|
-| #30 | `feat/issue-030-deploy` |
-| #31 | `docs/issue-031-onboarding` (doc + execução manual) |
+```
+#34 Provisioning (sequencial — base)
+        │
+        ├──────────────────┬──────────────────┐
+        ▼                  ▼                  │
+   #32 Platform Admin   #33 Hardening   (2 branches, 2 sessões)
+        │                  │
+        └────────┬─────────┘
+                 ▼
+            #30 Deploy (exige #33)
+                 ▼
+            #31 Onboarding (exige #30 + #32 + #34)
+```
+
+| Issue | Branch | Modo |
+|-------|--------|------|
+| #34 | `feat/issue-034-provisioning` | sequencial primeiro |
+| #32 | `feat/issue-032-platform-admin` | paralelo após #34 |
+| #33 | `feat/issue-033-hardening` | paralelo após #34 |
+| #30 | `feat/issue-030-deploy` | sequencial após #33 (e idealmente #32) |
+| #31 | `docs/issue-031-onboarding` | sequencial final |
+
+### Prompt #34 — Dev + QA
+
+```
+Dev Agent: implemente e valide ISSUE-034 (GitHub #34).
+Skills: agency-os-dev-agent + agency-os-tenant + agency-os-qa-agent.
+
+## Git
+git checkout main && git pull && git checkout -b feat/issue-034-provisioning
+
+## Fase 1 — Implementar
+- src/modules/provisioning/ — provisionTenant(), generatePublicKey()
+- Supabase Admin: criar auth user + users row + tenants + tenant_settings default
+- Script npm run provision:tenant (CLI)
+- docs/PROVISIONING.md — fluxo manual assistido
+
+## Fase 2 — QA
+- CLI cria tenant + owner utilizável
+- public_key único; slug duplicado tratado
+- Owner loga no dashboard do tenant criado
+- npm run build && npm run lint
+
+## Fase 3 — Auto-fix
+Máx 3 ciclos.
+
+## Fase 4 — Entrega
+git commit -m "feat(ops): tenant provisioning service and CLI (#34)"
+git push -u origin feat/issue-034-provisioning
+Relatório ✅/❌. NÃO mergear.
+```
+
+### Prompt #32 — Dev + QA
+
+```
+Dev Agent: implemente e valide ISSUE-032 (GitHub #32).
+Skills: agency-os-dev-agent + agency-os-widget-ui + agency-os-qa-agent.
+
+## Git
+git checkout main && git pull && git checkout -b feat/issue-032-platform-admin
+
+## Fase 1 — Implementar
+- src/app/(admin)/ — rotas /admin, /admin/tenants, /admin/tenants/new
+- requirePlatformAdmin() via PLATFORM_ADMIN_EMAILS
+- Listar tenants; criar tenant+owner (usa provisioning #34)
+- Toggle tenants.status active/inactive
+- Métricas básicas cross-tenant (cards)
+
+## Fase 2 — QA
+- Superadmin acessa /admin; owner comum → 403
+- Tenant inativo: /api/chat e /api/widget/config → 403
+- Criar tenant pelo admin funciona end-to-end
+- MCP Browser
+
+## Fase 3 — Auto-fix
+Máx 3 ciclos.
+
+## Fase 4 — Entrega
+git commit -m "feat(admin): platform admin area (#32)"
+git push -u origin feat/issue-032-platform-admin
+Relatório ✅/❌. NÃO mergear.
+```
+
+### Prompt #33 — Dev + QA
+
+```
+Dev Agent: implemente e valide ISSUE-033 (GitHub #33).
+Skills: agency-os-dev-agent + agency-os-chat + agency-os-qa-agent.
+
+## Git
+git checkout main && git pull && git checkout -b feat/issue-033-hardening
+
+## Fase 1 — Implementar
+- src/lib/rate-limit/ — por IP e public_key
+- Aplicar em /api/chat, /api/widget/config
+- Logs estruturados JSON (request_id, tenant_id, route, duration_ms)
+- Wrappers em src/ai/ para contar tokens/erros OpenAI e falhas de embedding
+- Error handler produção: respostas genéricas na API pública
+
+## Fase 2 — QA
+- Rate limit: 429 após N requests
+- Log visível no dev (stdout estruturado)
+- Falha OpenAI não vaza stack ao cliente
+- npm run build && npm run lint
+
+## Fase 3 — Auto-fix
+Máx 3 ciclos.
+
+## Fase 4 — Entrega
+git commit -m "feat(infra): production hardening rate limit and observability (#33)"
+git push -u origin feat/issue-033-hardening
+Relatório ✅/❌. NÃO mergear.
+```
 
 ### Prompt #30 — Dev + QA
 
 ```
 Dev Agent: implemente e valide ISSUE-030 (GitHub #30).
 Skills: agency-os-dev-agent + agency-os-qa-agent.
+
+**Pré-requisito:** #33 mergeado em main.
 
 ## Git
 git checkout main && git pull && git checkout -b feat/issue-030-deploy
@@ -1179,11 +1298,13 @@ Relatório ✅/❌. NÃO mergear.
 Dev Agent: implemente e valide ISSUE-031 (GitHub #31).
 Skills: agency-os-dev-agent + agency-os-qa-agent.
 
+**Pré-requisito:** #30 + #32 + #34 em main. Usar Platform Admin + Provisioning em produção.
+
 ## Git
 git checkout main && git pull && git checkout -b docs/issue-031-onboarding
 
 ## Fase 1 — Implementar
-docs/ONBOARDING.md — checklist 1º cliente (tenant, settings, FAQ, widget, lead real).
+docs/ONBOARDING.md — checklist 1º cliente usando /admin + provision:tenant.
 Executar com usuário ou simular e documentar.
 
 ## Fase 2 — QA
@@ -1213,7 +1334,7 @@ Relatório ✅ marcar V0.1 done | ❌ bloqueio.
 | 4 | ✅ sequencial | #7 |
 | 5 | ✅ sequencial + merge entre cada | #8 → #9 → #10 |
 | 6 | ✅ trilhos A/B/C + smoke F1–F6 | #11–#29 |
-| **7** | **⬜ sequencial** | **#30 → #31** ← você está aqui |
+| **7** | **⬜** | **#34 → (#32 ‖ #33) → #30 → #31** ← você está aqui |
 
 ---
 
@@ -1270,11 +1391,13 @@ Relatório: ✅ aprovar merge | ❌ listar bugs para Dev corrigir
 
 # V0.2 / V0.3
 
-Issues #32–#49 só após #31. Mesma regra de branch: `feat/issue-0XX-...`
+Issues **#35+** só após #31 ✅ e 1º cliente pagante. Mesma regra de branch: `feat/issue-0XX-...`
 
 | Milestone GitHub | Issues | Visão estratégica (referência) |
 |------------------|--------|--------------------------------|
-| `V0.2 — Site Conversacional` | #32–#41 (Hero #33, iFrame, RBAC…) | V0.2 Hero + Widget Hardening — [VISION.md](VISION.md) |
-| `V0.3 — Orçamentista IA` | #42–#49 (Estimator, quotes…) | Automação comercial; Site Adaptativo = trilha separada (sem issues ainda) |
+| `V0.2 — Site Conversacional` | #35–#44 (Hero #36, iFrame, RBAC…) | V0.2 Hero + hardening restante — [VISION.md](VISION.md) |
+| `V0.3 — Orçamentista IA` | #45–#52 (Estimator, quotes…) | Automação comercial; Site Adaptativo = trilha separada |
 
-Prompts Dev+QA para #32+ serão adicionados quando V0.1 (#31) estiver ✅.
+> **#32–#34** são Onda 7 (operação V0.1), não V0.2. Hardening mínimo em #33; quotas por plano ficam para V0.2.
+
+Prompts Dev+QA para #35+ serão adicionados quando V0.1 (#31) estiver ✅.

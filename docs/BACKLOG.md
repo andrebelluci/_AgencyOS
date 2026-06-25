@@ -3,15 +3,17 @@
 Issues organizadas para GitHub Projects.  
 Importar manualmente ou via `gh issue create`.
 
-**Labels sugeridas:** `v0.1`, `v0.2`, `v0.3`, `infra`, `ai`, `widget`, `panel`, `db`
+**Labels sugeridas:** `v0.1`, `v0.2`, `v0.3`, `infra`, `ai`, `widget`, `panel`, `db`, `ops`, `admin`, `hardening`
 
 **Milestones:** `V0.1 — Funcionário Digital`, `V0.2 — Site Conversacional`, `V0.3 — Orçamentista IA`
 
 > **Nota estratégica (2026-06):** Os milestones GitHub **não foram renomeados** para preservar issues e cronograma. Na visão de longo prazo ([VISION.md](VISION.md)):
-> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening — issues #32–#41 no milestone `V0.2`
+> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening — issues **#35–#44** no milestone `V0.2`
 > - **V0.3 (estratégico)** = Site Adaptativo — ainda sem issues dedicadas
 > - **V0.4 (estratégico)** = Site Conversacional completo
-> - Milestone `V0.3 — Orçamentista IA` = automação comercial (#42–#49), paralelo ao Site Adaptativo
+> - Milestone `V0.3 — Orçamentista IA` = automação comercial (#45–#52), paralelo ao Site Adaptativo
+>
+> **Onda 7 (operação):** #32–#34 são **pré-deploy V0.1** — não iniciam V0.2 produto.
 
 ---
 
@@ -235,29 +237,63 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 - **Labels:** v0.1, infra
 - **Descrição:** Vercel + Supabase prod, env vars, domínio `*.agencyos.com.br`.
 - **Aceite:** App acessível em produção.
+- **Depende de:** #33 (hardening mergeado)
 
 ### ISSUE-031: Onboarding 1º cliente
 - **Esforço:** Pequeno
-- **Labels:** v0.1
-- **Descrição:** Checklist manual: criar tenant, configurar, treinar FAQ, instalar widget, validar fluxo.
+- **Labels:** v0.1, ops
+- **Descrição:** Checklist manual usando #32 Platform Admin + #34 Provisioning: configurar tenant, treinar FAQ, instalar widget, validar lead real em produção.
 - **Aceite:** Cliente gera lead real em produção.
+- **Depende de:** #30, #32, #34
+
+---
+
+## Bloco 6 — Operação pré-deploy (Onda 7)
+
+> Fecha V0.1 para clientes reais. **Sem** self-service, checkout, assinatura ou billing.
+
+### ISSUE-032: Platform Admin
+- **Esforço:** Médio
+- **Labels:** v0.1, admin, ops, panel
+- **Descrição:** Área `(admin)` exclusiva para superadmin (`PLATFORM_ADMIN_EMAILS`). Listar tenants; criar tenant (via service #34); criar owner; ativar/desativar tenant (`tenants.status`); métricas básicas cross-tenant (total tenants, leads, conversas, mensagens últimos 7 dias).
+- **Aceite:** Superadmin logado acessa `/admin`; owner comum recebe 403; criar tenant + owner em um fluxo; toggle active/inactive reflete no widget (`/api/chat` e `/api/widget/config` retornam 403 para tenant inativo).
+- **Não inclui:** billing, planos, RBAC operator, self-service signup.
+- **Depende de:** #34
+
+### ISSUE-033: Production Hardening
+- **Esforço:** Médio
+- **Labels:** v0.1, infra, hardening
+- **Descrição:** Rate limit por IP e por `public_key` em `/api/chat`, `/api/widget/config` e rotas públicas críticas. Logs estruturados (JSON) com `request_id`, `tenant_id`, rota, latência. Métricas/contadores para chamadas OpenAI (tokens, erros) e embeddings (jobs, falhas). Handler global de erro em produção (sem stack trace ao cliente); mensagens genéricas na API pública.
+- **Aceite:** Exceder limite retorna 429; logs aparecem no Vercel; falha OpenAI registrada e resposta SSE encerra com erro amigável; embedding failure visível em log/métrica.
+- **Não inclui:** billing por uso, WAF enterprise, quotas por plano (V0.2).
+- **Depende de:** #29 (APIs públicas estáveis)
+
+### ISSUE-034: Tenant Provisioning
+- **Esforço:** Médio
+- **Labels:** v0.1, ops, db
+- **Descrição:** Service `provisionTenant()` + script CLI `npm run provision:tenant`: gera `slug`, `public_key` (crypto-safe), cria `tenants` + `tenant_settings` default + user owner no Supabase Auth + row em `users`. Documentar fluxo manual em `docs/PROVISIONING.md` (passo a passo para operador).
+- **Aceite:** Um comando ou chamada de service cria tenant utilizável; owner recebe credenciais; `public_key` único; settings vazias com defaults sensatos; idempotência documentada para slug duplicado.
+- **Não inclui:** email automático, convite self-service, pagamento.
+- **Depende de:** #10 (seed como referência)
 
 ---
 
 # FASE 2 — V0.2
 
+> **Bloqueado** até #31 ✅ e 1º cliente pagante. Numeração #35+ (antigas #32–#41 deslocadas pela Onda 7 operacional).
+
 | ID | Título | Esforço |
 |----|--------|---------|
-| ISSUE-032 | Domínio customizado por tenant | Médio |
-| ISSUE-033 | Hero conversacional (estados pré-definidos) | Médio |
-| ISSUE-034 | iFrame embed alternativo | Pequeno |
-| ISSUE-035 | Busca e filtro em conversas | Pequeno |
-| ISSUE-036 | RBAC owner + operator | Médio |
-| ISSUE-037 | tenant_features + planos | Médio |
-| ISSUE-038 | Landing page Agency OS | Médio |
-| ISSUE-039 | Métricas conversão widget→lead→WhatsApp | Pequeno |
-| ISSUE-040 | Support Agent separado | Médio |
-| ISSUE-041 | RAG: citação de fonte na resposta | Médio |
+| ISSUE-035 | Domínio customizado por tenant | Médio |
+| ISSUE-036 | Hero conversacional (estados pré-definidos) | Médio |
+| ISSUE-037 | iFrame embed alternativo | Pequeno |
+| ISSUE-038 | Busca e filtro em conversas | Pequeno |
+| ISSUE-039 | RBAC owner + operator | Médio |
+| ISSUE-040 | tenant_features + planos | Médio |
+| ISSUE-041 | Landing page Agency OS | Médio |
+| ISSUE-042 | Métricas conversão widget→lead→WhatsApp | Pequeno |
+| ISSUE-043 | Support Agent separado | Médio |
+| ISSUE-044 | RAG: citação de fonte na resposta | Médio |
 
 ---
 
@@ -265,14 +301,14 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 
 | ID | Título | Esforço |
 |----|--------|---------|
-| ISSUE-042 | Estimator Agent | Grande |
-| ISSUE-043 | Tabelas pricing_tables + services | Médio |
-| ISSUE-044 | Orçamento automático + PDF | Grande |
-| ISSUE-045 | Tabela opportunities + pipeline | Médio |
-| ISSUE-046 | Follow-up automático | Grande |
-| ISSUE-047 | Event store leve | Médio |
-| ISSUE-048 | Analytics dashboard | Médio |
-| ISSUE-049 | WhatsApp Business API (spike) | Grande |
+| ISSUE-045 | Estimator Agent | Grande |
+| ISSUE-046 | Tabelas pricing_tables + services | Médio |
+| ISSUE-047 | Orçamento automático + PDF | Grande |
+| ISSUE-048 | Tabela opportunities + pipeline | Médio |
+| ISSUE-049 | Follow-up automático | Grande |
+| ISSUE-050 | Event store leve | Médio |
+| ISSUE-051 | Analytics dashboard | Médio |
+| ISSUE-052 | WhatsApp Business API (spike) | Grande |
 
 ---
 
@@ -284,5 +320,11 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 008 → 011 → 012 → 013 → 014 → 015
 015 → 016 → 017 → 018 → 019
 007 → 020 → 021 → 022 → 023 → 024 → 025
-008 → 026 → 027 → 028 → 029 → 030 → 031
+008 → 026 → 027 → 028 → 029
+010 → 034 → 032
+029 → 033
+033 → 030
+030 + 032 + 034 → 031
 ```
+
+**Onda 7:** `#34 → (#32 ‖ #33) → #30 → #31`
