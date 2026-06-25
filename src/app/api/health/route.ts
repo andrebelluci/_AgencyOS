@@ -31,10 +31,16 @@ export async function GET() {
       await getDb().select({ id: tenants.id }).from(tenants).limit(1);
       payload.database = { configured: true, ok: true };
     } catch (error) {
+      const err = error as Error & { cause?: unknown };
+      const detail =
+        err.cause instanceof Error
+          ? err.cause.message
+          : err.message;
+
       payload.database = {
         configured: true,
         ok: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: detail,
       };
       payload.status = "degraded";
     }
