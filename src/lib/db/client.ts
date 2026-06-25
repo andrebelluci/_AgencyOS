@@ -46,7 +46,11 @@ const globalForDb = globalThis as unknown as DbGlobal;
 
 function getSql() {
   if (!globalForDb.sql) {
-    globalForDb.sql = postgres(getDatabaseUrl(), { prepare: false });
+    globalForDb.sql = postgres(getDatabaseUrl(), {
+      prepare: false,
+      ssl: "require",
+      max: 1,
+    });
   }
 
   return globalForDb.sql;
