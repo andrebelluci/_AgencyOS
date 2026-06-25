@@ -6,6 +6,7 @@ import {
   updateConversation,
 } from "@/modules/conversations/service";
 import { findTenantByPublicKey } from "@/modules/tenants/repository";
+import { assertActiveTenantForApi } from "@/modules/tenants/assert-active";
 
 import { ChatApiError } from "./service";
 
@@ -15,11 +16,9 @@ export async function recordWhatsAppClick(
 ): Promise<void> {
   const tenant = await findTenantByPublicKey(publicKey.trim());
 
-  if (!tenant || tenant.status !== "active") {
-    throw new ChatApiError("Tenant not found.", 404);
-  }
+  const activeTenant = assertActiveTenantForApi(tenant, ChatApiError);
 
-  const conversation = await getConversation(tenant.id, conversationId);
+  const conversation = await getConversation(activeTenant.id, conversationId);
 
   if (!conversation) {
     throw new ChatApiError("Conversation not found.", 404);
@@ -29,7 +28,7 @@ export async function recordWhatsAppClick(
     return;
   }
 
-  const updated = await updateConversation(tenant.id, conversationId, {
+  const updated = await updateConversation(activeTenant.id, conversationId, {
     metadata: mergeConversationMetadata(conversation.metadata, {
       whatsapp_clicked_at: new Date().toISOString(),
     }),

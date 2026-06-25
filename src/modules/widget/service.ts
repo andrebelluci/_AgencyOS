@@ -3,6 +3,7 @@ import "server-only";
 import type { TenantSettings } from "@/lib/db";
 import { getTenantSettings } from "@/modules/settings/service";
 import { findTenantByPublicKey } from "@/modules/tenants/repository";
+import { assertActiveTenantForApi } from "@/modules/tenants/assert-active";
 
 import type { WidgetPublicConfig } from "./types";
 
@@ -44,11 +45,9 @@ export async function getWidgetPublicConfig(
 
   const tenant = await findTenantByPublicKey(trimmedKey);
 
-  if (!tenant || tenant.status !== "active") {
-    throw new WidgetConfigError("Tenant not found.", 404);
-  }
+  const activeTenant = assertActiveTenantForApi(tenant, WidgetConfigError);
 
-  const settings = await getTenantSettings(tenant.id);
+  const settings = await getTenantSettings(activeTenant.id);
 
-  return toPublicConfig(trimmedKey, tenant.name, settings);
+  return toPublicConfig(trimmedKey, activeTenant.name, settings);
 }

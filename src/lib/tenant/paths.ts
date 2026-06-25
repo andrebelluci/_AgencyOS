@@ -10,6 +10,7 @@ const TENANT_EXEMPT_PREFIXES = [
 const TENANT_EXEMPT_EXACT = ["/", "/login"] as const;
 
 const AUTH_REQUIRED_PREFIXES = [
+  "/admin",
   "/dashboard",
   "/leads",
   "/conversations",
