@@ -16,6 +16,7 @@
     "test:prompt-builder": "tsx scripts/test-prompt-builder-issue-012.ts",
     "test:agents": "tsx scripts/test-agents-issue-011.ts",
     "test:openai-streaming": "tsx --env-file=.env.local scripts/test-openai-streaming-issue-014.ts",
+    "test:search-knowledge": "tsx --env-file=.env.local scripts/test-search-knowledge-issue-022.ts",
     "db:push": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs push --config=drizzle.config.ts",
     "db:studio": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs studio --config=drizzle.config.ts"
   },

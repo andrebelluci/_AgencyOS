@@ -1,7 +1,8 @@
 import "server-only";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 
+import { formatVectorForPg } from "@/ai/embeddings";
 import {
   getDb,
   knowledgeChunks,
@@ -9,7 +10,22 @@ import {
   type KnowledgeDocument,
 } from "@/lib/db";
 
-import type { CreateFaqInput, FaqItem, UpdateFaqInput } from "./types";
+import type {
+  CreateFaqInput,
+  FaqItem,
+  KnowledgeSearchChunk,
+  UpdateFaqInput,
+} from "./types";
+
+const DEFAULT_TOP_K = 5;
+
+type ChunkRow = {
+  id: string;
+  document_id: string;
+  content: string;
+  position: number;
+  score: number;
+};
 
 async function findFaqChunk(tenantId: string, documentId: string) {
   const [row] = await getDb()
@@ -26,10 +42,7 @@ async function findFaqChunk(tenantId: string, documentId: string) {
   return row;
 }
 
-function toFaqItem(
-  document: KnowledgeDocument,
-  answer: string,
-): FaqItem {
+function toFaqItem(document: KnowledgeDocument, answer: string): FaqItem {
   return {
     id: document.id,
     question: document.title,
@@ -203,4 +216,94 @@ export async function deleteFaqById(
     .returning();
 
   return row !== undefined;
+}
+
+export async function countEmbeddedChunks(tenantId: string): Promise<number> {
+  const db = getDb();
+  const result = await db.execute<{ count: string }>(sql`
+    SELECT COUNT(*)::text AS count
+    FROM knowledge_chunks
+    WHERE tenant_id = ${tenantId}::uuid
+      AND embedding IS NOT NULL
+  `);
+
+  const [row] = result as unknown as { count: string }[];
+  return Number(row?.count ?? 0);
+}
+
+export async function searchSemanticChunks(
+  tenantId: string,
+  embedding: number[],
+  topK: number = DEFAULT_TOP_K,
+): Promise<KnowledgeSearchChunk[]> {
+  const vector = formatVectorForPg(embedding);
+  const db = getDb();
+
+  const result = await db.execute<ChunkRow>(sql`
+    SELECT
+      id,
+      document_id,
+      content,
+      position,
+      (1 - (embedding <=> ${vector}::vector))::float8 AS score
+    FROM knowledge_chunks
+    WHERE tenant_id = ${tenantId}::uuid
+      AND embedding IS NOT NULL
+    ORDER BY embedding <=> ${vector}::vector
+    LIMIT ${topK}
+  `);
+
+  const rows = result as unknown as ChunkRow[];
+
+  return rows.map((row) => ({
+    id: row.id,
+    documentId: row.document_id,
+    content: row.content,
+    position: row.position,
+    score: Number(row.score),
+    source: "semantic",
+  }));
+}
+
+export async function searchTextChunks(
+  tenantId: string,
+  query: string,
+  topK: number = DEFAULT_TOP_K,
+): Promise<KnowledgeSearchChunk[]> {
+  const db = getDb();
+  const pattern = `%${query.trim()}%`;
+
+  const result = await db.execute<ChunkRow>(sql`
+    SELECT
+      id,
+      document_id,
+      content,
+      position,
+      GREATEST(
+        CASE WHEN content ILIKE ${pattern} THEN 1.0 ELSE 0.0 END,
+        ts_rank(
+          to_tsvector('portuguese', content),
+          plainto_tsquery('portuguese', ${query})
+        )
+      )::float8 AS score
+    FROM knowledge_chunks
+    WHERE tenant_id = ${tenantId}::uuid
+      AND (
+        content ILIKE ${pattern}
+        OR to_tsvector('portuguese', content) @@ plainto_tsquery('portuguese', ${query})
+      )
+    ORDER BY score DESC, position ASC
+    LIMIT ${topK}
+  `);
+
+  const rows = result as unknown as ChunkRow[];
+
+  return rows.map((row) => ({
+    id: row.id,
+    documentId: row.document_id,
+    content: row.content,
+    position: row.position,
+    score: Number(row.score),
+    source: "text",
+  }));
 }
