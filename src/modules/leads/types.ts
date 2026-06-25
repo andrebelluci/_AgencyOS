@@ -1,5 +1,9 @@
 import type { Lead } from "@/lib/db";
 
+export type LeadListItem = Lead & {
+  createdAtLabel: string;
+};
+
 export type CreateLeadInput = {
   name?: string | null;
   email?: string | null;
