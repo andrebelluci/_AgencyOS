@@ -1,10 +1,13 @@
+import { getClientEnv } from "@/env";
 import { requireOwnerTenant } from "@/lib/auth/require-owner";
 import {
   formatServicesText,
   type TenantSettingsFormValues,
 } from "@/modules/settings/schema";
 import { getTenantSettings } from "@/modules/settings/service";
+import { buildEmbedScriptSnippet } from "@/modules/widget/embed-snippet";
 
+import { EmbedCodeCard } from "./embed-code-card";
 import { SettingsForm } from "./settings-form";
 
 function toFormValues(
@@ -22,6 +25,11 @@ function toFormValues(
 export default async function SettingsPage() {
   const { tenant } = await requireOwnerTenant();
   const settings = await getTenantSettings(tenant.id);
+  const { NEXT_PUBLIC_APP_URL } = getClientEnv();
+  const embedSnippet = buildEmbedScriptSnippet(
+    NEXT_PUBLIC_APP_URL,
+    tenant.publicKey,
+  );
 
   return (
     <div className="space-y-6">
@@ -33,6 +41,8 @@ export default async function SettingsPage() {
       </div>
 
       <SettingsForm defaultValues={toFormValues(settings)} />
+
+      <EmbedCodeCard snippet={embedSnippet} publicKey={tenant.publicKey} />
     </div>
   );
 }
