@@ -13,7 +13,11 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 > **📍 Você está aqui (2026-06-25):** Onda 6 concluída (#11–#29). Smoke gate F1–F6 ✅.
 >
-> **Próximo passo:** Onda 7 → **#39 Provisioning** (GitHub) → **#37 Admin ‖ #38 Hardening** → **#30 Deploy** → **#31 Onboarding**.
+> **Vercel (parcial #30):** projeto conectado ao GitHub ✅ · env vars configuradas no dashboard ✅ · `docs/DEPLOY.md` e smoke em URL de produção ainda pendentes.
+>
+> **Próximo passo de código:** **#39 Tenant Provisioning** — não pular para #30 só porque o Vercel já está ligado.
+>
+> **Sequência Onda 7:** `#39 → (#37 ‖ #38) → #30 (fechar deploy) → #31`
 >
 > **Nota:** ISSUE-032/033/034 = GitHub **#37/#38/#39** (números #32–#36 já usados por PRs mergeados).
 
@@ -36,10 +40,10 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 | **#39** | Tenant Provisioning (ISSUE-034) | 7 | `feat/issue-039-provisioning` | ⬜ **PRÓXIMO** |
 | **#37** | Platform Admin (ISSUE-032) | 7 | `feat/issue-037-platform-admin` | ⬜ Bloqueada por #39 |
 | **#38** | Production Hardening (ISSUE-033) | 7 | `feat/issue-038-hardening` | ⬜ Paralela após #39 |
-| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | ⬜ Bloqueada por #38 |
+| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | 🟡 **Parcial** — Vercel+env ✅; falta #38, DEPLOY.md, smoke prod |
 | #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30+#37+#39 |
 
-**Legenda:** ✅ mergeado · ⬜ pendente · 🔒 aguarda ondas anteriores
+**Legenda:** ✅ mergeado · ⬜ pendente · 🟡 em andamento · 🔒 aguarda ondas anteriores
 
 ---
 
@@ -1149,6 +1153,19 @@ Gate Onda 7 deploy: só liberar **#30** se **#38** (hardening) estiver mergeado.
 > **Não inclui:** billing, self-service, checkout, assinatura, RBAC avançado, V0.2 produto (#35+).
 
 **Pré-requisito:** Onda 6 completa + smoke F1–F6 ✅
+
+### Checklist #30 — Deploy (acompanhar progresso)
+
+| Item | Status |
+|------|--------|
+| Projeto Vercel conectado ao GitHub | ✅ (feito pelo usuário) |
+| Env vars no dashboard Vercel | ✅ (feito pelo usuário) |
+| Supabase **prod** (não dev) nas env vars | ⬜ validar |
+| `PLATFORM_ADMIN_EMAILS` nas env vars | ⬜ após #37 |
+| `docs/DEPLOY.md` | ⬜ |
+| Domínio / URL de produção estável | ⬜ |
+| Smoke F1–F6 na URL de produção | ⬜ |
+| **#38** hardening mergeado | ⬜ obrigatório antes de fechar #30 |
 
 ### Ordem e paralelismo
 
