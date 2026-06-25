@@ -19,7 +19,9 @@ Importar manualmente ou via `gh issue create`.
 
 ## Como importar no GitHub Projects
 
-**Issues V0.1 já criadas:** [#1–#31](https://github.com/andrebelluci/_AgencyOS/issues?q=is%3Aissue+milestone%3A%22V0.1+-+Funcionario+Digital%22)
+**Issues V0.1 já criadas:** [#1–#31](https://github.com/andrebelluci/_AgencyOS/issues?q=is%3Aissue+milestone%3A%22V0.1+-+Funcionario+Digital%22) · Onda 7 ops: **#37** (ISSUE-032), **#38** (ISSUE-033), **#39** (ISSUE-034)
+
+> **Mapeamento BACKLOG ↔ GitHub:** números #32–#36 no GitHub foram consumidos por PRs mergeados. As issues operacionais usam IDs lógicos ISSUE-032/033/034 = GitHub **#37/#38/#39**.
 
 Para criar o board (requer escopo `project`):
 
@@ -237,14 +239,14 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 - **Labels:** v0.1, infra
 - **Descrição:** Vercel + Supabase prod, env vars, domínio `*.agencyos.com.br`.
 - **Aceite:** App acessível em produção.
-- **Depende de:** #33 (hardening mergeado)
+- **Depende de:** #38 (ISSUE-033 / GitHub #38)
 
 ### ISSUE-031: Onboarding 1º cliente
 - **Esforço:** Pequeno
 - **Labels:** v0.1, ops
-- **Descrição:** Checklist manual usando #32 Platform Admin + #34 Provisioning: configurar tenant, treinar FAQ, instalar widget, validar lead real em produção.
+- **Descrição:** Checklist manual usando #37 Platform Admin + #39 Provisioning: configurar tenant, treinar FAQ, instalar widget, validar lead real em produção.
 - **Aceite:** Cliente gera lead real em produção.
-- **Depende de:** #30, #32, #34
+- **Depende de:** #30, #37, #39 (GitHub)
 
 ---
 
@@ -253,28 +255,44 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 > Fecha V0.1 para clientes reais. **Sem** self-service, checkout, assinatura ou billing.
 
 ### ISSUE-032: Platform Admin
+- **GitHub:** [#37](https://github.com/andrebelluci/_AgencyOS/issues/37)
 - **Esforço:** Médio
 - **Labels:** v0.1, admin, ops, panel
 - **Descrição:** Área `(admin)` exclusiva para superadmin (`PLATFORM_ADMIN_EMAILS`). Listar tenants; criar tenant (via service #34); criar owner; ativar/desativar tenant (`tenants.status`); métricas básicas cross-tenant (total tenants, leads, conversas, mensagens últimos 7 dias).
 - **Aceite:** Superadmin logado acessa `/admin`; owner comum recebe 403; criar tenant + owner em um fluxo; toggle active/inactive reflete no widget (`/api/chat` e `/api/widget/config` retornam 403 para tenant inativo).
 - **Não inclui:** billing, planos, RBAC operator, self-service signup.
-- **Depende de:** #34
+- **Depende de:** #39 (ISSUE-034 / GitHub)
 
 ### ISSUE-033: Production Hardening
+- **GitHub:** [#38](https://github.com/andrebelluci/_AgencyOS/issues/38)
 - **Esforço:** Médio
 - **Labels:** v0.1, infra, hardening
 - **Descrição:** Rate limit por IP e por `public_key` em `/api/chat`, `/api/widget/config` e rotas públicas críticas. Logs estruturados (JSON) com `request_id`, `tenant_id`, rota, latência. Métricas/contadores para chamadas OpenAI (tokens, erros) e embeddings (jobs, falhas). Handler global de erro em produção (sem stack trace ao cliente); mensagens genéricas na API pública.
 - **Aceite:** Exceder limite retorna 429; logs aparecem no Vercel; falha OpenAI registrada e resposta SSE encerra com erro amigável; embedding failure visível em log/métrica.
 - **Não inclui:** billing por uso, WAF enterprise, quotas por plano (V0.2).
 - **Depende de:** #29 (APIs públicas estáveis)
+- **Bloqueia:** #30 (deploy)
 
 ### ISSUE-034: Tenant Provisioning
+- **GitHub:** [#39](https://github.com/andrebelluci/_AgencyOS/issues/39)
 - **Esforço:** Médio
 - **Labels:** v0.1, ops, db
 - **Descrição:** Service `provisionTenant()` + script CLI `npm run provision:tenant`: gera `slug`, `public_key` (crypto-safe), cria `tenants` + `tenant_settings` default + user owner no Supabase Auth + row em `users`. Documentar fluxo manual em `docs/PROVISIONING.md` (passo a passo para operador).
 - **Aceite:** Um comando ou chamada de service cria tenant utilizável; owner recebe credenciais; `public_key` único; settings vazias com defaults sensatos; idempotência documentada para slug duplicado.
 - **Não inclui:** email automático, convite self-service, pagamento.
 - **Depende de:** #10 (seed como referência)
+
+### Mapeamento Onda 7 (BACKLOG ↔ GitHub)
+
+| BACKLOG | GitHub | Título |
+|---------|--------|--------|
+| ISSUE-034 | [#39](https://github.com/andrebelluci/_AgencyOS/issues/39) | Tenant Provisioning |
+| ISSUE-032 | [#37](https://github.com/andrebelluci/_AgencyOS/issues/37) | Platform Admin |
+| ISSUE-033 | [#38](https://github.com/andrebelluci/_AgencyOS/issues/38) | Production Hardening |
+| ISSUE-030 | [#30](https://github.com/andrebelluci/_AgencyOS/issues/30) | Deploy produção |
+| ISSUE-031 | [#31](https://github.com/andrebelluci/_AgencyOS/issues/31) | Onboarding 1º cliente |
+
+**Ordem:** `#39 → (#37 ‖ #38) → #30 → #31`
 
 ---
 
@@ -321,10 +339,10 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 015 → 016 → 017 → 018 → 019
 007 → 020 → 021 → 022 → 023 → 024 → 025
 008 → 026 → 027 → 028 → 029
-010 → 034 → 032
-029 → 033
-033 → 030
-030 + 032 + 034 → 031
+010 → 039 → 037
+029 → 038
+038 → 030
+030 + 037 + 039 → 031
 ```
 
-**Onda 7:** `#34 → (#32 ‖ #33) → #30 → #31`
+**Onda 7 (GitHub):** `#39 → (#37 ‖ #38) → #30 → #31`

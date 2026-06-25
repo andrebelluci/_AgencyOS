@@ -5,7 +5,7 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 > **Regra de ouro:** a **Onda 6** (Chat, Knowledge, Painel avançado) só começa quando as **Ondas 1–5** estiverem ✅. Não pular.
 
-> **Visão estratégica (referência):** Este documento é o **plano operacional V0.1** (#1–#34). Issues #32–#34 = operação pré-deploy (não é V0.2). Evolução V0.1→V0.5 em [VISION.md](VISION.md). V0.2 produto = **#35+** após #31.
+> **Visão estratégica (referência):** Plano operacional V0.1. Onda 7 ops = GitHub **#37–#39** (ISSUE-032/033/034). V0.2 produto = **ISSUE-035+** após #31.
 
 ---
 
@@ -13,7 +13,9 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 > **📍 Você está aqui (2026-06-25):** Onda 6 concluída (#11–#29). Smoke gate F1–F6 ✅.
 >
-> **Próximo passo:** Onda 7 expandida → **#34 Provisioning** → **#32 Admin ‖ #33 Hardening** → **#30 Deploy** → **#31 Onboarding**.
+> **Próximo passo:** Onda 7 → **#39 Provisioning** (GitHub) → **#37 Admin ‖ #38 Hardening** → **#30 Deploy** → **#31 Onboarding**.
+>
+> **Nota:** ISSUE-032/033/034 = GitHub **#37/#38/#39** (números #32–#36 já usados por PRs mergeados).
 
 | Issue | Título | Onda | Branch esperada | Status |
 |-------|--------|------|-----------------|--------|
@@ -31,11 +33,11 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 | #20–#25 | Knowledge | 6B | ver trilho B | ✅ Feito (em `main`) |
 | #26–#29 | Painel dados | 6C | ver trilho C | ✅ Feito (em `main`) |
 | — | Smoke gate Onda 6 (F1–F6) | 6 | — | ✅ Aprovado (2026-06-25) |
-| #34 | Tenant Provisioning | 7 | `feat/issue-034-provisioning` | ⬜ **PRÓXIMO** |
-| #32 | Platform Admin | 7 | `feat/issue-032-platform-admin` | ⬜ Bloqueada por #34 |
-| #33 | Production Hardening | 7 | `feat/issue-033-hardening` | ⬜ Paralela após #34 |
-| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | ⬜ Bloqueada por #33 |
-| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30+#32+#34 |
+| **#39** | Tenant Provisioning (ISSUE-034) | 7 | `feat/issue-039-provisioning` | ⬜ **PRÓXIMO** |
+| **#37** | Platform Admin (ISSUE-032) | 7 | `feat/issue-037-platform-admin` | ⬜ Bloqueada por #39 |
+| **#38** | Production Hardening (ISSUE-033) | 7 | `feat/issue-038-hardening` | ⬜ Paralela após #39 |
+| #30 | Deploy produção | 7 | `feat/issue-030-deploy` | ⬜ Bloqueada por #38 |
+| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30+#37+#39 |
 
 **Legenda:** ✅ mergeado · ⬜ pendente · 🔒 aguarda ondas anteriores
 
@@ -125,7 +127,7 @@ ONDA 5  #8 → #9 → #10 ✅
 ONDA 6  Trilho A (#11–#19) ‖ Trilho B (#20–#25) ‖ Trilho C (#26–#29) ✅
          │
          ▼  GATE: smoke F1–F6 ✅ (2026-06-25)
-ONDA 7  #34 → (#32 ‖ #33) → #30 → #31 ───► VOCÊ ESTÁ AQUI
+ONDA 7  #39 → (#37 ‖ #38) → #30 → #31 ───► VOCÊ ESTÁ AQUI
          │
          ▼  GATE V0.2: #31 ✅ + 1º pagante
 V0.2     #35+ (produto — não iniciar agora)
@@ -1135,7 +1137,7 @@ npm run db:seed && npm run dev
 
 Fluxo: widget/chat → lead capturado → /leads → FAQ no chat → WhatsApp link.
 
-Gate Onda 7 deploy: só liberar **#30** se **#33** (hardening) estiver mergeado.
+Gate Onda 7 deploy: só liberar **#30** se **#38** (hardening) estiver mergeado.
 ```
 
 ---
@@ -1151,35 +1153,35 @@ Gate Onda 7 deploy: só liberar **#30** se **#33** (hardening) estiver mergeado.
 ### Ordem e paralelismo
 
 ```
-#34 Provisioning (sequencial — base)
+#34 Provisioning (sequencial — base)     → GitHub #39
         │
         ├──────────────────┬──────────────────┐
         ▼                  ▼                  │
-   #32 Platform Admin   #33 Hardening   (2 branches, 2 sessões)
+   #32 Platform Admin   #33 Hardening        → GitHub #37 / #38
         │                  │
         └────────┬─────────┘
                  ▼
-            #30 Deploy (exige #33)
+            #30 Deploy (exige #38)
                  ▼
-            #31 Onboarding (exige #30 + #32 + #34)
+            #31 Onboarding (exige #30 + #37 + #39)
 ```
 
 | Issue | Branch | Modo |
 |-------|--------|------|
-| #34 | `feat/issue-034-provisioning` | sequencial primeiro |
-| #32 | `feat/issue-032-platform-admin` | paralelo após #34 |
-| #33 | `feat/issue-033-hardening` | paralelo após #34 |
-| #30 | `feat/issue-030-deploy` | sequencial após #33 (e idealmente #32) |
+| #39 | `feat/issue-039-provisioning` | sequencial primeiro |
+| #37 | `feat/issue-037-platform-admin` | paralelo após #39 |
+| #38 | `feat/issue-038-hardening` | paralelo após #39 |
+| #30 | `feat/issue-030-deploy` | sequencial após #38 (e idealmente #37) |
 | #31 | `docs/issue-031-onboarding` | sequencial final |
 
-### Prompt #34 — Dev + QA
+### Prompt #39 — Dev + QA (ISSUE-034)
 
 ```
-Dev Agent: implemente e valide ISSUE-034 (GitHub #34).
+Dev Agent: implemente e valide ISSUE-034 (GitHub #39).
 Skills: agency-os-dev-agent + agency-os-tenant + agency-os-qa-agent.
 
 ## Git
-git checkout main && git pull && git checkout -b feat/issue-034-provisioning
+git checkout main && git pull && git checkout -b feat/issue-039-provisioning
 
 ## Fase 1 — Implementar
 - src/modules/provisioning/ — provisionTenant(), generatePublicKey()
@@ -1197,24 +1199,24 @@ git checkout main && git pull && git checkout -b feat/issue-034-provisioning
 Máx 3 ciclos.
 
 ## Fase 4 — Entrega
-git commit -m "feat(ops): tenant provisioning service and CLI (#34)"
-git push -u origin feat/issue-034-provisioning
+git commit -m "feat(ops): tenant provisioning service and CLI (#39)"
+git push -u origin feat/issue-039-provisioning
 Relatório ✅/❌. NÃO mergear.
 ```
 
-### Prompt #32 — Dev + QA
+### Prompt #37 — Dev + QA (ISSUE-032)
 
 ```
-Dev Agent: implemente e valide ISSUE-032 (GitHub #32).
+Dev Agent: implemente e valide ISSUE-032 (GitHub #37).
 Skills: agency-os-dev-agent + agency-os-widget-ui + agency-os-qa-agent.
 
 ## Git
-git checkout main && git pull && git checkout -b feat/issue-032-platform-admin
+git checkout main && git pull && git checkout -b feat/issue-037-platform-admin
 
 ## Fase 1 — Implementar
 - src/app/(admin)/ — rotas /admin, /admin/tenants, /admin/tenants/new
 - requirePlatformAdmin() via PLATFORM_ADMIN_EMAILS
-- Listar tenants; criar tenant+owner (usa provisioning #34)
+- Listar tenants; criar tenant+owner (usa provisioning #39)
 - Toggle tenants.status active/inactive
 - Métricas básicas cross-tenant (cards)
 
@@ -1228,19 +1230,19 @@ git checkout main && git pull && git checkout -b feat/issue-032-platform-admin
 Máx 3 ciclos.
 
 ## Fase 4 — Entrega
-git commit -m "feat(admin): platform admin area (#32)"
-git push -u origin feat/issue-032-platform-admin
+git commit -m "feat(admin): platform admin area (#37)"
+git push -u origin feat/issue-037-platform-admin
 Relatório ✅/❌. NÃO mergear.
 ```
 
-### Prompt #33 — Dev + QA
+### Prompt #38 — Dev + QA (ISSUE-033)
 
 ```
-Dev Agent: implemente e valide ISSUE-033 (GitHub #33).
+Dev Agent: implemente e valide ISSUE-033 (GitHub #38).
 Skills: agency-os-dev-agent + agency-os-chat + agency-os-qa-agent.
 
 ## Git
-git checkout main && git pull && git checkout -b feat/issue-033-hardening
+git checkout main && git pull && git checkout -b feat/issue-038-hardening
 
 ## Fase 1 — Implementar
 - src/lib/rate-limit/ — por IP e public_key
@@ -1259,8 +1261,8 @@ git checkout main && git pull && git checkout -b feat/issue-033-hardening
 Máx 3 ciclos.
 
 ## Fase 4 — Entrega
-git commit -m "feat(infra): production hardening rate limit and observability (#33)"
-git push -u origin feat/issue-033-hardening
+git commit -m "feat(infra): production hardening rate limit and observability (#38)"
+git push -u origin feat/issue-038-hardening
 Relatório ✅/❌. NÃO mergear.
 ```
 
@@ -1270,7 +1272,7 @@ Relatório ✅/❌. NÃO mergear.
 Dev Agent: implemente e valide ISSUE-030 (GitHub #30).
 Skills: agency-os-dev-agent + agency-os-qa-agent.
 
-**Pré-requisito:** #33 mergeado em main.
+**Pré-requisito:** #38 mergeado em main.
 
 ## Git
 git checkout main && git pull && git checkout -b feat/issue-030-deploy
@@ -1298,7 +1300,7 @@ Relatório ✅/❌. NÃO mergear.
 Dev Agent: implemente e valide ISSUE-031 (GitHub #31).
 Skills: agency-os-dev-agent + agency-os-qa-agent.
 
-**Pré-requisito:** #30 + #32 + #34 em main. Usar Platform Admin + Provisioning em produção.
+**Pré-requisito:** #30 + #37 + #39 em main. Usar Platform Admin + Provisioning em produção.
 
 ## Git
 git checkout main && git pull && git checkout -b docs/issue-031-onboarding
@@ -1334,7 +1336,7 @@ Relatório ✅ marcar V0.1 done | ❌ bloqueio.
 | 4 | ✅ sequencial | #7 |
 | 5 | ✅ sequencial + merge entre cada | #8 → #9 → #10 |
 | 6 | ✅ trilhos A/B/C + smoke F1–F6 | #11–#29 |
-| **7** | **⬜** | **#34 → (#32 ‖ #33) → #30 → #31** ← você está aqui |
+| **7** | **⬜** | **#39 → (#37 ‖ #38) → #30 → #31** ← você está aqui |
 
 ---
 
@@ -1398,6 +1400,6 @@ Issues **#35+** só após #31 ✅ e 1º cliente pagante. Mesma regra de branch: 
 | `V0.2 — Site Conversacional` | #35–#44 (Hero #36, iFrame, RBAC…) | V0.2 Hero + hardening restante — [VISION.md](VISION.md) |
 | `V0.3 — Orçamentista IA` | #45–#52 (Estimator, quotes…) | Automação comercial; Site Adaptativo = trilha separada |
 
-> **#32–#34** são Onda 7 (operação V0.1), não V0.2. Hardening mínimo em #33; quotas por plano ficam para V0.2.
+> **#37–#39** são Onda 7 (operação V0.1), não V0.2. Hardening mínimo em #38; quotas por plano ficam para V0.2.
 
 Prompts Dev+QA para #35+ serão adicionados quando V0.1 (#31) estiver ✅.
