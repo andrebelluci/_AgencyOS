@@ -1,5 +1,5 @@
 import { requireOwnerTenant } from "@/lib/auth/require-owner";
-import { listPdfDocuments } from "@/modules/knowledge/pdf-pipeline";
+import { listPdfDocuments } from "@/modules/knowledge/pdf-documents";
 import { listFaqs } from "@/modules/knowledge/service";
 import type { PdfDocumentListItem } from "@/modules/knowledge/types";
 

@@ -6,6 +6,54 @@ Guia para publicar o Agency OS na **Vercel** com **Supabase** em produção.
 
 ---
 
+## Matriz de ambientes (obrigatório antes do #31)
+
+Antes de onboardar o **1º cliente real** (#31), **produção e desenvolvimento devem estar isolados** — assim como a Vercel separa Production e Preview.
+
+| Camada | Ambiente | Banco / backend | Dados |
+|--------|----------|-----------------|-------|
+| **Local** | `npm run dev` + `.env.local` | Supabase **dev** | Seed, testes, quebrar à vontade |
+| **Vercel Preview** | PRs e branches (`*.vercel.app`) | Supabase **dev** (ou staging) | **Nunca** prod |
+| **Vercel Production** | `main` → URL canônica | Supabase **prod** | Clientes reais, leads reais |
+
+### Regra de ouro
+
+> **Um projeto Supabase = um ambiente de dados.** Não use o mesmo `NEXT_PUBLIC_SUPABASE_URL` em local e em Production na Vercel.
+
+### Vercel — escopo das env vars
+
+No dashboard **Project Settings → Environment Variables**, marque cada variável:
+
+| Variável | Development | Preview | Production |
+|----------|:-----------:|:-------:|:----------:|
+| `DATABASE_URL` | dev | dev | **prod** |
+| `NEXT_PUBLIC_SUPABASE_*` | dev | dev | **prod** |
+| `SUPABASE_SERVICE_ROLE_KEY` | dev | dev | **prod** |
+| `OPENAI_API_KEY` | pode ser a mesma ou key de teste | idem | **prod** |
+| `PLATFORM_ADMIN_EMAILS` | seu e-mail | opcional | **prod** |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | URL do preview | URL prod |
+
+**Preview com banco de prod é perigoso:** um PR pode rodar migração, seed ou provisioning contra dados de cliente.
+
+### Como validar que está separado
+
+1. Compare o **project ref** na URL:
+   - `.env.local` → `https://abcdef.supabase.co`
+   - Vercel **Production** → deve ser **outro** ref (ex.: `https://xyzprod.supabase.co`)
+2. `GET /api/health` na URL prod → `database.ok: true`
+3. Crie um lead de teste em local — **não** deve aparecer no Table Editor do Supabase prod
+4. `npm run provision:tenant` em local usa `.env.local` (dev); em prod use env de prod **só** quando for cliente real (#31)
+
+### Checklist antes do #31
+
+- [ ] Projeto Supabase **dev** para local + Preview Vercel
+- [ ] Projeto Supabase **prod** só na Vercel Production
+- [ ] Migrações aplicadas nos **dois** (`npm run db:migrate` com cada `DATABASE_URL`)
+- [ ] Nenhum `db:seed` de desenvolvimento rodado contra prod
+- [ ] 1º tenant de cliente criado via `provision:tenant` ou `/admin` **em prod**
+
+---
+
 ## Pré-requisitos
 
 - [ ] Issues **#39** (provisioning) e **#38** (hardening) mergeadas em `main`

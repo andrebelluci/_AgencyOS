@@ -9,7 +9,6 @@ import {
   deleteChunksByDocumentId,
   deletePdfDocumentById,
   findPdfDocumentById,
-  findPdfDocumentsByTenant,
   insertChunks,
   insertPdfDocument,
   updateDocumentStatus,
@@ -28,7 +27,8 @@ export { MAX_PDF_BYTES };
 export async function listPdfDocuments(
   tenantId: string,
 ): Promise<PdfDocumentItem[]> {
-  return findPdfDocumentsByTenant(tenantId);
+  const { listPdfDocuments: list } = await import("./pdf-documents");
+  return list(tenantId);
 }
 
 export async function getPdfDocument(

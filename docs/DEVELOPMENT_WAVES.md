@@ -41,7 +41,7 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 | **#37** | Platform Admin (ISSUE-032) | 7 | `feat/issue-037-platform-admin` | ⬜ Bloqueada por #39 |
 | **#38** | Production Hardening (ISSUE-033) | 7 | `feat/issue-038-hardening` | ⬜ Paralela após #39 |
 | #30 | Deploy produção | 7 | `feat/issue-030-deploy` | 🟡 **Parcial** — Vercel+env ✅; falta #38, DEPLOY.md, smoke prod |
-| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30+#37+#39 |
+| #31 | Onboarding 1º cliente | 7 | `docs/issue-031-onboarding` | ⬜ Bloqueada por #30+#37+#39 + **Supabase prod ≠ dev** |
 
 **Legenda:** ✅ mergeado · ⬜ pendente · 🟡 em andamento · 🔒 aguarda ondas anteriores
 

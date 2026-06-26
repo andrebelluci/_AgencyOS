@@ -1,8 +1,10 @@
 import "server-only";
 
-import { PDFParse } from "pdf-parse";
+import { ensurePdfDomPolyfill } from "./pdf-dom-polyfill";
 
 export async function extractPdfText(buffer: Buffer): Promise<string> {
+  await ensurePdfDomPolyfill();
+  const { PDFParse } = await import("pdf-parse");
   const parser = new PDFParse({ data: buffer });
 
   try {
