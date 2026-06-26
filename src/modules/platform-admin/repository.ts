@@ -25,10 +25,10 @@ export async function fetchPlatformMetrics(): Promise<PlatformMetrics> {
     messages_last_7_days: number;
   }>(sql`
     SELECT
-      (SELECT count(*)::int FROM ${tenants}) AS total_tenants,
-      (SELECT count(*)::int FROM ${leads} WHERE ${leads.createdAt} >= ${since}) AS leads_last_7_days,
-      (SELECT count(*)::int FROM ${conversations} WHERE ${conversations.createdAt} >= ${since}) AS conversations_last_7_days,
-      (SELECT count(*)::int FROM ${messages} WHERE ${messages.createdAt} >= ${since}) AS messages_last_7_days
+      (SELECT count(*)::int FROM tenants) AS total_tenants,
+      (SELECT count(*)::int FROM leads WHERE created_at >= ${since}) AS leads_last_7_days,
+      (SELECT count(*)::int FROM conversations WHERE created_at >= ${since}) AS conversations_last_7_days,
+      (SELECT count(*)::int FROM messages WHERE created_at >= ${since}) AS messages_last_7_days
   `);
 
   const row = result[0];
