@@ -30,6 +30,7 @@ Estas decisões resolvem conflitos entre documentos e não encurtam prazos — a
 | D15 | **Onda 7 expandida — operação pré-deploy** | Antes do deploy oficial (#30), entram #34 Provisioning → (#32 Admin ‖ #33 Hardening). Sem billing, self-service ou RBAC avançado. V0.2 produto (#35+) só após #31. |
 | D16 | **Superadmin por allowlist** | `PLATFORM_ADMIN_EMAILS` (env). Sem tabela de roles nem RBAC multi-nível no V0.1. |
 | D17 | **Animações: widget vs site hospedeiro** | Launcher, painel, ícone e chat = Agency OS (`embed.js` + `/chat`). Decoração da página (pulse, demo inline, reveal) = CSS do site cliente. Animações ricas do produto (avatar, modos) = V0.2+ no embed, não hack permanente no host. |
+| D18 | **Widget dark mode = V0.2 (ISSUE-045)** | Tema `light` / `dark` / `auto` por tenant + `data-theme` no embed. Iframe **não** herda CSS do site; `auto` usa `prefers-color-scheme` do visitante. Sincronizar tema com página hospedeira fica fora do escopo inicial. |
 
 ---
 
@@ -216,7 +217,7 @@ Detalhamento de campos em DATABASE.md.
 
 **Resiliência (estratégico):** Widget Hardening completo (quotas por tenant, abuse avançado) — parte mínima antecipada em **#33** (Onda 7); restante em V0.2.
 
-**Backlog existente (#35–#44):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG.
+**Backlog existente (#35–#45):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG, **widget dark mode (#45)**.
 
 > Milestone GitHub `V0.2 — Site Conversacional` agrupa estas issues. Site Conversacional **completo** = V0.4 na visão estratégica.
 
@@ -226,7 +227,7 @@ Detalhamento de campos em DATABASE.md.
 
 **Interface (estratégico):** Site Adaptativo — IA seleciona estados/perfil; conteúdo, CTA e componentes por regras (sem HTML gerado por LLM). Issues dedicadas ainda não criadas.
 
-**Automação comercial (backlog #45–#52):** Estimator Agent, pricing_tables, quotes, opportunities, follow-up, event store leve, analytics, WhatsApp API (se ROI).
+**Automação comercial (backlog #46–#53):** Estimator Agent, pricing_tables, quotes, opportunities, follow-up, event store leve, analytics, WhatsApp API (se ROI).
 
 > Milestone GitHub `V0.3 — Orçamentista IA` refere-se à trilha de automação, não ao Site Adaptativo.
 

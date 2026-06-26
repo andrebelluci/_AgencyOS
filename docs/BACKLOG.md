@@ -8,10 +8,10 @@ Importar manualmente ou via `gh issue create`.
 **Milestones:** `V0.1 — Funcionário Digital`, `V0.2 — Site Conversacional`, `V0.3 — Orçamentista IA`
 
 > **Nota estratégica (2026-06):** Os milestones GitHub **não foram renomeados** para preservar issues e cronograma. Na visão de longo prazo ([VISION.md](VISION.md)):
-> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening — issues **#35–#44** no milestone `V0.2`
+> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening + dark mode — issues **#35–#45** no milestone `V0.2`
 > - **V0.3 (estratégico)** = Site Adaptativo — ainda sem issues dedicadas
 > - **V0.4 (estratégico)** = Site Conversacional completo
-> - Milestone `V0.3 — Orçamentista IA` = automação comercial (#45–#52), paralelo ao Site Adaptativo
+> - Milestone `V0.3 — Orçamentista IA` = automação comercial (#46–#53), paralelo ao Site Adaptativo
 >
 > **Onda 7 (operação):** #32–#34 são **pré-deploy V0.1** — não iniciam V0.2 produto.
 
@@ -336,6 +336,15 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 | ISSUE-042 | Métricas conversão widget→lead→WhatsApp | Pequeno |
 | ISSUE-043 | Support Agent separado | Médio |
 | ISSUE-044 | RAG: citação de fonte na resposta | Médio |
+| ISSUE-045 | Widget dark mode (theme light/dark/auto) | Pequeno |
+
+### ISSUE-045: Widget dark mode (V0.2)
+- **Esforço:** Pequeno
+- **Labels:** v0.2, widget, panel
+- **Descrição:** Tema do chat no iframe (`/chat`) e painel do embed: `light`, `dark` ou `auto` (`prefers-color-scheme`). Setting em `tenant_settings` + opcional `data-theme` no script embed. **Não** herda CSS do site hospedeiro automaticamente (iframe isolado); `auto` segue preferência do OS/navegador do visitante.
+- **Aceite:** Site escuro + widget configurado `dark` ou `auto` exibe chat coerente; contraste WCAG AA; `primary_color` continua como accent.
+- **Depende de:** #31 ✅, 1º cliente pagante
+- **Não inclui:** detecção do tema da página via `postMessage` (futuro); fontes/sombras/temas completos (V0.3+).
 
 ---
 
@@ -343,14 +352,14 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 
 | ID | Título | Esforço |
 |----|--------|---------|
-| ISSUE-045 | Estimator Agent | Grande |
-| ISSUE-046 | Tabelas pricing_tables + services | Médio |
-| ISSUE-047 | Orçamento automático + PDF | Grande |
-| ISSUE-048 | Tabela opportunities + pipeline | Médio |
-| ISSUE-049 | Follow-up automático | Grande |
-| ISSUE-050 | Event store leve | Médio |
-| ISSUE-051 | Analytics dashboard | Médio |
-| ISSUE-052 | WhatsApp Business API (spike) | Grande |
+| ISSUE-046 | Estimator Agent | Grande |
+| ISSUE-047 | Tabelas pricing_tables + services | Médio |
+| ISSUE-048 | Orçamento automático + PDF | Grande |
+| ISSUE-049 | Tabela opportunities + pipeline | Médio |
+| ISSUE-050 | Follow-up automático | Grande |
+| ISSUE-051 | Event store leve | Médio |
+| ISSUE-052 | Analytics dashboard | Médio |
+| ISSUE-053 | WhatsApp Business API (spike) | Grande |
 
 ---
 

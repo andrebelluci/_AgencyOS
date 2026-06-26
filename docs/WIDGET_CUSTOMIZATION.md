@@ -41,6 +41,7 @@ JSON em `tenant_settings` — sem tabela dedicada (migrável depois).
 ## Identidade visual (`primary_color`)
 
 - Única cor de marca no V0.1 (sem temas, fontes ou modo escuro).
+- **Modo escuro:** planejado V0.2 — [ISSUE-045](BACKLOG.md#issue-045-widget-dark-mode-v02) (`light` / `dark` / `auto`); ver decisão D18 em [DEV_PLAN.md](DEV_PLAN.md).
 - Formato: `#RRGGBB` (validado no painel).
 - Aplicada em: botão flutuante (`embed.js`), cabeçalho do chat, botão enviar, CTA e chips de ação rápida.
 - Default: `#1e40af`
@@ -87,5 +88,7 @@ O launcher expõe a classe `.aos-embed-launcher`. O site pode aplicar efeitos **
 - Não depender de override para funcionalidade (abrir chat, cor da marca, ícone).
 
 Animações **ricas** que fazem parte do produto (avatar, modos sidebar/fullscreen, voice) ficam no roadmap V0.2+ — ver [DEV_PLAN.md](DEV_PLAN.md) e [PRODUCTS.md](PRODUCTS.md).
+
+**Modo escuro do chat (V0.2 — ISSUE-045):** tema `light` / `dark` / `auto` por tenant; opcional `data-theme` no embed. O iframe **não** herda o CSS escuro do site hospedeiro — configure `dark` ou `auto` quando disponível.
 
 Detalhes visuais gerais: [DESIGN.md](DESIGN.md).

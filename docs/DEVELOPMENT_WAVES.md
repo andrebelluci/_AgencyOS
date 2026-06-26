@@ -1414,8 +1414,8 @@ Issues **#35+** só após #31 ✅ e 1º cliente pagante. Mesma regra de branch: 
 
 | Milestone GitHub | Issues | Visão estratégica (referência) |
 |------------------|--------|--------------------------------|
-| `V0.2 — Site Conversacional` | #35–#44 (Hero #36, iFrame, RBAC…) | V0.2 Hero + hardening restante — [VISION.md](VISION.md) |
-| `V0.3 — Orçamentista IA` | #45–#52 (Estimator, quotes…) | Automação comercial; Site Adaptativo = trilha separada |
+| `V0.2 — Site Conversacional` | #35–#45 (Hero #36, iFrame, dark mode #45…) | V0.2 Hero + hardening restante — [VISION.md](VISION.md) |
+| `V0.3 — Orçamentista IA` | #46–#53 (Estimator, quotes…) | Automação comercial; Site Adaptativo = trilha separada |
 
 > **#37–#39** são Onda 7 (operação V0.1), não V0.2. Hardening mínimo em #38; quotas por plano ficam para V0.2.
 

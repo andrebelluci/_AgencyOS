@@ -10,7 +10,7 @@ Roadmap **estratégico** de interface e experiência. Não substitui milestones 
 | Versão | Produto | O que entrega | Gate comercial |
 |--------|---------|---------------|----------------|
 | **V0.1** | Funcionário Digital + Widget | Chat, leads, knowledge, painel, `embed.js` | 1º cliente pagante |
-| **V0.2** | Hero Conversacional | Chat inline na hero, onboarding conversacional, perguntas contextuais; **Widget Hardening** (rate limit, abuse, quotas, timeout, observabilidade) | 3–10 pagantes |
+| **V0.2** | Hero Conversacional | Chat inline na hero, onboarding conversacional, perguntas contextuais; **Widget Hardening** (rate limit, abuse, quotas, timeout, observabilidade); **widget dark mode** (ISSUE-045) | 3–10 pagantes |
 | **V0.3** | Site Adaptativo | Estados + componentes + regras (ex.: residencial, comercial, arquiteto); conteúdo/CTA/prova social por perfil — **sem HTML gerado por LLM** | Demanda comprovada |
 | **V0.4** | Site Conversacional | Conversa substitui parte da navegação; IA guia a jornada | Produto diferenciado |
 | **V0.5** | Digital Twin Público | Representação operacional da empresa para o visitante | Enterprise / premium |
@@ -23,8 +23,8 @@ Issues V0.2/V0.3 no [BACKLOG.md](BACKLOG.md) permanecem; esta tabela alinha a **
 
 | Milestone no GitHub | Conteúdo real | Versão estratégica equivalente |
 |---------------------|--------------|-------------------------------|
-| `V0.2 — Site Conversacional` | Hero (#36), iFrame, RBAC, Support… (#35–#44) | V0.2 Hero + hardening restante (mínimo em Onda 7 #33) |
-| `V0.3 — Orçamentista IA` | Estimator, quotes, pipeline (#45–#52) | Automação comercial (paralelo ao **V0.3 Site Adaptativo**) |
+| `V0.2 — Site Conversacional` | Hero (#36), iFrame, RBAC, dark mode (#45)… (#35–#45) | V0.2 Hero + hardening restante (mínimo em Onda 7 #33) |
+| `V0.3 — Orçamentista IA` | Estimator, quotes, pipeline (#46–#53) | Automação comercial (paralelo ao **V0.3 Site Adaptativo**) |
 
 Não renomear milestones sem migração planejada de issues.
 

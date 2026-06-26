@@ -75,6 +75,8 @@ Entrega: chat, captura, knowledge, painel, `embed.js`.
 
 **Widget Hardening** (tema estratégico — issues futuras): rate limiting, abuse protection, quotas por tenant, timeout strategy, observabilidade.
 
+**Widget dark mode (ISSUE-045):** tema `light` / `dark` / `auto` no iframe do chat; setting por tenant; opcional `data-theme` no embed. Não herda automaticamente o CSS escuro do site do cliente (iframe isolado).
+
 ---
 
 ## V0.3 — Site Adaptativo
@@ -85,7 +87,7 @@ Cada perfil recebe conteúdo, provas sociais, CTAs e componentes diferentes.
 
 **Implementação:** Estados + Componentes + Regras + Contexto + IA.
 
-> Milestone GitHub `V0.3 — Orçamentista IA` (issues #45–#52) cobre **automação comercial** em paralelo. Ver [BACKLOG.md](BACKLOG.md).
+> Milestone GitHub `V0.3 — Orçamentista IA` (issues #46–#53) cobre **automação comercial** em paralelo. Ver [BACKLOG.md](BACKLOG.md).
 
 ---
 

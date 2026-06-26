@@ -496,7 +496,7 @@ Hero Conversacional + Widget Hardening
 
 ## V0.3
 
-Site Adaptativo (visão) + Orçamentista IA (backlog #45–#52)
+Site Adaptativo (visão) + Orçamentista IA (backlog #46–#53)
 
 * Estados + componentes + regras por perfil
 * Estimator Agent, orçamentos, pipeline
