@@ -18,6 +18,8 @@ export async function fetchPlatformMetrics(): Promise<PlatformMetrics> {
   const since = getSevenDaysAgo();
   const db = getDb();
 
+  const sinceIso = since.toISOString();
+
   const result = await db.execute<{
     total_tenants: number;
     leads_last_7_days: number;
@@ -26,9 +28,9 @@ export async function fetchPlatformMetrics(): Promise<PlatformMetrics> {
   }>(sql`
     SELECT
       (SELECT count(*)::int FROM tenants) AS total_tenants,
-      (SELECT count(*)::int FROM leads WHERE created_at >= ${since}) AS leads_last_7_days,
-      (SELECT count(*)::int FROM conversations WHERE created_at >= ${since}) AS conversations_last_7_days,
-      (SELECT count(*)::int FROM messages WHERE created_at >= ${since}) AS messages_last_7_days
+      (SELECT count(*)::int FROM leads WHERE created_at >= ${sinceIso}::timestamptz) AS leads_last_7_days,
+      (SELECT count(*)::int FROM conversations WHERE created_at >= ${sinceIso}::timestamptz) AS conversations_last_7_days,
+      (SELECT count(*)::int FROM messages WHERE created_at >= ${sinceIso}::timestamptz) AS messages_last_7_days
   `);
 
   const row = result[0];
