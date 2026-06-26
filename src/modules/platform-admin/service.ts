@@ -2,33 +2,11 @@ import "server-only";
 
 import { listAllTenants } from "@/modules/tenants/admin-repository";
 
-import {
-  countAllTenants,
-  countConversationsLast7Days,
-  countLeadsLast7Days,
-  countMessagesLast7Days,
-} from "./repository";
+import { fetchPlatformMetrics } from "./repository";
 import type { PlatformMetrics, TenantListItem } from "./types";
 
 export async function getPlatformMetrics(): Promise<PlatformMetrics> {
-  const [
-    totalTenants,
-    leadsLast7Days,
-    conversationsLast7Days,
-    messagesLast7Days,
-  ] = await Promise.all([
-    countAllTenants(),
-    countLeadsLast7Days(),
-    countConversationsLast7Days(),
-    countMessagesLast7Days(),
-  ]);
-
-  return {
-    totalTenants,
-    leadsLast7Days,
-    conversationsLast7Days,
-    messagesLast7Days,
-  };
+  return fetchPlatformMetrics();
 }
 
 export async function listTenantsForAdmin(): Promise<TenantListItem[]> {

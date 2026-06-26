@@ -4,6 +4,9 @@ import { signOut } from "@/app/(auth)/login/actions";
 
 /** Evita SSG no build (queries ao DB + auth excedem timeout na Vercel). */
 export const dynamic = "force-dynamic";
+
+/** Métricas cross-tenant podem exceder 10s no cold start (pooler). */
+export const maxDuration = 60;
 import { Button } from "@/components/ui/button";
 import { requirePlatformAdmin } from "@/lib/auth/platform-admin";
 
