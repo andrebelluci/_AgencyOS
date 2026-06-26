@@ -1,6 +1,9 @@
 import Link from "next/link";
 
 import { signOut } from "@/app/(auth)/login/actions";
+
+/** Evita SSG no build (queries ao DB + auth excedem timeout na Vercel). */
+export const dynamic = "force-dynamic";
 import { Button } from "@/components/ui/button";
 import { requirePlatformAdmin } from "@/lib/auth/platform-admin";
 
