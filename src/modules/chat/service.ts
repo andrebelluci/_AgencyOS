@@ -15,6 +15,7 @@ import {
 import { getLead } from "@/modules/leads/service";
 import { getTenantSettings } from "@/modules/settings/service";
 import { findTenantByPublicKey } from "@/modules/tenants/repository";
+import { assertActiveTenantForApi } from "@/modules/tenants/assert-active";
 import { buildWhatsAppLink } from "@/tools/build-whatsapp-link";
 
 import type { ChatContext, ChatHistoryResult, PrepareChatInput } from "./types";
@@ -76,18 +77,16 @@ export async function getChatHistory(
 ): Promise<ChatHistoryResult> {
   const tenant = await findTenantByPublicKey(publicKey);
 
-  if (!tenant || tenant.status !== "active") {
-    throw new ChatApiError("Tenant not found.", 404);
-  }
+  const activeTenant = assertActiveTenantForApi(tenant, ChatApiError);
 
-  const conversation = await getConversation(tenant.id, conversationId);
+  const conversation = await getConversation(activeTenant.id, conversationId);
 
   if (!conversation) {
     throw new ChatApiError("Conversation not found.", 404);
   }
 
-  const settings = await getTenantSettings(tenant.id);
-  const storedMessages = await listMessages(tenant.id, conversationId);
+  const settings = await getTenantSettings(activeTenant.id);
+  const storedMessages = await listMessages(activeTenant.id, conversationId);
 
   const messages = storedMessages
     .filter((row) => row.role === "user" || row.role === "assistant")
@@ -100,7 +99,7 @@ export async function getChatHistory(
   let whatsappUrl: string | null = null;
 
   if (settings?.whatsapp?.trim() && conversation.leadId) {
-    const lead = await getLead(tenant.id, conversation.leadId);
+    const lead = await getLead(activeTenant.id, conversation.leadId);
 
     if (lead) {
       const link = buildWhatsAppLink({
@@ -126,23 +125,21 @@ export async function prepareChatContext(
 ): Promise<ChatContext> {
   const tenant = await findTenantByPublicKey(input.publicKey);
 
-  if (!tenant || tenant.status !== "active") {
-    throw new ChatApiError("Tenant not found.", 404);
-  }
+  const activeTenant = assertActiveTenantForApi(tenant, ChatApiError);
 
-  const settings = await getTenantSettings(tenant.id);
+  const settings = await getTenantSettings(activeTenant.id);
   if (!settings) {
     throw new ChatApiError("Tenant settings not found.", 404);
   }
 
   const { conversationId, leadId } = await resolveOrCreateConversation(
-    tenant.id,
+    activeTenant.id,
     input.conversationId,
     input.visitorId,
   );
 
   return {
-    tenantId: tenant.id,
+    tenantId: activeTenant.id,
     conversationId,
     leadId,
     tenantSettings: toTenantSettingsPromptSource(settings),
