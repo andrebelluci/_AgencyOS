@@ -7,6 +7,11 @@ import {
   type TenantSettingsFormValues,
 } from "@/modules/settings/schema";
 import { updateTenantSettings } from "@/modules/settings/service";
+import {
+  normalizePrimaryColorInput,
+  type UpdateTenantSettingsInput,
+} from "@/modules/settings/types";
+import { DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
 
 export type SettingsActionState = {
   error?: string;
@@ -27,13 +32,20 @@ export async function updateTenantSettingsAction(
   try {
     const { tenant } = await requireOwnerTenant();
 
-    await updateTenantSettings(tenant.id, {
+    const payload: UpdateTenantSettingsInput = {
       companyName: parsed.data.companyName,
       whatsapp: parsed.data.whatsapp || null,
       city: parsed.data.city || null,
       services: parseServicesText(parsed.data.servicesText),
       systemPrompt: parsed.data.systemPrompt || null,
-    });
+      initialMessage: parsed.data.initialMessage,
+      primaryColor:
+        normalizePrimaryColorInput(parsed.data.primaryColor) ??
+        DEFAULT_PRIMARY_COLOR,
+      quickActions: parsed.data.quickActions,
+    };
+
+    await updateTenantSettings(tenant.id, payload);
 
     return { success: true };
   } catch {

@@ -31,6 +31,9 @@ export async function upsertTenantSettings(
       city: input.city ?? null,
       services: input.services,
       systemPrompt: input.systemPrompt ?? null,
+      initialMessage: input.initialMessage ?? null,
+      primaryColor: input.primaryColor ?? null,
+      quickActions: input.quickActions ?? [],
     })
     .onConflictDoUpdate({
       target: tenantSettings.tenantId,
@@ -40,6 +43,9 @@ export async function upsertTenantSettings(
         city: input.city ?? null,
         services: input.services,
         systemPrompt: input.systemPrompt ?? null,
+        initialMessage: input.initialMessage ?? null,
+        primaryColor: input.primaryColor ?? null,
+        quickActions: input.quickActions ?? [],
       },
     })
     .returning();

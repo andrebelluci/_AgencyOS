@@ -29,6 +29,7 @@ Estas decisões resolvem conflitos entre documentos e não encurtam prazos — a
 | D14 | **Hero Conversacional = V0.2** | MVP.md seção 2 movida para V0.2 neste plano. Primeiro passo da evolução de interface (antes do Site Adaptativo V0.3 e Site Conversacional V0.4). |
 | D15 | **Onda 7 expandida — operação pré-deploy** | Antes do deploy oficial (#30), entram #34 Provisioning → (#32 Admin ‖ #33 Hardening). Sem billing, self-service ou RBAC avançado. V0.2 produto (#35+) só após #31. |
 | D16 | **Superadmin por allowlist** | `PLATFORM_ADMIN_EMAILS` (env). Sem tabela de roles nem RBAC multi-nível no V0.1. |
+| D17 | **Animações: widget vs site hospedeiro** | Launcher, painel, ícone e chat = Agency OS (`embed.js` + `/chat`). Decoração da página (pulse, demo inline, reveal) = CSS do site cliente. Animações ricas do produto (avatar, modos) = V0.2+ no embed, não hack permanente no host. |
 
 ---
 
@@ -73,6 +74,7 @@ Detalhamento: [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md).
 - Leads: captura + score (baixo/médio/alto) + status CRM básico
 - Widget: `public/widget/embed.js`
 - Painel: dashboard, leads, conversas, knowledge, settings, código embed
+- Integração: site do cliente cola o script; animações estruturais no embed; decoração da página no host (ver D17, [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md))
 - WhatsApp: redirecionamento com mensagem pré-preenchida
 
 ## Onda 7 — Operação e go-live (#30–#34)
@@ -87,7 +89,9 @@ Fecha o V0.1 para **clientes reais**. Onboarding continua **assistido manualment
 | **#30** Deploy produção | Vercel + Supabase prod (após #33 mergeado) |
 | **#31** Onboarding 1º cliente | Executar fluxo com #32+#34 em produção; lead real |
 
-**Ordem:** `#34 → (#32 ‖ #33) → #30 → #31`
+**Refinamentos pré-#31 (031A–031D):** mensagem inicial (`initial_message`), ações rápidas (`quick_actions` JSON), Sales Agent (RAG-first), `primary_color` no widget — sem alterar arquitetura V0.2.
+
+**Ordem:** `#34 → (#32 ‖ #33) → #30 → (031A–031D) → #31`
 
 **Gate deploy (#30):** #33 ✅ (API pública endurecida).  
 **Gate V0.2 (#35+):** #31 ✅ + 1º cliente pagante.

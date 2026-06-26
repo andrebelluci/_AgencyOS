@@ -9,6 +9,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import postgres from "postgres";
 
+import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "../src/lib/widget/initial-message";
+
 const DEV_TENANT_SLUG = "development";
 const DEV_PUBLIC_KEY = "pk_dev_local";
 const DEV_COMPANY_NAME = "Belluci Acabamentos";
@@ -118,6 +120,8 @@ async function ensureTenantSettings(
       city,
       services,
       welcome_message,
+      initial_message,
+      quick_actions,
       primary_color,
       whatsapp
     )
@@ -127,6 +131,8 @@ async function ensureTenantSettings(
       ${DEV_CITY},
       ${sql.json(DEV_SERVICES)},
       ${"Olá! Como posso ajudar você hoje?"},
+      ${DEFAULT_INITIAL_MESSAGE_TEMPLATE},
+      ${sql.json([])},
       ${"#1e40af"},
       ${"5519999999999"}
     )

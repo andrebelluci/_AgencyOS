@@ -60,6 +60,17 @@ Escala 4px: `p-4` cards, `gap-4` listas, `space-y-6` seções de página.
 - Input fixo no rodapé com botão enviar
 - Estados: loading (skeleton ou dots), erro (mensagem amigável)
 
+**Animações (ownership):**
+
+| Camada | Responsável |
+|--------|-------------|
+| Launcher, painel, ícone, abrir/fechar | Agency OS — `embed.js` |
+| Chat (typing, mensagens, stream) | Agency OS — `/chat` (iframe) |
+| Pulse/teaser/reveal na página do cliente | Site hospedeiro — CSS local |
+| Avatar animado, modos de widget | V0.2+ — evoluir produto, não CSS do site |
+
+Ver tabela completa em [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md). Overrides decorativos no host (ex.: pulse em `.aos-embed-launcher`) devem respeitar `prefers-reduced-motion`.
+
 ### Painel admin
 - Sidebar fixa + conteúdo
 - Tabelas com empty state
@@ -87,6 +98,8 @@ Escala 4px: `p-4` cards, `gap-4` listas, `space-y-6` seções de página.
 - Emojis excessivos no painel admin
 - Animações que atrasam interação
 - Layout que quebra em mobile (widget e painel responsivos)
+- Fork do `embed.js` no site do cliente para animações que deveriam estar no produto (avatar, modos)
+- Pulse/animação pesada no host **sem** `prefers-reduced-motion`
 
 ---
 

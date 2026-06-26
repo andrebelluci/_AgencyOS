@@ -22,7 +22,14 @@ description: Padrões UI do widget de chat e painel admin do Agency OS. Use ao c
 
 - Estados: idle, streaming, error, lead-captured
 - `visitor_id` anônimo — sem exigir login
-- Mensagem de boas-vindas configurável via tenant_settings
+- Mensagem de boas-vindas configurável via tenant_settings (`initial_message`)
+- Animações estruturais (launcher, painel, chat) = Agency OS; pulse/teaser na landing = site do cliente (ver `docs/WIDGET_CUSTOMIZATION.md`)
+
+## Animações — regra rápida
+
+- **Agency OS:** `embed.js` + `/chat` (abrir/fechar, hover, ícone, typing)
+- **Site hospedeiro:** CSS decorativo (pulse em `.aos-embed-launcher`, reveal de demo) com `prefers-reduced-motion`
+- **V0.2+:** avatar, modos — evoluir embed, não fork no site
 
 ## Painel admin
 

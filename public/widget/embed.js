@@ -26,7 +26,7 @@
   var baseUrl = new URL(script.src).origin;
   var position = (script.getAttribute("data-position") || "bottom-right").trim();
   var zIndex = script.getAttribute("data-z-index") || "2147483646";
-  var primaryColor = script.getAttribute("data-color") || "#2563eb";
+  var primaryColor = "#2563eb";
 
   var isOpen = false;
   var root = null;
@@ -156,12 +156,14 @@
     }
   }
 
-  function setLauncherColor(color) {
+  function applyBranding(color) {
     if (!color || !launcher) {
       return;
     }
+
     primaryColor = color;
     launcher.style.backgroundColor = color;
+    launcher.style.setProperty("--aos-primary", color);
   }
 
   function open() {
@@ -235,8 +237,12 @@
         return response.json();
       })
       .then(function (config) {
-        if (config && config.primary_color) {
-          setLauncherColor(config.primary_color);
+        if (!config) {
+          return;
+        }
+
+        if (config.primary_color) {
+          applyBranding(config.primary_color);
         }
       })
       .catch(function () {

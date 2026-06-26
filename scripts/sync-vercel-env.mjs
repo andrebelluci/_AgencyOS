@@ -70,8 +70,16 @@ for (const key of keys) {
   }
 }
 
-for (const target of ["production", "preview", "development"]) {
-  setEnv("PLATFORM_APEX_TENANT_SLUG", "development", target);
+if (prod.PLATFORM_APEX_TENANT_SLUG) {
+  setEnv("PLATFORM_APEX_TENANT_SLUG", prod.PLATFORM_APEX_TENANT_SLUG, "production");
+}
+if (dev.PLATFORM_APEX_TENANT_SLUG) {
+  setEnv("PLATFORM_APEX_TENANT_SLUG", dev.PLATFORM_APEX_TENANT_SLUG, "preview");
+  setEnv("PLATFORM_APEX_TENANT_SLUG", dev.PLATFORM_APEX_TENANT_SLUG, "development");
+} else {
+  for (const target of ["preview", "development"]) {
+    setEnv("PLATFORM_APEX_TENANT_SLUG", "development", target);
+  }
 }
 
 console.log("\nDone.");

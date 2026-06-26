@@ -1,6 +1,11 @@
+import type { QuickActionConfig } from "@/lib/widget/quick-actions";
+import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "@/lib/widget/initial-message";
+
 export const DEFAULT_PRIMARY_COLOR = "#1e40af";
 export const DEFAULT_WELCOME_MESSAGE =
   "Olá! Como posso ajudar você hoje?";
+
+export { DEFAULT_INITIAL_MESSAGE_TEMPLATE };
 
 export function buildDefaultTenantSettings(companyName: string) {
   return {
@@ -8,6 +13,8 @@ export function buildDefaultTenantSettings(companyName: string) {
     city: null as string | null,
     services: [] as string[],
     welcomeMessage: DEFAULT_WELCOME_MESSAGE,
+    initialMessage: DEFAULT_INITIAL_MESSAGE_TEMPLATE,
+    quickActions: [] as QuickActionConfig[],
     primaryColor: DEFAULT_PRIMARY_COLOR,
     whatsapp: null as string | null,
     logoUrl: null as string | null,

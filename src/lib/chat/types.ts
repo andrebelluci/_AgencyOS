@@ -1,3 +1,5 @@
+import type { ResolvedQuickAction } from "@/lib/widget/quick-actions";
+
 export type ChatUiMessage = {
   id: string;
   role: "user" | "assistant";
@@ -11,4 +13,5 @@ export type ChatWidgetConfig = {
   welcomeMessage: string;
   primaryColor?: string | null;
   whatsapp?: string | null;
+  quickActions?: ResolvedQuickAction[];
 };

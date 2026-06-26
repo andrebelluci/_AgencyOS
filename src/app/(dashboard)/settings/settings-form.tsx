@@ -2,8 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
+import { ColorPickerField } from "@/components/settings/color-picker-field";
+import { QuickActionsEditor } from "@/components/settings/quick-actions-editor";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +18,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
 import {
+  INITIAL_MESSAGE_PLACEHOLDER,
   tenantSettingsFormSchema,
   type TenantSettingsFormValues,
 } from "@/modules/settings/schema";
@@ -35,6 +39,7 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors },
   } = useForm<TenantSettingsFormValues>({
@@ -60,15 +65,15 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
   });
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <CardTitle>Empresa</CardTitle>
-        <CardDescription>
-          Dados exibidos no widget e usados pelos agentes de IA.
-        </CardDescription>
-      </CardHeader>
+    <form onSubmit={onSubmit} className="space-y-6">
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle>Empresa</CardTitle>
+          <CardDescription>
+            Dados exibidos no widget e usados pelos agentes de IA.
+          </CardDescription>
+        </CardHeader>
 
-      <form onSubmit={onSubmit}>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="companyName">Nome da empresa</Label>
@@ -121,9 +126,7 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
               disabled={isPending}
               {...register("servicesText")}
             />
-            <p className="text-xs text-muted-foreground">
-              Um serviço por linha.
-            </p>
+            <p className="text-xs text-muted-foreground">Um serviço por linha.</p>
           </div>
 
           <div className="space-y-2">
@@ -139,26 +142,81 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
               Complementa o comportamento padrão do agente de vendas.
             </p>
           </div>
+        </CardContent>
+      </Card>
 
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle>Widget</CardTitle>
+          <CardDescription>
+            Mensagem inicial, identidade visual e ações rápidas do Funcionário
+            Digital no site.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="initialMessage">Mensagem inicial</Label>
+            <Textarea
+              id="initialMessage"
+              rows={4}
+              disabled={isPending}
+              aria-invalid={Boolean(errors.initialMessage)}
+              {...register("initialMessage")}
+            />
+            <p className="text-xs text-muted-foreground">
+              Use <code className="text-xs">{"{{company_name}}"}</code> para
+              inserir o nome da empresa. Exemplo: {INITIAL_MESSAGE_PLACEHOLDER}
+            </p>
+            {errors.initialMessage ? (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.initialMessage.message}
+              </p>
+            ) : null}
+          </div>
+
+          <Controller
+            control={control}
+            name="primaryColor"
+            render={({ field }) => (
+              <ColorPickerField
+                id="primaryColor"
+                value={field.value || DEFAULT_PRIMARY_COLOR}
+                onChange={field.onChange}
+                disabled={isPending}
+                error={errors.primaryColor?.message}
+              />
+            )}
+          />
+
+          <QuickActionsEditor
+            control={control}
+            errors={errors}
+            disabled={isPending}
+          />
+        </CardContent>
+
+        <CardFooter className="flex-col items-stretch gap-3 border-t bg-transparent sm:flex-row sm:justify-end">
           {serverError ? (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-sm text-destructive sm:mr-auto" role="alert">
               {serverError}
             </p>
           ) : null}
 
           {success ? (
-            <p className="text-sm text-green-700 dark:text-green-400" role="status">
+            <p
+              className="text-sm text-green-700 dark:text-green-400 sm:mr-auto"
+              role="status"
+            >
               Configurações salvas com sucesso.
             </p>
           ) : null}
-        </CardContent>
 
-        <CardFooter className="justify-end border-t-0 bg-transparent">
           <Button type="submit" disabled={isPending}>
             {isPending ? "Salvando…" : "Salvar"}
           </Button>
         </CardFooter>
-      </form>
-    </Card>
+      </Card>
+    </form>
   );
 }

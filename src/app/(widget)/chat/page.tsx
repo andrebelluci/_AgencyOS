@@ -1,8 +1,7 @@
 import { ChatPageClient } from "@/components/chat/chat-page-client";
 import { getTenant } from "@/lib/tenant/get-tenant";
 import { getTenantSettings } from "@/modules/settings/service";
-
-const DEFAULT_WELCOME = "Olá! Como posso ajudar você hoje?";
+import { buildChatWidgetConfigFromSettings } from "@/modules/widget/service";
 
 export default async function ChatWidgetPage() {
   const tenant = await getTenant();
@@ -10,13 +9,11 @@ export default async function ChatWidgetPage() {
 
   return (
     <ChatPageClient
-      config={{
-        publicKey: tenant.publicKey,
-        companyName: settings?.companyName ?? tenant.name,
-        welcomeMessage: settings?.welcomeMessage ?? DEFAULT_WELCOME,
-        primaryColor: settings?.primaryColor,
-        whatsapp: settings?.whatsapp,
-      }}
+      config={buildChatWidgetConfigFromSettings(
+        tenant.publicKey,
+        tenant.name,
+        settings,
+      )}
     />
   );
 }

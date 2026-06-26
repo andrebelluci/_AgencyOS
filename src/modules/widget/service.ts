@@ -1,13 +1,14 @@
 import "server-only";
 
 import type { TenantSettings } from "@/lib/db";
+import { resolveInitialMessage } from "@/lib/widget/initial-message";
+import { resolveEnabledQuickActions } from "@/lib/widget/resolve-quick-actions";
 import { getTenantSettings } from "@/modules/settings/service";
+import { DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
 import { findTenantByPublicKey } from "@/modules/tenants/repository";
 import { assertActiveTenantForApi } from "@/modules/tenants/assert-active";
 
 import type { WidgetPublicConfig } from "./types";
-
-const DEFAULT_WELCOME_MESSAGE = "Olá! Como posso ajudar você hoje?";
 
 export class WidgetConfigError extends Error {
   constructor(
@@ -24,13 +25,24 @@ function toPublicConfig(
   tenantName: string,
   settings: TenantSettings | null,
 ): WidgetPublicConfig {
+  const companyName = settings?.companyName ?? tenantName;
+  const resolvedMessage = resolveInitialMessage(
+    settings?.initialMessage,
+    companyName,
+    settings?.welcomeMessage,
+  );
+
   return {
     public_key: publicKey,
-    company_name: settings?.companyName ?? tenantName,
-    welcome_message: settings?.welcomeMessage ?? DEFAULT_WELCOME_MESSAGE,
-    primary_color: settings?.primaryColor ?? null,
-    secondary_color: settings?.secondaryColor ?? null,
+    company_name: companyName,
+    welcome_message: resolvedMessage,
+    initial_message: resolvedMessage,
+    primary_color: settings?.primaryColor ?? DEFAULT_PRIMARY_COLOR,
     logo_url: settings?.logoUrl ?? null,
+    quick_actions: resolveEnabledQuickActions(
+      settings?.quickActions,
+      settings?.whatsapp,
+    ),
   };
 }
 
@@ -50,4 +62,29 @@ export async function getWidgetPublicConfig(
   const settings = await getTenantSettings(activeTenant.id);
 
   return toPublicConfig(trimmedKey, activeTenant.name, settings);
+}
+
+export function buildChatWidgetConfigFromSettings(
+  publicKey: string,
+  tenantName: string,
+  settings: TenantSettings | null,
+): {
+  publicKey: string;
+  companyName: string;
+  welcomeMessage: string;
+  primaryColor: string;
+  whatsapp: string | null;
+  quickActions: WidgetPublicConfig["quick_actions"];
+} {
+  const companyName = settings?.companyName ?? tenantName;
+  const publicConfig = toPublicConfig(publicKey, tenantName, settings);
+
+  return {
+    publicKey,
+    companyName,
+    welcomeMessage: publicConfig.welcome_message,
+    primaryColor: publicConfig.primary_color,
+    whatsapp: settings?.whatsapp ?? null,
+    quickActions: publicConfig.quick_actions,
+  };
 }

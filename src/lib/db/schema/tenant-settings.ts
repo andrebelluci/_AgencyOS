@@ -1,5 +1,7 @@
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+import type { QuickActionConfig } from "@/lib/widget/quick-actions";
+
 import { tenants } from "./tenants";
 
 export const tenantSettings = pgTable("tenant_settings", {
@@ -17,6 +19,11 @@ export const tenantSettings = pgTable("tenant_settings", {
   services: jsonb("services").$type<string[]>().default([]).notNull(),
   systemPrompt: text("system_prompt"),
   welcomeMessage: text("welcome_message"),
+  initialMessage: text("initial_message"),
+  quickActions: jsonb("quick_actions")
+    .$type<QuickActionConfig[]>()
+    .default([])
+    .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

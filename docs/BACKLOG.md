@@ -246,7 +246,31 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 - **Labels:** v0.1, ops
 - **Descrição:** Checklist manual usando #37 Platform Admin + #39 Provisioning: configurar tenant, treinar FAQ, instalar widget, validar lead real em produção.
 - **Aceite:** Cliente gera lead real em produção.
-- **Depende de:** #30, #37, #39 (GitHub)
+- **Depende de:** #30, #37, #39 (GitHub); refinamentos **031A–031D** (pré-requisito recomendado)
+
+### ISSUE-031A: Mensagem inicial configurável
+- **Esforço:** Pequeno
+- **Labels:** v0.1, widget, panel
+- **Descrição:** Campo `tenant_settings.initial_message` com template `{{company_name}}`; editável em Settings; primeira mensagem do widget; default para novos tenants.
+- **Aceite:** Owner edita mensagem; widget exibe texto resolvido na abertura.
+
+### ISSUE-031B: Ações rápidas
+- **Esforço:** Pequeno
+- **Labels:** v0.1, widget, panel
+- **Descrição:** `tenant_settings.quick_actions` (JSON): label, type (`whatsapp`|`link`), url, enabled. Editor no painel; widget renderiza ações habilitadas.
+- **Aceite:** Ações aparecem no chat; WhatsApp usa número do tenant se URL vazia.
+
+### ISSUE-031C: Refinamento Sales Agent
+- **Esforço:** Pequeno
+- **Labels:** v0.1, agents
+- **Descrição:** Prompt/regras: RAG obrigatório para serviços; sem inventar preços/serviços; qualificação quando RAG vazio; menos respostas genéricas.
+- **Aceite:** `npm run test:agents` passa; comportamento documentado em AGENTS.md (referência).
+
+### ISSUE-031D: Identidade visual básica do widget
+- **Esforço:** Pequeno
+- **Labels:** v0.1, widget, panel
+- **Descrição:** `primary_color` editável via color picker + HEX no Settings; validação `#RRGGBB`; aplicado no embed (launcher), header, botões e ações do widget.
+- **Aceite:** Cor salva reflete no widget sem redeploy de código; default para novos tenants.
 
 ---
 

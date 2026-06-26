@@ -33,6 +33,17 @@ Widget → POST /api/chat (SSE) → Orchestrator → Sales Agent → tools → p
 
 Injeta botão flutuante → abre chat em modal/iframe apontando para `/chat`.
 
+## Animações — onde codar
+
+| Agency OS (`embed.js`, `/chat`) | Site do cliente (CSS/JS) |
+|--------------------------------|--------------------------|
+| Abrir/fechar painel, hover launcher, ícone | Pulse decorativo, reveal da demo, hero teaser |
+| Typing, mensagens, streaming | Layout ao redor do widget |
+
+Regra: comportamento do widget → Agency OS; página ao redor → host. Overrides leves no host (ex.: `.aos-embed-launcher` + `prefers-reduced-motion`) são OK. Avatar/modos ricos → V0.2+ no embed.
+
+Ver [WIDGET_CUSTOMIZATION.md](../../docs/WIDGET_CUSTOMIZATION.md).
+
 ## WhatsApp
 
 Após lead capturado: `buildWhatsAppLink` → botão no chat.

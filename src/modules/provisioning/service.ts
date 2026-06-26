@@ -212,6 +212,8 @@ async function ensureTenantSettings(
       city,
       services,
       welcome_message,
+      initial_message,
+      quick_actions,
       primary_color,
       whatsapp
     )
@@ -221,6 +223,8 @@ async function ensureTenantSettings(
       ${defaults.city},
       ${sql.json(defaults.services)},
       ${defaults.welcomeMessage},
+      ${defaults.initialMessage},
+      ${sql.json(defaults.quickActions)},
       ${defaults.primaryColor},
       ${defaults.whatsapp}
     )

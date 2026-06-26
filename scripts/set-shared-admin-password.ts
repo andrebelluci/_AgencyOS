@@ -6,9 +6,9 @@
  */
 import { createClient } from "@supabase/supabase-js";
 
-const SHARED_PASSWORD = "BelluciDev2026!";
+const SHARED_PASSWORD = "AgencyOS-Temp2026!";
 const EMAILS = [
-  "andre.belluci@dharmalabs.com.br",
+  "andrebelluci@dharmalabs.com.br",
   "owner@belluci.dev",
 ] as const;
 

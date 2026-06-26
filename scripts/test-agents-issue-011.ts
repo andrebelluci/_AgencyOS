@@ -80,6 +80,15 @@ function main(): void {
     "sales prompt missing RAG instructions",
   );
   assert(
+    pipeline.prepared.prompt.includes("nunca invente") ||
+      pipeline.prepared.prompt.includes("Nunca invente"),
+    "sales prompt missing anti-hallucination guard",
+  );
+  assert(
+    pipeline.prepared.prompt.includes("serviços"),
+    "sales prompt missing services guidance",
+  );
+  assert(
     SALES_TOOL_DEFINITIONS.every((tool) => tool.type === "function"),
     "sales tool definitions must use function type",
   );

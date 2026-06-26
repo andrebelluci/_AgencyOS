@@ -1,5 +1,7 @@
 import { getClientEnv } from "@/env";
 import { requireOwnerTenant } from "@/lib/auth/require-owner";
+import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "@/lib/widget/initial-message";
+import { DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
 import {
   formatServicesText,
   type TenantSettingsFormValues,
@@ -19,6 +21,12 @@ function toFormValues(
     city: settings?.city ?? "",
     servicesText: formatServicesText(settings?.services ?? []),
     systemPrompt: settings?.systemPrompt ?? "",
+    initialMessage:
+      settings?.initialMessage ??
+      settings?.welcomeMessage ??
+      DEFAULT_INITIAL_MESSAGE_TEMPLATE,
+    primaryColor: settings?.primaryColor ?? DEFAULT_PRIMARY_COLOR,
+    quickActions: settings?.quickActions ?? [],
   };
 }
 

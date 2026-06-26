@@ -14,6 +14,7 @@ type ChatInputProps = {
   disabled?: boolean;
   isLoading?: boolean;
   placeholder?: string;
+  primaryColor?: string;
 };
 
 export function ChatInput({
@@ -23,6 +24,7 @@ export function ChatInput({
   disabled = false,
   isLoading = false,
   placeholder = "Digite sua mensagem…",
+  primaryColor,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -68,6 +70,11 @@ export function ChatInput({
           disabled={disabled || isLoading || !value.trim()}
           aria-label={isLoading ? "Enviando mensagem" : "Enviar mensagem"}
           className="shrink-0"
+          style={
+            primaryColor
+              ? { backgroundColor: primaryColor, borderColor: primaryColor }
+              : undefined
+          }
         >
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
