@@ -71,7 +71,8 @@ Complementam as regras `agency-os-*.mdc`. Em conflito, **agency-os prevalece**.
 
 Frases que ativam o contexto certo:
 
-- **"Dev Agent: implemente e valide ISSUE-017"** → agency-os-dev-agent (prompt em DEVELOPMENT_WAVES.md)
+- **"Dev Agent: implemente e valide ISSUE-045"** → agency-os-dev-agent (prompt #50 em DEVELOPMENT_WAVES_V0.2.md)
+- **V0.1:** prompts históricos em DEVELOPMENT_WAVES_V0.1.md
 - **"Implemente o Bloco 0 do DEV_PLAN"** → lê DEV_PLAN + skill implement-sprint
 - **"Crie o Sales Agent"** → lê AGENTS.md + regra agency-os-ai-agents
 - **"Adicione tabela X"** → lê DATABASE.md MVP + regra database
@@ -86,7 +87,7 @@ Para acelerar, trate o Cursor como diferentes papéis conforme a tarefa:
 
 | Papel | Foco | Documentos |
 |-------|------|------------|
-| **Dev Agent** | Issues, implementação, QA, auto-fix | DEV_PLAN, BACKLOG, DEVELOPMENT_WAVES |
+| **Dev Agent** | Issues, implementação, QA, auto-fix | DEV_PLAN, BACKLOG, DEVELOPMENT_WAVES_V0.2 (ativo) |
 | **QA Agent** | Browser, testes, relatório | QA_PLAN, MCP cursor-ide-browser |
 | **CTO** | Escopo, prioridade, decisões | DEV_PLAN, NON_NEGOTIABLES, KILL_LIST |
 | **Architect** | Estrutura, módulos, ADRs | ARCHITECTURE, decisions/ |

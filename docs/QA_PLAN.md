@@ -22,7 +22,7 @@ Estratégia de qualidade para V0.1. Complementa o Dev Agent e QA Agent do Cursor
 | **Dev** | `agency-os-dev-agent` | Lê issue → implementa → QA → auto-fix → entrega |
 | **QA** | `agency-os-qa-agent` | Checklist QA (sozinho ou Fase 2 do Dev) → relatório |
 
-**Regra:** quem implementa não fecha a própria issue. **Um prompt QA = uma issue** (ver prompts em `docs/DEVELOPMENT_WAVES.md`).
+**Regra:** quem implementa não fecha a própria issue. **Um prompt QA = uma issue** (ver prompts em `docs/DEVELOPMENT_WAVES_V0.2.md` para V0.2; `docs/DEVELOPMENT_WAVES_V0.1.md` para V0.1).
 
 ---
 
@@ -147,13 +147,13 @@ Issue só fecha quando:
 
 ```
 # Fluxo completo (um paste)
-"Dev Agent: implemente e valide ISSUE-017"  → ver prompt em DEVELOPMENT_WAVES.md
+"Dev Agent: implemente e valide ISSUE-045"  → ver prompt #50 em DEVELOPMENT_WAVES_V0.2.md
 
 # Só validar (issue já implementada)
 "QA Agent: valide ISSUE-017 na branch feat/issue-017-widget-config"
 ```
 
-Smoke gates (várias issues): Onda 5 completa, Onda 6 F1–F6 — ver DEVELOPMENT_WAVES.md.
+Smoke gates (várias issues): Onda 5/6 V0.1 — ver DEVELOPMENT_WAVES_V0.1.md; Ondas 1–3 V0.2 — ver DEVELOPMENT_WAVES_V0.2.md.
 
 ---
 

@@ -95,7 +95,7 @@ Fecha o V0.1 para **clientes reais**. Onboarding continua **assistido manualment
 **Ordem:** `#34 → (#32 ‖ #33) → #30 → (031A–031D) → #31`
 
 **Gate deploy (#30):** #33 ✅ (API pública endurecida).  
-**Gate V0.2 (#35+):** #31 ✅ + 1º cliente pagante.
+**Gate V0.2 (#41+):** #31 ✅ · milestone `V0.2 - Site Conversacional` · ver [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).
 
 ---
 
@@ -217,7 +217,7 @@ Detalhamento de campos em DATABASE.md.
 
 **Resiliência (estratégico):** Widget Hardening completo (quotas por tenant, abuse avançado) — parte mínima antecipada em **#33** (Onda 7); restante em V0.2.
 
-**Backlog existente (#35–#45):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG, **widget dark mode (#45)**.
+**Backlog existente (V0.2):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG, **widget dark mode** — GitHub **#41–#51** · prompts em [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).
 
 > Milestone GitHub `V0.2 — Site Conversacional` agrupa estas issues. Site Conversacional **completo** = V0.4 na visão estratégica.
 

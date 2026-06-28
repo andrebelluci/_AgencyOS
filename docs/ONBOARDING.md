@@ -248,7 +248,7 @@ Fluxos smoke completos: [QA_PLAN.md](./QA_PLAN.md) (F1–F6).
 
 ## Gate V0.2
 
-Com este checklist ✅ e **1º cliente pagante**, a Onda 7 está fechada e issues **#35+** (V0.2 produto) podem ser priorizadas. Ver [DEV_PLAN.md](./DEV_PLAN.md) e [BACKLOG.md](./BACKLOG.md).
+Com checklist V0.1 ✅, milestone **`V0.2 - Site Conversacional`** ativo no GitHub (#41–#51). Iniciar por **#50** (ISSUE-045 dark mode). Ver [DEVELOPMENT_WAVES_V0.2.md](./DEVELOPMENT_WAVES_V0.2.md) e [BACKLOG.md](./BACKLOG.md) Fase 2.
 
 ---
 

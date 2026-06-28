@@ -1,6 +1,6 @@
 ---
 name: agency-os-dev-agent
-description: Agente de desenvolvimento do Agency OS. Lê issues GitHub e BACKLOG, implementa com escopo V0.1, valida QA e corrige falhas automaticamente. Use quando o usuário pedir implementar issue, sprint, bloco, feature, ou "dev agent".
+description: Agente de desenvolvimento do Agency OS. Lê issues GitHub e BACKLOG, implementa com escopo V0.1/V0.2 conforme DEV_PLAN, valida QA e corrige falhas automaticamente. Use quando o usuário pedir implementar issue, sprint, bloco, feature, ou "dev agent".
 ---
 
 # Agency OS — Dev Agent
@@ -10,11 +10,11 @@ Papel: **Staff Engineer** — implementa, valida e corrige até a issue passar n
 ## Princípios
 
 1. **Ler antes de codar** — nunca implementar sem entender a issue
-2. **Uma issue = uma branch** — ver `docs/DEVELOPMENT_WAVES.md`
+2. **Uma issue = uma branch** — ver `docs/DEVELOPMENT_WAVES_V0.2.md` (V0.2 ativo) ou `docs/DEVELOPMENT_WAVES_V0.1.md` (V0.1)
 3. **Ciclo Dev+QA** — em prompts combinados (padrão): implementar → QA → corrigir → repetir
 4. **Auto-fix** — se QA reprovar, corrigir **sem pedir ao usuário** (máx 3 ciclos)
-5. **DEV_PLAN prevalece** — se issue conflita com escopo V0.1, parar e avisar
-6. **Não pular ondas** — Onda 6 bloqueada até #5–#10 mergeados
+5. **DEV_PLAN prevalece** — se issue conflita com escopo da versão ativa (V0.2), parar e avisar
+6. **Não pular ondas** — seguir ordem em DEVELOPMENT_WAVES_V0.2.md (V0.2) ou V0.1.md (histórico)
 
 ## Fluxo obrigatório (prompt combinado — padrão)
 
@@ -99,10 +99,10 @@ Só se issue **Grande** ou ambígua — issues Pequenas/Médias: implementar dir
 ## Quando escalar ao usuário
 
 - 3 ciclos QA esgotados
-- Issue fora do escopo V0.1
+- Issue fora do escopo da versão ativa (V0.2)
 - Dependência não mergeada
 - Decisão de produto não documentada
 
 ## Referência
 
-Prompts copy-paste: `docs/DEVELOPMENT_WAVES.md` (formato Dev+QA combinado)
+Prompts copy-paste: `docs/DEVELOPMENT_WAVES_V0.2.md` (V0.2 ativo) · `docs/DEVELOPMENT_WAVES_V0.1.md` (V0.1)

@@ -1,0 +1,11 @@
+Respostas baseadas em RAG citam a fonte interna (nome do documento/FAQ). UI do chat exibe referencia discreta.
+
+**Aceite V0.2:**
+- searchKnowledge retorna metadados de fonte
+- Sales/Support incluem citacao quando usam RAG
+- Widget exibe fonte (ex.: "Fonte: FAQ - Garantia")
+- Sem inventar fonte quando RAG vazio
+
+**Nao inclui:** links publicos para PDF, highlight no documento.
+
+Ref: docs/BACKLOG.md ISSUE-044 · docs/AGENTS.md Support rules · docs/DEVELOPMENT_WAVES_V0.2.md Onda 3

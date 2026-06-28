@@ -20,7 +20,9 @@ Em caso de conflito, prevalece nesta ordem:
 | [VISION.md](VISION.md) | Visão e categoria de produto | Estratégia, pitch, roadmap longo |
 | [ROADMAP.md](ROADMAP.md) | Fases 1–5 da plataforma completa | Planejamento trimestral/anual |
 | [DEV_PLAN.md](DEV_PLAN.md) | **Plano executável de desenvolvimento** | **Todo dia de código** |
-| [DEVELOPMENT_WAVES.md](DEVELOPMENT_WAVES.md) | **Ondas, paralelismo e prompts** | **Sprint planning / execução** |
+| [DEVELOPMENT_WAVES.md](DEVELOPMENT_WAVES.md) | **Índice das ondas V0.1 / V0.2** | **Sprint planning / execução** |
+| [DEVELOPMENT_WAVES_V0.1.md](DEVELOPMENT_WAVES_V0.1.md) | Ondas e prompts **V0.1** (histórico) | Referência V0.1 |
+| [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md) | Ondas e prompts **V0.2** (ativo) | **Sprint atual** |
 | [BACKLOG.md](BACKLOG.md) | Issues por fase (GitHub Projects) | Sprint planning |
 | [MVP.md](MVP.md) | O que validar comercialmente | Decisões de escopo |
 | [PRODUCTS.md](PRODUCTS.md) | Planos e modelo comercial | Pricing, features por plano |

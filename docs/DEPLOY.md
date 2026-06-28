@@ -229,4 +229,5 @@ A Vercel (IPv4) pode não resolver o host direto `db.[ref].supabase.co` (IPv6-on
 - [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
 - [PROVISIONING.md](./PROVISIONING.md)
 - [MULTITENANCY.md](./MULTITENANCY.md)
-- [DEVELOPMENT_WAVES.md](./DEVELOPMENT_WAVES.md) — Onda 7
+- [DEVELOPMENT_WAVES_V0.1.md](./DEVELOPMENT_WAVES_V0.1.md) — Onda 7 V0.1
+- [DEVELOPMENT_WAVES_V0.2.md](./DEVELOPMENT_WAVES_V0.2.md) — V0.2 ativo

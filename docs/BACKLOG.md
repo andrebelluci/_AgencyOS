@@ -8,7 +8,7 @@ Importar manualmente ou via `gh issue create`.
 **Milestones:** `V0.1 — Funcionário Digital`, `V0.2 — Site Conversacional`, `V0.3 — Orçamentista IA`
 
 > **Nota estratégica (2026-06):** Os milestones GitHub **não foram renomeados** para preservar issues e cronograma. Na visão de longo prazo ([VISION.md](VISION.md)):
-> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening + dark mode — issues **#35–#45** no milestone `V0.2`
+> - **V0.2 (estratégico)** = Hero Conversacional + Widget Hardening + dark mode — GitHub **#41–#51** · [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md)
 > - **V0.3 (estratégico)** = Site Adaptativo — ainda sem issues dedicadas
 > - **V0.4 (estratégico)** = Site Conversacional completo
 > - Milestone `V0.3 — Orçamentista IA` = automação comercial (#46–#53), paralelo ao Site Adaptativo
@@ -19,7 +19,9 @@ Importar manualmente ou via `gh issue create`.
 
 ## Como importar no GitHub Projects
 
-**Issues V0.1 já criadas:** [#1–#31](https://github.com/andrebelluci/_AgencyOS/issues?q=is%3Aissue+milestone%3A%22V0.1+-+Funcionario+Digital%22) · Onda 7 ops: **#37** (ISSUE-032), **#38** (ISSUE-033), **#39** (ISSUE-034)
+**Issues V0.1:** [#1–#31](https://github.com/andrebelluci/_AgencyOS/issues?q=is%3Aissue+milestone%3A%22V0.1+-+Funcionario+Digital%22) · Onda 7 ops: **#37** (ISSUE-032), **#38** (ISSUE-033), **#39** (ISSUE-034)
+
+**Issues V0.2:** milestone [`V0.2 - Site Conversacional`](https://github.com/andrebelluci/_AgencyOS/milestone/2) · **#41–#51** · prompts em [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md)
 
 > **Mapeamento BACKLOG ↔ GitHub:** números #32–#36 no GitHub foram consumidos por PRs mergeados. As issues operacionais usam IDs lógicos ISSUE-032/033/034 = GitHub **#37/#38/#39**.
 
@@ -32,7 +34,9 @@ gh project create --owner @me --title "Agency OS"
 
 Depois: Projects → Add items → filtrar milestone `V0.1 - Funcionario Digital`.
 
-Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
+Para recriar issues V0.1: `powershell -File scripts/create-github-issues.ps1`
+
+Para recriar issues V0.2: `powershell -File scripts/create-github-issues-v02.ps1`
 
 ---
 
@@ -320,31 +324,144 @@ Para recriar issues: `powershell -File scripts/create-github-issues.ps1`
 
 ---
 
-# FASE 2 — V0.2
+# FASE 2 — V0.2 (Site Conversacional)
 
-> **Bloqueado** até #31 ✅ e 1º cliente pagante. Numeração #35+ (antigas #32–#41 deslocadas pela Onda 7 operacional).
+> **Ativo desde 2026-06-28.** Gate V0.1 (#31) ✅. Ordem de execução em [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md) — **não** segue ordem numérica do BACKLOG.
 
-| ID | Título | Esforço |
-|----|--------|---------|
-| ISSUE-035 | Domínio customizado por tenant | Médio |
-| ISSUE-036 | Hero conversacional (estados pré-definidos) | Médio |
-| ISSUE-037 | iFrame embed alternativo | Pequeno |
-| ISSUE-038 | Busca e filtro em conversas | Pequeno |
-| ISSUE-039 | RBAC owner + operator | Médio |
-| ISSUE-040 | tenant_features + planos | Médio |
-| ISSUE-041 | Landing page Agency OS | Médio |
-| ISSUE-042 | Métricas conversão widget→lead→WhatsApp | Pequeno |
-| ISSUE-043 | Support Agent separado | Médio |
-| ISSUE-044 | RAG: citação de fonte na resposta | Médio |
-| ISSUE-045 | Widget dark mode (theme light/dark/auto) | Pequeno |
+| ID | GitHub | Título | Esforço | Onda V0.2 |
+|----|--------|--------|---------|-----------|
+| ISSUE-045 | [#50](https://github.com/andrebelluci/_AgencyOS/issues/50) | Widget dark mode | Pequeno | **1** (primeira) |
+| ISSUE-038 | [#44](https://github.com/andrebelluci/_AgencyOS/issues/44) | Busca e filtro em conversas | Pequeno | 1 |
+| ISSUE-042 | [#48](https://github.com/andrebelluci/_AgencyOS/issues/48) | Métricas conversão widget→lead→WhatsApp | Pequeno | 1 |
+| ISSUE-036 | [#42](https://github.com/andrebelluci/_AgencyOS/issues/42) | Hero conversacional (estados pré-definidos) | Médio | 2 |
+| ISSUE-037 | [#43](https://github.com/andrebelluci/_AgencyOS/issues/43) | iFrame embed alternativo | Pequeno | 2 |
+| ISSUE-035 | [#41](https://github.com/andrebelluci/_AgencyOS/issues/41) | Domínio customizado por tenant | Médio | 2 |
+| ISSUE-039 | [#45](https://github.com/andrebelluci/_AgencyOS/issues/45) | RBAC owner + operator | Médio | 3 |
+| ISSUE-040 | [#46](https://github.com/andrebelluci/_AgencyOS/issues/46) | tenant_features + planos | Médio | 3 |
+| ISSUE-043 | [#49](https://github.com/andrebelluci/_AgencyOS/issues/49) | Support Agent separado | Médio | 3 |
+| ISSUE-044 | [#51](https://github.com/andrebelluci/_AgencyOS/issues/51) | RAG: citação de fonte na resposta | Médio | 3 |
+| ISSUE-041 | [#47](https://github.com/andrebelluci/_AgencyOS/issues/47) | Landing page Agency OS | Médio | 3 |
+
+### Mapeamento BACKLOG ↔ GitHub (V0.2)
+
+| BACKLOG | GitHub | Branch esperada |
+|---------|--------|-----------------|
+| ISSUE-035 | #41 | `feat/issue-041-custom-domain` |
+| ISSUE-036 | #42 | `feat/issue-042-hero-conversational` |
+| ISSUE-037 | #43 | `feat/issue-043-iframe-embed` |
+| ISSUE-038 | #44 | `feat/issue-044-conversations-search` |
+| ISSUE-039 | #45 | `feat/issue-045-rbac` |
+| ISSUE-040 | #46 | `feat/issue-046-tenant-features` |
+| ISSUE-041 | #47 | `feat/issue-047-landing` |
+| ISSUE-042 | #48 | `feat/issue-048-conversion-metrics` |
+| ISSUE-043 | #49 | `feat/issue-049-support-agent` |
+| ISSUE-044 | #51 | `feat/issue-051-rag-citation` |
+| ISSUE-045 | #50 | `feat/issue-050-widget-dark-mode` |
+
+**Ordem de execução V0.2:** `#50 → #44 → #48 → #42 → (#43 ‖ #41) → #45 → #46 → (#49 ‖ #51) → #47`
+
+---
 
 ### ISSUE-045: Widget dark mode (V0.2)
+- **GitHub:** [#50](https://github.com/andrebelluci/_AgencyOS/issues/50)
 - **Esforço:** Pequeno
 - **Labels:** v0.2, widget, panel
+- **Onda V0.2:** 1 (primeira issue)
 - **Descrição:** Tema do chat no iframe (`/chat`) e painel do embed: `light`, `dark` ou `auto` (`prefers-color-scheme`). Setting em `tenant_settings` + opcional `data-theme` no script embed. **Não** herda CSS do site hospedeiro automaticamente (iframe isolado); `auto` segue preferência do OS/navegador do visitante.
 - **Aceite:** Site escuro + widget configurado `dark` ou `auto` exibe chat coerente; contraste WCAG AA; `primary_color` continua como accent.
-- **Depende de:** #31 ✅, 1º cliente pagante
+- **Depende de:** #31 ✅
 - **Não inclui:** detecção do tema da página via `postMessage` (futuro); fontes/sombras/temas completos (V0.3+).
+
+### ISSUE-038: Busca e filtro em conversas (V0.2)
+- **GitHub:** [#44](https://github.com/andrebelluci/_AgencyOS/issues/44)
+- **Esforço:** Pequeno
+- **Labels:** v0.2, panel
+- **Onda V0.2:** 1
+- **Descrição:** `/conversations` com busca textual e filtros (período, lead vinculado).
+- **Aceite:** Owner encontra conversa por texto em mensagens; filtro de datas funciona; query por `tenant_id`.
+- **Depende de:** #28 (página conversations V0.1)
+
+### ISSUE-042: Métricas conversão widget→lead→WhatsApp (V0.2)
+- **GitHub:** [#48](https://github.com/andrebelluci/_AgencyOS/issues/48)
+- **Esforço:** Pequeno
+- **Labels:** v0.2, panel
+- **Onda V0.2:** 1
+- **Descrição:** Funil no dashboard: sessões chat → mensagens → leads → cliques WhatsApp.
+- **Aceite:** Métricas visíveis por tenant (7d/30d); integra tracking WhatsApp V0.1.
+- **Depende de:** #26, #19
+
+### ISSUE-036: Hero conversacional (V0.2)
+- **GitHub:** [#42](https://github.com/andrebelluci/_AgencyOS/issues/42)
+- **Esforço:** Médio
+- **Labels:** v0.2, widget, ai
+- **Onda V0.2:** 2
+- **Descrição:** Chat inline na hero com estados pré-definidos (serviço, cidade, prazo). CTAs por regras — sem LLM gerando layout.
+- **Aceite:** Snippet hero documentado; fluxo persiste em conversations; lead quando qualificado.
+- **Depende de:** Onda 1 ✅; #18 embed
+
+### ISSUE-037: iFrame embed alternativo (V0.2)
+- **GitHub:** [#43](https://github.com/andrebelluci/_AgencyOS/issues/43)
+- **Esforço:** Pequeno
+- **Labels:** v0.2, widget
+- **Onda V0.2:** 2 (paralela após #42)
+- **Descrição:** Snippet iframe direto para hero/sidebar/página dedicada.
+- **Aceite:** Gerador em /settings; cross-origin OK; WIDGET_CUSTOMIZATION.md atualizado.
+- **Depende de:** #42
+
+### ISSUE-035: Domínio customizado por tenant (V0.2)
+- **GitHub:** [#41](https://github.com/andrebelluci/_AgencyOS/issues/41)
+- **Esforço:** Médio
+- **Labels:** v0.2, infra
+- **Onda V0.2:** 2 (paralela após #42)
+- **Descrição:** `custom_domain` em tenants; middleware resolve antes do subdomínio.
+- **Aceite:** Domínio do cliente resolve tenant; widget e APIs funcionam; DNS documentado.
+- **Depende de:** #4 middleware
+
+### ISSUE-039: RBAC owner + operator (V0.2)
+- **GitHub:** [#45](https://github.com/andrebelluci/_AgencyOS/issues/45)
+- **Esforço:** Médio
+- **Labels:** v0.2, panel, db
+- **Onda V0.2:** 3
+- **Descrição:** Roles `owner` e `operator`; operator vê leads/conversas, não settings críticos.
+- **Aceite:** RLS + guards; operator 403 em settings/knowledge write.
+- **Depende de:** #5 auth; Onda 2 ✅
+
+### ISSUE-040: tenant_features + planos (V0.2)
+- **GitHub:** [#46](https://github.com/andrebelluci/_AgencyOS/issues/46)
+- **Esforço:** Médio
+- **Labels:** v0.2, db, panel
+- **Onda V0.2:** 3
+- **Descrição:** Tabela `tenant_features`; `isFeatureEnabled()`; gates por plano básico.
+- **Aceite:** Features ligáveis por tenant; defaults para existentes.
+- **Não inclui:** billing, Stripe, checkout.
+- **Depende de:** #45
+
+### ISSUE-043: Support Agent separado (V0.2)
+- **GitHub:** [#49](https://github.com/andrebelluci/_AgencyOS/issues/49)
+- **Esforço:** Médio
+- **Labels:** v0.2, ai
+- **Onda V0.2:** 3 (paralela após #46)
+- **Descrição:** Orchestrator roteia suporte/FAQ para Support Agent.
+- **Aceite:** `test:agents` passa; garantia/FAQ → Support; venda → Sales.
+- **Depende de:** #11 agents; #46 recomendado
+
+### ISSUE-044: RAG citação de fonte (V0.2)
+- **GitHub:** [#51](https://github.com/andrebelluci/_AgencyOS/issues/51)
+- **Esforço:** Médio
+- **Labels:** v0.2, ai, widget
+- **Onda V0.2:** 3 (paralela após #46)
+- **Descrição:** Respostas RAG citam documento/FAQ; UI exibe "Fonte: ...".
+- **Aceite:** FAQ no knowledge → citação visível; sem fonte inventada.
+- **Depende de:** #22 searchKnowledge
+
+### ISSUE-041: Landing page Agency OS (V0.2)
+- **GitHub:** [#47](https://github.com/andrebelluci/_AgencyOS/issues/47)
+- **Esforço:** Médio
+- **Labels:** v0.2, panel, infra
+- **Onda V0.2:** 3 (final)
+- **Descrição:** Landing marketing apex: hero, benefícios, CTA, SEO.
+- **Aceite:** Página responsiva em produção; não quebra tenants.
+- **Depende de:** #49/#51 mergeados (recomendado)
 
 ---
 

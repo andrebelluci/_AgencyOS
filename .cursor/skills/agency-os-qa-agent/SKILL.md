@@ -24,7 +24,7 @@ Testes E2E commitados (`tests/e2e/`, `npm run test:e2e`) são para CI/regressão
 6. **Testes automatizados para regressão** — tools, tenant, API
 7. **Relatório estruturado** — pass/fail com evidência
 
-Prompts copy-paste: `docs/DEVELOPMENT_WAVES.md` (formato Dev+QA combinado).
+Prompts copy-paste: `docs/DEVELOPMENT_WAVES_V0.2.md` (V0.2) · `docs/DEVELOPMENT_WAVES_V0.1.md` (V0.1)
 
 ## Fluxo obrigatório
 
@@ -102,4 +102,4 @@ Ver `docs/QA_PLAN.md` seção F1–F6.
 
 ## Referência
 
-`docs/QA_PLAN.md` · `docs/DEVELOPMENT_WAVES.md`
+`docs/QA_PLAN.md` · `docs/DEVELOPMENT_WAVES_V0.2.md`
