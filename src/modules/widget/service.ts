@@ -1,7 +1,10 @@
 import "server-only";
 
 import type { TenantSettings } from "@/lib/db";
-import { resolveInitialMessage } from "@/lib/widget/initial-message";
+import {
+  DEFAULT_ASSISTANT_LABEL,
+  resolveInitialMessage,
+} from "@/lib/widget/initial-message";
 import { resolveEnabledQuickActions } from "@/lib/widget/resolve-quick-actions";
 import { getTenantSettings } from "@/modules/settings/service";
 import { DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
@@ -26,15 +29,18 @@ function toPublicConfig(
   settings: TenantSettings | null,
 ): WidgetPublicConfig {
   const companyName = settings?.companyName ?? tenantName;
+  const assistantLabel = settings?.assistantLabel?.trim() || DEFAULT_ASSISTANT_LABEL;
   const resolvedMessage = resolveInitialMessage(
     settings?.initialMessage,
     companyName,
     settings?.welcomeMessage,
+    assistantLabel,
   );
 
   return {
     public_key: publicKey,
     company_name: companyName,
+    assistant_label: assistantLabel,
     welcome_message: resolvedMessage,
     initial_message: resolvedMessage,
     primary_color: settings?.primaryColor ?? DEFAULT_PRIMARY_COLOR,
@@ -71,6 +77,7 @@ export function buildChatWidgetConfigFromSettings(
 ): {
   publicKey: string;
   companyName: string;
+  assistantLabel: string;
   welcomeMessage: string;
   primaryColor: string;
   whatsapp: string | null;
@@ -82,6 +89,7 @@ export function buildChatWidgetConfigFromSettings(
   return {
     publicKey,
     companyName,
+    assistantLabel: publicConfig.assistant_label,
     welcomeMessage: publicConfig.welcome_message,
     primaryColor: publicConfig.primary_color,
     whatsapp: settings?.whatsapp ?? null,

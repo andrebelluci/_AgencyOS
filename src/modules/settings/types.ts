@@ -8,6 +8,7 @@ export type UpdateTenantSettingsInput = {
   services: string[];
   systemPrompt?: string | null;
   initialMessage?: string | null;
+  assistantLabel?: string | null;
   primaryColor?: string | null;
   quickActions?: QuickActionConfig[];
 };

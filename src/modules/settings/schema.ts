@@ -3,6 +3,7 @@ import { z } from "zod";
 import { QUICK_ACTION_TYPES } from "@/lib/widget/quick-actions";
 import { isValidHexColor } from "@/lib/utils/color";
 import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "@/lib/widget/initial-message";
+import { DEFAULT_ASSISTANT_LABEL } from "@/lib/widget/initial-message";
 
 export const quickActionFormSchema = z.object({
   label: z.string().trim().min(1, "Informe o rótulo da ação.").max(40),
@@ -22,6 +23,11 @@ export const tenantSettingsFormSchema = z.object({
     .trim()
     .min(1, "Informe a mensagem inicial do widget.")
     .max(2000, "Máximo de 2000 caracteres."),
+  assistantLabel: z
+    .string()
+    .trim()
+    .min(1, "Informe como o assistente aparece no widget.")
+    .max(60, "Máximo de 60 caracteres."),
   primaryColor: z
     .string()
     .trim()

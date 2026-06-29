@@ -39,6 +39,7 @@ export async function updateTenantSettingsAction(
       services: parseServicesText(parsed.data.servicesText),
       systemPrompt: parsed.data.systemPrompt || null,
       initialMessage: parsed.data.initialMessage,
+      assistantLabel: parsed.data.assistantLabel,
       primaryColor:
         normalizePrimaryColorInput(parsed.data.primaryColor) ??
         DEFAULT_PRIMARY_COLOR,

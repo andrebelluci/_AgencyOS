@@ -32,6 +32,7 @@ export async function upsertTenantSettings(
       services: input.services,
       systemPrompt: input.systemPrompt ?? null,
       initialMessage: input.initialMessage ?? null,
+      assistantLabel: input.assistantLabel ?? null,
       primaryColor: input.primaryColor ?? null,
       quickActions: input.quickActions ?? [],
     })
@@ -44,6 +45,7 @@ export async function upsertTenantSettings(
         services: input.services,
         systemPrompt: input.systemPrompt ?? null,
         initialMessage: input.initialMessage ?? null,
+        assistantLabel: input.assistantLabel ?? null,
         primaryColor: input.primaryColor ?? null,
         quickActions: input.quickActions ?? [],
       },

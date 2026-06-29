@@ -26,7 +26,20 @@
   var baseUrl = new URL(script.src).origin;
   var position = (script.getAttribute("data-position") || "bottom-right").trim();
   var zIndex = script.getAttribute("data-z-index") || "2147483646";
+  var autoOffset = script.getAttribute("data-auto-offset") !== "false";
+  var manualOffsetBottom = parseInt(
+    script.getAttribute("data-offset-bottom") || "",
+    10,
+  );
   var primaryColor = "#2563eb";
+  var assistantLabel = "Assistente virtual";
+
+  var LAUNCHER_SIZE = 56;
+  var MIN_BOTTOM = 20;
+  var SIDE_PROBE = 140;
+  var BOTTOM_BAND = 220;
+  var STACK_GAP = 16;
+  var offsetResizeTimer = null;
 
   var isOpen = false;
   var root = null;
@@ -69,6 +82,100 @@
     styleEl.setAttribute("data-aos-embed", "true");
     styleEl.textContent = css;
     document.head.appendChild(styleEl);
+  }
+
+  function isEmbedNode(el) {
+    if (!el || !el.closest) {
+      return false;
+    }
+    return Boolean(
+      el.closest("[data-aos-embed-root]") ||
+        el.classList.contains("aos-embed-launcher") ||
+        el.classList.contains("aos-embed-panel") ||
+        el.classList.contains("aos-embed-backdrop"),
+    );
+  }
+
+  function isVisibleFixedElement(el) {
+    var rect = el.getBoundingClientRect();
+    if (rect.width < 8 || rect.height < 8) {
+      return false;
+    }
+
+    var style = window.getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden") {
+      return false;
+    }
+    if (parseFloat(style.opacity || "1") === 0) {
+      return false;
+    }
+
+    return style.position === "fixed" || style.position === "sticky";
+  }
+
+  function detectBottomOffset() {
+    if (!isNaN(manualOffsetBottom) && manualOffsetBottom >= 0) {
+      return manualOffsetBottom;
+    }
+    if (!autoOffset) {
+      return MIN_BOTTOM;
+    }
+
+    var sideRight = position !== "bottom-left";
+    var viewportW = window.innerWidth;
+    var viewportH = window.innerHeight;
+    var neededBottom = MIN_BOTTOM;
+    var nodes = document.body ? document.body.getElementsByTagName("*") : [];
+
+    for (var i = 0; i < nodes.length; i += 1) {
+      var el = nodes[i];
+      if (isEmbedNode(el)) {
+        continue;
+      }
+      if (!isVisibleFixedElement(el)) {
+        continue;
+      }
+
+      var rect = el.getBoundingClientRect();
+      if (rect.bottom < viewportH - BOTTOM_BAND) {
+        continue;
+      }
+
+      if (sideRight) {
+        if (rect.right < viewportW - SIDE_PROBE) {
+          continue;
+        }
+      } else if (rect.left > SIDE_PROBE) {
+        continue;
+      }
+
+      var stackBottom = viewportH - rect.top + STACK_GAP;
+      if (stackBottom > neededBottom) {
+        neededBottom = stackBottom;
+      }
+    }
+
+    var maxBottom = Math.max(MIN_BOTTOM, viewportH - LAUNCHER_SIZE - 20);
+    return Math.min(neededBottom, maxBottom);
+  }
+
+  function applyLauncherOffsets() {
+    if (!launcher || !panel) {
+      return;
+    }
+
+    var bottom = detectBottomOffset();
+    launcher.style.bottom = bottom + "px";
+    panel.style.bottom = bottom + LAUNCHER_SIZE + 12 + "px";
+  }
+
+  function scheduleOffsetUpdate() {
+    if (offsetResizeTimer) {
+      window.clearTimeout(offsetResizeTimer);
+    }
+    offsetResizeTimer = window.setTimeout(function () {
+      applyLauncherOffsets();
+    }, 120);
   }
 
   function positionClass(prefix) {
@@ -148,6 +255,8 @@
     document.body.appendChild(root);
 
     document.addEventListener("keydown", onKeyDown);
+    applyLauncherOffsets();
+    window.addEventListener("resize", scheduleOffsetUpdate);
   }
 
   function onKeyDown(event) {
@@ -207,6 +316,11 @@
 
   function destroy() {
     document.removeEventListener("keydown", onKeyDown);
+    window.removeEventListener("resize", scheduleOffsetUpdate);
+    if (offsetResizeTimer) {
+      window.clearTimeout(offsetResizeTimer);
+      offsetResizeTimer = null;
+    }
     if (root && root.parentNode) {
       root.parentNode.removeChild(root);
     }
@@ -244,6 +358,20 @@
         if (config.primary_color) {
           applyBranding(config.primary_color);
         }
+
+        if (config.assistant_label) {
+          assistantLabel = config.assistant_label;
+          if (launcher) {
+            launcher.setAttribute(
+              "aria-label",
+              "Abrir chat com " + assistantLabel,
+            );
+          }
+        }
+
+        scheduleOffsetUpdate();
+        window.setTimeout(scheduleOffsetUpdate, 600);
+        window.setTimeout(scheduleOffsetUpdate, 2000);
       })
       .catch(function () {
         /* branding is optional */

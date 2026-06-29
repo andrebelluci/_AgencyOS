@@ -156,6 +156,27 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
 
         <CardContent className="space-y-6">
           <div className="space-y-2">
+            <Label htmlFor="assistantLabel">Nome do assistente</Label>
+            <Input
+              id="assistantLabel"
+              disabled={isPending}
+              placeholder="Assistente virtual"
+              aria-invalid={Boolean(errors.assistantLabel)}
+              {...register("assistantLabel")}
+            />
+            <p className="text-xs text-muted-foreground">
+              Subtítulo exibido abaixo do nome da empresa no chat. Ex.:{" "}
+              <em>Concierge</em>, <em>Assistente do casal</em>. Default:{" "}
+              Funcionário Digital.
+            </p>
+            {errors.assistantLabel ? (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.assistantLabel.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="initialMessage">Mensagem inicial</Label>
             <Textarea
               id="initialMessage"
@@ -165,8 +186,9 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
               {...register("initialMessage")}
             />
             <p className="text-xs text-muted-foreground">
-              Use <code className="text-xs">{"{{company_name}}"}</code> para
-              inserir o nome da empresa. Exemplo: {INITIAL_MESSAGE_PLACEHOLDER}
+              Use <code className="text-xs">{"{{company_name}}"}</code> e{" "}
+              <code className="text-xs">{"{{assistant_label}}"}</code> como
+              variáveis. Exemplo: {INITIAL_MESSAGE_PLACEHOLDER}
             </p>
             {errors.initialMessage ? (
               <p className="text-sm text-destructive" role="alert">

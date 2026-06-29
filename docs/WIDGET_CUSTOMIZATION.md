@@ -2,13 +2,29 @@
 
 Configurações em **Settings → Widget** e colunas em `tenant_settings`.
 
+## Nome do assistente (`assistant_label`)
+
+- Subtítulo abaixo do nome da empresa no cabeçalho do chat.
+- Configurável em **Settings → Widget → Nome do assistente**.
+- Default: `Funcionário Digital` (tenants antigos sem valor usam o mesmo fallback).
+- API: `GET /api/widget/config` → `assistant_label`
+- Também disponível na mensagem inicial via `{{assistant_label}}`.
+
+**Exemplos por segmento:**
+
+| Segmento | Sugestão |
+|----------|----------|
+| Casamento / eventos | `Assistente do casal`, `Concierge` |
+| Acabamentos / reforma | `Funcionário Digital` (default) |
+| Clínica / estética | `Atendimento virtual` |
+
 ## Mensagem inicial (`initial_message`)
 
-- Template com `{{company_name}}` substituído pelo nome da empresa.
+- Template com `{{company_name}}` e `{{assistant_label}}` substituídos automaticamente.
 - Exibida como primeira mensagem do assistente no widget (antes do histórico).
 - Default (novos tenants):
 
-  > Olá! Sou o Funcionário Digital da {{company_name}}. Posso ajudar você a conhecer nossos serviços, tirar dúvidas ou solicitar um orçamento.
+  > Olá! Sou o {{assistant_label}} da {{company_name}}. Posso ajudar você a conhecer nossos serviços, tirar dúvidas ou solicitar um orçamento.
 
 - Fallback: `welcome_message` (legado) → template padrão.
 - Resolução: `src/lib/widget/initial-message.ts`
@@ -61,7 +77,29 @@ Snippet padrão (Settings → código embed):
 <script src="https://app.agencyos.com.br/widget/embed.js" data-key="PUBLIC_KEY"></script>
 ```
 
-O script injeta o launcher e um painel com iframe apontando para `/chat?key=…`. O site do cliente **não** precisa forkar o embed para personalizar cor (`primary_color` via API) nem conteúdo (Settings).
+O script injeta o launcher e um painel com iframe apontando para `/chat?key=…`. O site do cliente **não** precisa forkar o embed para personalizar cor (`primary_color` via API), nome do assistente (`assistant_label`) nem conteúdo (Settings).
+
+### Posição do botão flutuante (auto-offset)
+
+Por padrão, o embed **detecta** outros elementos `fixed`/`sticky` no canto inferior (ex.: botão WhatsApp do site) e **sobe** o launcher para não sobrepor.
+
+| Atributo | Default | Descrição |
+|----------|---------|-----------|
+| `data-auto-offset` | `true` (implícito) | `false` desliga a detecção |
+| `data-offset-bottom` | — | Offset fixo em px (sobrescreve auto) |
+| `data-position` | `bottom-right` | `bottom-left` também suportado |
+
+Exemplo manual (forçar 96px do fundo):
+
+```html
+<script
+  src="https://app.agencyos.com.br/widget/embed.js"
+  data-key="PUBLIC_KEY"
+  data-offset-bottom="96"
+></script>
+```
+
+A detecção roda na carga, após buscar `/api/widget/config`, no `resize` e com retentativas tardias (botões que carregam depois).
 
 ---
 
