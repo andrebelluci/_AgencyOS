@@ -1,15 +1,26 @@
 ---
 name: implement-sprint
-description: Implementa blocos/sprints do DEV_PLAN.md do Agency OS. Use quando o usuário pedir implementar sprint, bloco, fase V0.1, ou iniciar desenvolvimento de uma issue do BACKLOG.
+description: Implementa blocos/sprints do DEV_PLAN.md do Agency OS. Use quando o usuário pedir implementar sprint, bloco, fase V0.1/V0.2, ou iniciar desenvolvimento de uma issue do BACKLOG.
 ---
 
 # Implement Sprint — Agency OS
 
 ## Antes de codar
 
-1. Ler `docs/DEV_PLAN.md` — identificar bloco e issues em `docs/BACKLOG.md`
-2. Verificar gate do bloco anterior está atendido
-3. Confirmar escopo V0.1 — não adicionar tabelas/features proibidas
+1. Ler `docs/DEV_PLAN.md` — identificar versão ativa (V0.2) e issues em `docs/BACKLOG.md`
+2. Ler ondas e prompt da issue: `docs/DEVELOPMENT_WAVES_V0.2.md` (ativo) ou `DEVELOPMENT_WAVES_V0.1.md` (histórico)
+3. Verificar gate da onda anterior está atendido
+4. Confirmar escopo da versão — V0.2: issues #41–#51; não adiantar V0.3
+
+## V0.2 — ordem atual
+
+```
+Onda 1: #50 → #44 → #48
+Onda 2: #42 → (#43 ‖ #41)
+Onda 3: #45 → #46 → (#49 ‖ #51) → #47
+```
+
+**Não reimplementar 031E** (`assistant_label`, auto-offset) — já em `main`.
 
 ## Durante implementação
 
@@ -17,8 +28,9 @@ description: Implementa blocos/sprints do DEV_PLAN.md do Agency OS. Use quando o
 - `tenant_id` em toda operação de banco
 - Páginas finas, lógica em `src/modules/`
 - Zod + tipagem forte
+- QA: `npm run build && npm run lint` + `npm run test:e2e:no-ai` quando widget/painel
 
-## Checklist por bloco
+## Checklist por bloco (V0.1 — referência)
 
 ### Bloco 0
 - [ ] Next.js + Supabase + Drizzle
@@ -51,4 +63,4 @@ description: Implementa blocos/sprints do DEV_PLAN.md do Agency OS. Use quando o
 
 ## Ao concluir issue
 
-Marcar critério de aceite do BACKLOG. Não commitar sem pedido do usuário.
+Marcar critério de aceite do BACKLOG (seção V0.2 quando aplicável). Não commitar sem pedido do usuário.

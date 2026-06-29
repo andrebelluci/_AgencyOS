@@ -276,6 +276,19 @@ Para recriar issues V0.2: `powershell -File scripts/create-github-issues-v02.ps1
 - **Descrição:** `primary_color` editável via color picker + HEX no Settings; validação `#RRGGBB`; aplicado no embed (launcher), header, botões e ações do widget.
 - **Aceite:** Cor salva reflete no widget sem redeploy de código; default para novos tenants.
 
+### ISSUE-031E: Nome do assistente + auto-offset do launcher (pós-#31)
+- **Esforço:** Pequeno
+- **Labels:** v0.1, widget, panel
+- **Status:** ✅ Entregue em `main` (`4e8c862`, `e5433af`) — **não** é escopo V0.2 (decisão D19)
+- **Descrição:**
+  - **031E-a:** `tenant_settings.assistant_label` — nome exibido no cabeçalho do chat; placeholder `{{assistant_label}}` na mensagem inicial; exposto em `GET /api/widget/config`. Migração `0010_assistant_label`.
+  - **031E-b:** Auto-offset do launcher em `embed.js` — detecta FABs `fixed`/`sticky` no canto inferior e reposiciona o botão; override `data-offset-bottom` / `data-auto-offset="false"`.
+  - **031E-c (fix):** Login owner no apex Vercel — `users.tenant_id` prevalece sobre slug apex (`e5433af`).
+- **Aceite:** Owner edita nome do assistente em Settings → Widget; widget e `/chat` exibem `assistant_label` (não hardcodar "Funcionário Digital"); mensagem inicial resolve `{{assistant_label}}`; launcher não sobrepõe FAB do site quando auto-offset ativo.
+- **V0.2:** issues #50, #43 **consomem** `/api/widget/config` — não reimplementar label nem offset.
+- **Depende de:** #31
+- **Docs:** [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · [OPERATIONS.md](OPERATIONS.md) · [DEVELOPMENT_WAVES_V0.2.md § 031E](DEVELOPMENT_WAVES_V0.2.md#entregas-v01-já-feitas--não-reimplementar-na-v02)
+
 ---
 
 ## Bloco 6 — Operação pré-deploy (Onda 7)

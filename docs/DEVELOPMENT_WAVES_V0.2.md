@@ -184,7 +184,10 @@ git checkout main && git pull && git checkout -b feat/issue-050-widget-dark-mode
 - MCP Browser: /chat?key= com theme dark e auto
 - Contraste legível (WCAG AA spot check)
 - Settings persiste tema; widget reflete sem redeploy
+- `assistant_label` e `primary_color` intactos após mudança de tema (031E)
+- npm run db:migrate (migration widget_theme)
 - npm run build && npm run lint
+- npm run test:e2e:no-ai (regressão V0.1 — ver docs/TEST.md)
 
 ## Fase 3 — Auto-fix
 Máx 3 ciclos.
@@ -263,11 +266,11 @@ Relatório ✅/❌.
 ```
 QA Agent: smoke gate Onda 1 V0.2 (main atualizado).
 
-Critérios V0.2:
+Critérios: docs/QA_PLAN.md F7.1
 - Widget dark/auto em /chat?key=
 - Busca em /conversations
 - Métricas no dashboard
-npm run build && npm run lint
+npm run build && npm run lint && npm run test:e2e:no-ai
 Relatório ✅/❌ antes de iniciar Onda 2.
 ```
 
@@ -398,11 +401,13 @@ Relatório ✅/❌.
 ### Smoke gate Onda 2 V0.2
 
 ```
-QA Agent: smoke gate Onda 2 V0.2.
+QA Agent: smoke gate Onda 2 V0.2 (main atualizado).
 
+Critérios: docs/QA_PLAN.md F7.2
 - Hero com estados em demo page
 - iframe snippet funcional
 - custom_domain documentado e testável
+- F7.1 ainda passa
 Relatório ✅/❌ antes de Onda 3.
 ```
 
@@ -589,8 +594,9 @@ Critérios: exceder quota → 429 com mensagem clara; logs com tenant_id.
 ### Smoke gate final V0.2
 
 ```
-QA Agent: smoke gate V0.2 completo (main).
+QA Agent: smoke gate V0.2 completo (main atualizado).
 
+Critérios: docs/QA_PLAN.md F7.3
 Fluxo integrado V0.2:
 1. Widget dark + hero + iframe em demo
 2. Domínio custom (se configurado)
@@ -598,8 +604,7 @@ Fluxo integrado V0.2:
 4. Support Agent + citação RAG no chat
 5. Landing apex
 6. Métricas dashboard
-
-docs/QA_PLAN.md — adicionar seção F7 V0.2 quando existir.
+7. F1–F6 + F7.1 + F7.2 passam (npm run test:e2e:no-ai)
 Relatório ✅ fecha milestone V0.2.
 ```
 

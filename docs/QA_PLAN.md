@@ -1,6 +1,6 @@
 # QA Plan — Agency OS
 
-Estratégia de qualidade para V0.1. Complementa o Dev Agent e QA Agent do Cursor.
+Estratégia de qualidade para **V0.1** (concluído) e **V0.2** (ativo). Complementa o Dev Agent e QA Agent do Cursor.
 
 ---
 
@@ -68,6 +68,37 @@ Não buscar 100% coverage no V0.1. Cobrir **caminhos que geram receita**.
 
 ### F6 — Multi-tenant
 - [ ] Tenant A não acessa dados de Tenant B (RLS + app)
+
+---
+
+## Fluxos de teste V0.2 (smoke F7)
+
+Referência de ondas: [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).  
+Regressão V0.1: manter **F1–F6** passando (`npm run test:e2e:no-ai` ou `npm run test:e2e:smoke`).
+
+### F7.1 — Onda 1 V0.2 (após #50, #44, #48 em `main`)
+
+- [ ] **Dark mode (#50):** Settings → tema `light` / `dark` / `auto`; `/chat?key=` reflete tema; `primary_color` como accent; `assistant_label` preservado (031E)
+- [ ] **Busca conversas (#44):** `/conversations` — busca textual encontra mensagem; filtro por período funciona
+- [ ] **Métricas (#48):** Dashboard exibe funil widget → mensagens → leads → WhatsApp (7d/30d)
+- [ ] `npm run build && npm run lint && npm run test:e2e:no-ai`
+
+### F7.2 — Onda 2 V0.2 (após #42, #43, #41 em `main`)
+
+- [ ] **Hero (#42):** Demo com chat inline na hero; estados pré-definidos; lead ou WhatsApp ao final
+- [ ] **iFrame (#43):** Snippet iframe em /settings carrega `/chat?key=` cross-origin
+- [ ] **Domínio (#41):** Host custom resolve tenant (dev: Host header ou hosts file); widget e APIs OK
+- [ ] F7.1 ainda passa
+
+### F7.3 — Milestone V0.2 completo (após Onda 3)
+
+- [ ] **RBAC (#45):** Operator acessa leads/conversas; 403 em settings/knowledge write
+- [ ] **Features (#46):** `tenant_features` liga/desliga capability esperada
+- [ ] **Support (#49):** Pergunta garantia/FAQ → Support Agent; venda → Sales
+- [ ] **Citação RAG (#51):** Resposta com FAQ cita fonte visível no chat
+- [ ] **Landing (#47):** Página marketing apex responsiva com CTA
+- [ ] F1–F6 + F7.1 + F7.2 passam
+- [ ] Hardening complementar (quotas tenant) documentado/testado se entregue
 
 ---
 
@@ -154,11 +185,12 @@ npm run test:e2e:report
 "Dev Agent: implemente e valide ISSUE-045"  → ver prompt #50 em DEVELOPMENT_WAVES_V0.2.md
 
 # Só validar (issue já implementada)
-"QA Agent: valide ISSUE-017 na branch feat/issue-017-widget-config"
+"QA Agent: valide ISSUE-045 (GitHub #50) na branch feat/issue-050-widget-dark-mode"
 "QA Agent: rode smoke F1–F6 com Playwright"
+"QA Agent: rode smoke F7.1 V0.2"   → após Onda 1 mergeada
 ```
 
-Smoke gates (várias issues): Onda 5/6 V0.1 — ver DEVELOPMENT_WAVES_V0.1.md; Ondas 1–3 V0.2 — ver DEVELOPMENT_WAVES_V0.2.md.
+Smoke gates: Onda 5/6 **V0.1** — `DEVELOPMENT_WAVES_V0.1.md`; Ondas 1–3 **V0.2** — `DEVELOPMENT_WAVES_V0.2.md` · critérios **F7.1–F7.3** abaixo.
 
 ---
 
