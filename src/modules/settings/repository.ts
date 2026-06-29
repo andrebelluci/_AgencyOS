@@ -34,6 +34,7 @@ export async function upsertTenantSettings(
       initialMessage: input.initialMessage ?? null,
       assistantLabel: input.assistantLabel ?? null,
       primaryColor: input.primaryColor ?? null,
+      widgetTheme: input.widgetTheme ?? "light",
       quickActions: input.quickActions ?? [],
     })
     .onConflictDoUpdate({
@@ -47,6 +48,7 @@ export async function upsertTenantSettings(
         initialMessage: input.initialMessage ?? null,
         assistantLabel: input.assistantLabel ?? null,
         primaryColor: input.primaryColor ?? null,
+        widgetTheme: input.widgetTheme ?? "light",
         quickActions: input.quickActions ?? [],
       },
     })

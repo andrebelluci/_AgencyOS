@@ -1,4 +1,5 @@
 import type { QuickActionConfig } from "@/lib/widget/quick-actions";
+import type { WidgetTheme } from "@/lib/widget/theme";
 import { normalizeHexColor } from "@/lib/utils/color";
 
 export type UpdateTenantSettingsInput = {
@@ -10,6 +11,7 @@ export type UpdateTenantSettingsInput = {
   initialMessage?: string | null;
   assistantLabel?: string | null;
   primaryColor?: string | null;
+  widgetTheme?: WidgetTheme;
   quickActions?: QuickActionConfig[];
 };
 

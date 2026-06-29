@@ -1,6 +1,7 @@
 import { getClientEnv } from "@/env";
 import { requireOwnerTenant } from "@/lib/auth/require-owner";
 import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "@/lib/widget/initial-message";
+import { parseWidgetTheme } from "@/lib/widget/theme";
 import { DEFAULT_ASSISTANT_LABEL, DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
 import {
   formatServicesText,
@@ -27,6 +28,7 @@ function toFormValues(
       DEFAULT_INITIAL_MESSAGE_TEMPLATE,
     assistantLabel: settings?.assistantLabel ?? DEFAULT_ASSISTANT_LABEL,
     primaryColor: settings?.primaryColor ?? DEFAULT_PRIMARY_COLOR,
+    widgetTheme: parseWidgetTheme(settings?.widgetTheme),
     quickActions: settings?.quickActions ?? [],
   };
 }

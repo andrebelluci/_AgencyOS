@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { QUICK_ACTION_TYPES } from "@/lib/widget/quick-actions";
+import { WIDGET_THEMES } from "@/lib/widget/theme";
 import { isValidHexColor } from "@/lib/utils/color";
 import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "@/lib/widget/initial-message";
 import { DEFAULT_ASSISTANT_LABEL } from "@/lib/widget/initial-message";
@@ -34,6 +35,7 @@ export const tenantSettingsFormSchema = z.object({
     .refine((value) => !value || isValidHexColor(value), {
       message: "Cor inválida. Use o formato #RRGGBB.",
     }),
+  widgetTheme: z.enum(WIDGET_THEMES),
   quickActions: z.array(quickActionFormSchema).max(6),
 });
 

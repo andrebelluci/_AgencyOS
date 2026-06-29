@@ -43,6 +43,7 @@ export async function updateTenantSettingsAction(
       primaryColor:
         normalizePrimaryColorInput(parsed.data.primaryColor) ??
         DEFAULT_PRIMARY_COLOR,
+      widgetTheme: parsed.data.widgetTheme,
       quickActions: parsed.data.quickActions,
     };
 

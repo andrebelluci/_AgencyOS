@@ -21,6 +21,7 @@ export const tenantSettings = pgTable("tenant_settings", {
   welcomeMessage: text("welcome_message"),
   initialMessage: text("initial_message"),
   assistantLabel: text("assistant_label"),
+  widgetTheme: text("widget_theme").default("light").notNull(),
   quickActions: jsonb("quick_actions")
     .$type<QuickActionConfig[]>()
     .default([])

@@ -3,6 +3,7 @@ import {
   DEFAULT_ASSISTANT_LABEL,
   DEFAULT_INITIAL_MESSAGE_TEMPLATE,
 } from "@/lib/widget/initial-message";
+import { DEFAULT_WIDGET_THEME } from "@/lib/widget/theme";
 
 export const DEFAULT_PRIMARY_COLOR = "#1e40af";
 export const DEFAULT_WELCOME_MESSAGE =
@@ -18,6 +19,7 @@ export function buildDefaultTenantSettings(companyName: string) {
     welcomeMessage: DEFAULT_WELCOME_MESSAGE,
     initialMessage: DEFAULT_INITIAL_MESSAGE_TEMPLATE,
     assistantLabel: DEFAULT_ASSISTANT_LABEL,
+    widgetTheme: DEFAULT_WIDGET_THEME,
     quickActions: [] as QuickActionConfig[],
     primaryColor: DEFAULT_PRIMARY_COLOR,
     whatsapp: null as string | null,

@@ -31,8 +31,12 @@
     script.getAttribute("data-offset-bottom") || "",
     10,
   );
+  var embedThemeOverride = (script.getAttribute("data-theme") || "").trim().toLowerCase();
   var primaryColor = "#2563eb";
   var assistantLabel = "Assistente virtual";
+  var widgetTheme = "light";
+  var prefersDark = false;
+  var themeMediaQuery = null;
 
   var LAUNCHER_SIZE = 56;
   var MIN_BOTTOM = 20;
@@ -52,6 +56,79 @@
   var chatUrl =
     baseUrl + "/chat?key=" + encodeURIComponent(publicKey);
 
+  function normalizeTheme(value) {
+    if (value === "dark" || value === "auto" || value === "light") {
+      return value;
+    }
+    return "light";
+  }
+
+  function resolveTheme() {
+    if (
+      embedThemeOverride === "light" ||
+      embedThemeOverride === "dark" ||
+      embedThemeOverride === "auto"
+    ) {
+      return embedThemeOverride;
+    }
+    return normalizeTheme(widgetTheme);
+  }
+
+  function isDarkTheme() {
+    var theme = resolveTheme();
+    if (theme === "dark") {
+      return true;
+    }
+    if (theme === "light") {
+      return false;
+    }
+    return prefersDark;
+  }
+
+  function buildChatUrl() {
+    var url = chatUrl;
+    if (
+      embedThemeOverride === "light" ||
+      embedThemeOverride === "dark" ||
+      embedThemeOverride === "auto"
+    ) {
+      url += "&theme=" + encodeURIComponent(embedThemeOverride);
+    }
+    return url;
+  }
+
+  function applyPanelTheme() {
+    if (!panel) {
+      return;
+    }
+
+    var dark = isDarkTheme();
+    panel.setAttribute("data-aos-theme", dark ? "dark" : "light");
+    if (backdrop) {
+      backdrop.setAttribute("data-aos-theme", dark ? "dark" : "light");
+    }
+  }
+
+  function bindThemeMediaQuery() {
+    if (!window.matchMedia) {
+      return;
+    }
+
+    themeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    prefersDark = themeMediaQuery.matches;
+
+    var onThemeChange = function () {
+      prefersDark = themeMediaQuery.matches;
+      applyPanelTheme();
+    };
+
+    if (themeMediaQuery.addEventListener) {
+      themeMediaQuery.addEventListener("change", onThemeChange);
+    } else if (themeMediaQuery.addListener) {
+      themeMediaQuery.addListener(onThemeChange);
+    }
+  }
+
   var css =
     ".aos-embed-root{position:fixed;z-index:" +
     zIndex +
@@ -64,12 +141,15 @@
     ".aos-embed-bottom-left{bottom:20px;left:20px}" +
     ".aos-embed-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.4);opacity:0;pointer-events:none;transition:opacity .2s ease}" +
     ".aos-embed-backdrop.aos-open{opacity:1;pointer-events:auto}" +
-    ".aos-embed-panel{position:fixed;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:16px;box-shadow:0 24px 48px rgba(15,23,42,.2);opacity:0;transform:translateY(12px) scale(.98);pointer-events:none;transition:opacity .2s ease,transform .2s ease}" +
+    ".aos-embed-panel{position:fixed;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:16px;box-shadow:0 24px 48px rgba(15,23,42,.2);opacity:0;transform:translateY(12px) scale(.98);pointer-events:none;transition:opacity .2s ease,transform .2s ease,background-color .2s ease}" +
+    ".aos-embed-panel[data-aos-theme=\"dark\"]{background:#0f172a;box-shadow:0 24px 48px rgba(0,0,0,.45)}" +
     ".aos-embed-panel.aos-open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}" +
     ".aos-embed-panel-bottom-right{bottom:88px;right:20px;width:min(400px,calc(100vw - 32px));height:min(640px,calc(100vh - 112px))}" +
     ".aos-embed-panel-bottom-left{bottom:88px;left:20px;width:min(400px,calc(100vw - 32px));height:min(640px,calc(100vh - 112px))}" +
     ".aos-embed-close{align-self:flex-end;margin:8px 8px 0;border:none;background:transparent;color:#64748b;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}" +
+    ".aos-embed-panel[data-aos-theme=\"dark\"] .aos-embed-close{color:#94a3b8}" +
     ".aos-embed-close:hover{background:#f1f5f9;color:#0f172a}" +
+    ".aos-embed-panel[data-aos-theme=\"dark\"] .aos-embed-close:hover{background:#1e293b;color:#f8fafc}" +
     ".aos-embed-close:focus-visible{outline:2px solid rgba(37,99,235,.45);outline-offset:1px}" +
     ".aos-embed-frame{flex:1;border:none;width:100%;min-height:0}" +
     "@media (max-width:480px){.aos-embed-panel-bottom-right,.aos-embed-panel-bottom-left{inset:0;width:100%;height:100%;border-radius:0;bottom:0;right:0;left:0}.aos-embed-backdrop.aos-open{background:rgba(15,23,42,.55)}}";
@@ -255,6 +335,8 @@
     document.body.appendChild(root);
 
     document.addEventListener("keydown", onKeyDown);
+    bindThemeMediaQuery();
+    applyPanelTheme();
     applyLauncherOffsets();
     window.addEventListener("resize", scheduleOffsetUpdate);
   }
@@ -282,9 +364,10 @@
     }
 
     if (!iframe.src) {
-      iframe.src = chatUrl;
+      iframe.src = buildChatUrl();
     }
 
+    applyPanelTheme();
     isOpen = true;
     backdrop.classList.add("aos-open");
     panel.classList.add("aos-open");
@@ -369,6 +452,11 @@
           }
         }
 
+        if (config.theme) {
+          widgetTheme = normalizeTheme(config.theme);
+          applyPanelTheme();
+        }
+
         scheduleOffsetUpdate();
         window.setTimeout(scheduleOffsetUpdate, 600);
         window.setTimeout(scheduleOffsetUpdate, 2000);
@@ -390,7 +478,7 @@
       return publicKey;
     },
     getChatUrl: function () {
-      return chatUrl;
+      return buildChatUrl();
     },
   };
 })();

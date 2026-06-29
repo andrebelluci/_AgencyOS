@@ -5,6 +5,7 @@ import {
   DEFAULT_ASSISTANT_LABEL,
   resolveInitialMessage,
 } from "@/lib/widget/initial-message";
+import { parseWidgetTheme } from "@/lib/widget/theme";
 import { resolveEnabledQuickActions } from "@/lib/widget/resolve-quick-actions";
 import { getTenantSettings } from "@/modules/settings/service";
 import { DEFAULT_PRIMARY_COLOR } from "@/modules/provisioning/defaults";
@@ -44,6 +45,7 @@ function toPublicConfig(
     welcome_message: resolvedMessage,
     initial_message: resolvedMessage,
     primary_color: settings?.primaryColor ?? DEFAULT_PRIMARY_COLOR,
+    theme: parseWidgetTheme(settings?.widgetTheme),
     logo_url: settings?.logoUrl ?? null,
     quick_actions: resolveEnabledQuickActions(
       settings?.quickActions,
@@ -80,6 +82,7 @@ export function buildChatWidgetConfigFromSettings(
   assistantLabel: string;
   welcomeMessage: string;
   primaryColor: string;
+  theme: WidgetPublicConfig["theme"];
   whatsapp: string | null;
   quickActions: WidgetPublicConfig["quick_actions"];
 } {
@@ -92,6 +95,7 @@ export function buildChatWidgetConfigFromSettings(
     assistantLabel: publicConfig.assistant_label,
     welcomeMessage: publicConfig.welcome_message,
     primaryColor: publicConfig.primary_color,
+    theme: publicConfig.theme,
     whatsapp: settings?.whatsapp ?? null,
     quickActions: publicConfig.quick_actions,
   };

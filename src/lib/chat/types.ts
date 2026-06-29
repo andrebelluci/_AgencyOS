@@ -1,4 +1,5 @@
 import type { ResolvedQuickAction } from "@/lib/widget/quick-actions";
+import type { WidgetTheme } from "@/lib/widget/theme";
 
 export type ChatUiMessage = {
   id: string;
@@ -13,6 +14,7 @@ export type ChatWidgetConfig = {
   assistantLabel: string;
   welcomeMessage: string;
   primaryColor?: string | null;
+  theme: WidgetTheme;
   whatsapp?: string | null;
   quickActions?: ResolvedQuickAction[];
 };

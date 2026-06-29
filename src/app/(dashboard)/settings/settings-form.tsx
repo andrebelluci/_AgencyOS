@@ -211,6 +211,31 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
             )}
           />
 
+          <div className="space-y-2">
+            <Label htmlFor="widgetTheme">Tema do widget</Label>
+            <select
+              id="widgetTheme"
+              disabled={isPending}
+              aria-invalid={Boolean(errors.widgetTheme)}
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
+              {...register("widgetTheme")}
+            >
+              <option value="light">Claro</option>
+              <option value="dark">Escuro</option>
+              <option value="auto">Automático (sistema)</option>
+            </select>
+            <p className="text-xs text-muted-foreground">
+              Aplica ao chat em <code className="text-xs">/chat</code> e ao painel
+              do embed. <em>Automático</em> segue{" "}
+              <code className="text-xs">prefers-color-scheme</code> do visitante.
+            </p>
+            {errors.widgetTheme ? (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.widgetTheme.message}
+              </p>
+            ) : null}
+          </div>
+
           <QuickActionsEditor
             control={control}
             errors={errors}

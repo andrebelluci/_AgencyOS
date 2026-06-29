@@ -58,12 +58,37 @@ JSON em `tenant_settings` — sem tabela dedicada (migrável depois).
 
 ## Identidade visual (`primary_color`)
 
-- Única cor de marca no V0.1 (sem temas, fontes ou modo escuro).
-- **Modo escuro:** planejado V0.2 — [ISSUE-045](BACKLOG.md#issue-045-widget-dark-mode-v02) (`light` / `dark` / `auto`); ver decisão D18 em [DEV_PLAN.md](DEV_PLAN.md).
+- Cor de marca do tenant — usada como **accent** em temas claro e escuro.
 - Formato: `#RRGGBB` (validado no painel).
 - Aplicada em: botão flutuante (`embed.js`), cabeçalho do chat, botão enviar, CTA e chips de ação rápida.
 - Default: `#1e40af`
 - API pública: `GET /api/widget/config` → `primary_color`
+
+## Tema do widget (`widget_theme`) — V0.2 (ISSUE-045)
+
+- Valores: `light` | `dark` | `auto`
+- Configurável em **Settings → Widget → Tema do widget**
+- Default: `light` (tenants antigos sem valor)
+- API: `GET /api/widget/config` → `theme`
+- `auto` segue `prefers-color-scheme` do visitante (OS/navegador)
+- O iframe **não** herda o CSS escuro do site hospedeiro — configure `dark` ou `auto` quando o site do cliente for escuro
+- Contraste pensado para WCAG AA com variáveis Shadcn (`globals.css` `.dark`)
+
+### Override no embed (`data-theme`)
+
+Opcional no script do site — sobrescreve o setting do tenant **somente naquela página**:
+
+```html
+<script
+  src="https://app.agencyos.com.br/widget/embed.js"
+  data-key="PUBLIC_KEY"
+  data-theme="dark"
+></script>
+```
+
+Valores: `light`, `dark`, `auto`. Sem o atributo, usa o tema salvo em Settings.
+
+O painel do embed (chrome fora do iframe) acompanha o mesmo tema resolvido.
 
 ## Sales Agent (031C)
 
@@ -98,8 +123,19 @@ Por padrão, o embed **detecta** outros elementos `fixed`/`sticky` no canto infe
 | `data-auto-offset` | `true` (implícito) | `false` desliga a detecção |
 | `data-offset-bottom` | — | Offset fixo em px (sobrescreve auto) |
 | `data-position` | `bottom-right` | `bottom-left` também suportado |
+| `data-theme` | — | Override opcional: `light`, `dark` ou `auto` (sobrescreve Settings) |
 
-Exemplo manual (forçar 96px do fundo):
+Exemplo com tema escuro forçado no site:
+
+```html
+<script
+  src="https://app.agencyos.com.br/widget/embed.js"
+  data-key="PUBLIC_KEY"
+  data-theme="dark"
+></script>
+```
+
+Exemplo manual de offset (forçar 96px do fundo):
 
 ```html
 <script
@@ -136,7 +172,5 @@ O launcher expõe a classe `.aos-embed-launcher`. O site pode aplicar efeitos **
 - Não depender de override para funcionalidade (abrir chat, cor da marca, ícone).
 
 Animações **ricas** que fazem parte do produto (avatar, modos sidebar/fullscreen, voice) ficam no roadmap V0.2+ — ver [DEV_PLAN.md](DEV_PLAN.md) e [PRODUCTS.md](PRODUCTS.md).
-
-**Modo escuro do chat (V0.2 — ISSUE-045):** tema `light` / `dark` / `auto` por tenant; opcional `data-theme` no embed. O iframe **não** herda o CSS escuro do site hospedeiro — configure `dark` ou `auto` quando disponível.
 
 Detalhes visuais gerais: [DESIGN.md](DESIGN.md).

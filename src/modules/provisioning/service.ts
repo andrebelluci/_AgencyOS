@@ -215,6 +215,7 @@ async function ensureTenantSettings(
       initial_message,
       assistant_label,
       quick_actions,
+      widget_theme,
       primary_color,
       whatsapp
     )
@@ -227,6 +228,7 @@ async function ensureTenantSettings(
       ${defaults.initialMessage},
       ${defaults.assistantLabel},
       ${sql.json(defaults.quickActions)},
+      ${defaults.widgetTheme},
       ${defaults.primaryColor},
       ${defaults.whatsapp}
     )
