@@ -12,10 +12,8 @@ export async function linkUserToTenant(
   const existing = await findUserById(authUser.id);
 
   if (existing) {
-    if (existing.tenantId !== tenantId) {
-      throw new Error("User is linked to a different tenant.");
-    }
-
+    // Hostname may resolve to PLATFORM_APEX_TENANT_SLUG on *.vercel.app while the
+    // owner was provisioned on another slug — trust the DB link from provisioning.
     return existing;
   }
 

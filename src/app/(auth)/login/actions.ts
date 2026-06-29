@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { linkUserToTenant } from "@/lib/auth/link-user-tenant";
 import { resolveTenantForAuth } from "@/lib/auth/resolve-tenant-for-auth";
 import { createClient } from "@/lib/supabase/server";
+import { findUserById } from "@/modules/users/repository";
 
 export type LoginState = {
   error?: string;
@@ -36,8 +37,11 @@ export async function login(
     return { error: "Não foi possível iniciar a sessão." };
   }
 
-  const tenant = await resolveTenantForAuth();
-  await linkUserToTenant(data.user, tenant.id);
+  const existingUser = await findUserById(data.user.id);
+  if (!existingUser) {
+    const tenant = await resolveTenantForAuth();
+    await linkUserToTenant(data.user, tenant.id);
+  }
 
   redirect(next.startsWith("/") ? next : "/dashboard");
 }

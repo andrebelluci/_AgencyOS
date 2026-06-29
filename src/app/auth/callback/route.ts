@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { linkUserToTenant } from "@/lib/auth/link-user-tenant";
 import { resolveTenantForAuth } from "@/lib/auth/resolve-tenant-for-auth";
 import { createClient } from "@/lib/supabase/server";
+import { findUserById } from "@/modules/users/repository";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -21,8 +22,11 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/login?error=auth`);
   }
 
-  const tenant = await resolveTenantForAuth();
-  await linkUserToTenant(data.user, tenant.id);
+  const existingUser = await findUserById(data.user.id);
+  if (!existingUser) {
+    const tenant = await resolveTenantForAuth();
+    await linkUserToTenant(data.user, tenant.id);
+  }
 
   return NextResponse.redirect(`${origin}${safeNext}`);
 }

@@ -2,9 +2,7 @@ import Link from "next/link";
 
 import { signOut } from "@/app/(auth)/login/actions";
 import { Button } from "@/components/ui/button";
-import { linkUserToTenant } from "@/lib/auth/link-user-tenant";
-import { requireSession } from "@/lib/auth/require-session";
-import { getTenant } from "@/lib/tenant/get-tenant";
+import { requireOwnerTenant } from "@/lib/auth/require-owner";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -19,9 +17,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await requireSession();
-  const tenant = await getTenant();
-  await linkUserToTenant(user, tenant.id);
+  const { user } = await requireOwnerTenant();
 
   return (
     <div className="flex min-h-full flex-1">
