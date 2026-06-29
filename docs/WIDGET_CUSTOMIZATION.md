@@ -126,6 +126,9 @@ Por padrão, o embed **detecta** outros FABs pequenos (`fixed`/`sticky`, até ~2
 | `data-offset-ignore` | — | Seletores CSS extras a ignorar (vírgula) |
 | `data-position` | `bottom-right` | `bottom-left` também suportado |
 | `data-theme` | — | Override opcional: `light`, `dark` ou `auto` (sobrescreve Settings) |
+| `data-z-index` | `9990` | Z-index do root **com chat fechado** (cookie/banner do site pode ficar acima). Com chat aberto, sobe para `2147483646` automaticamente. |
+
+**Painel fechado não bloqueia cliques:** `.aos-embed-panel` usa `pointer-events: none` e `visibility: hidden` até `.aos-open`. No mobile, layout fullscreen (`aos-embed-panel-mobile`) só é aplicado com chat aberto.
 
 O embed publica no `:root` as variáveis `--aos-embed-launcher-bottom`, `--aos-embed-launcher-size` e `--aos-embed-launcher-stack` (offset + tamanho + safe-area) para o site empilhar botões próprios (ex.: voltar ao topo) sem chute fixo em `58px`.
 
