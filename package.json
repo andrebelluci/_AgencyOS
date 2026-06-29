@@ -19,6 +19,8 @@
     "test:agents": "tsx scripts/test-agents-issue-011.ts",
     "test:openai-streaming": "tsx --env-file=.env.local scripts/test-openai-streaming-issue-014.ts",
     "test:search-knowledge": "tsx --env-file=.env.local scripts/test-search-knowledge-issue-022.ts",
+    "test:faq-rag": "tsx scripts/test-faq-rag-index.ts",
+    "reindex:faq": "tsx --env-file=.env.local scripts/reindex-faq-knowledge.ts",
     "test:pdf-pipeline": "tsx --env-file=.env.local scripts/test-pdf-pipeline-issue-024.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

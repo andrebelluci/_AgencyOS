@@ -13,6 +13,11 @@ import {
   searchTextChunks,
   updateFaqById,
 } from "./repository";
+import {
+  logKnowledgeSearch,
+  mergeSearchChunks,
+  resolveSearchSource,
+} from "./search-utils";
 import type {
   CreateFaqInput,
   FaqItem,
@@ -66,37 +71,42 @@ export async function searchKnowledge(
   const trimmed = query.trim();
 
   if (!trimmed) {
-    return { chunks: [], source: "none" };
+    const empty = { chunks: [], source: "none" as const };
+    logKnowledgeSearch(tenantId, trimmed, empty);
+    return empty;
   }
 
   const limit = Math.min(Math.max(topK, 1), 10);
+  let semanticChunks: Awaited<ReturnType<typeof searchSemanticChunks>> = [];
+
   const hasEmbeddings = (await countEmbeddedChunks(tenantId)) > 0;
 
   if (hasOpenAIConfig() && hasEmbeddings) {
     try {
       const embedding = await createQueryEmbedding(trimmed);
-      const semanticChunks = await searchSemanticChunks(
+      const rawSemantic = await searchSemanticChunks(
         tenantId,
         embedding,
         limit,
       );
-      const relevant = semanticChunks.filter(
+      semanticChunks = rawSemantic.filter(
         (chunk) => chunk.score >= MIN_SEMANTIC_SCORE,
       );
-
-      if (relevant.length > 0) {
-        return { chunks: relevant, source: "semantic" };
-      }
     } catch {
       // Fall through to text search when embedding or vector query fails.
     }
   }
 
   const textChunks = await searchTextChunks(tenantId, trimmed, limit);
+  const merged = mergeSearchChunks(semanticChunks, textChunks, limit);
+  const source = resolveSearchSource(merged, semanticChunks, textChunks);
 
-  if (textChunks.length > 0) {
-    return { chunks: textChunks, source: "text" };
-  }
+  const result: KnowledgeSearchResult = {
+    chunks: merged,
+    source,
+  };
 
-  return { chunks: [], source: "none" };
+  logKnowledgeSearch(tenantId, trimmed, result);
+
+  return result;
 }

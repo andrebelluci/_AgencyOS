@@ -8,6 +8,8 @@ const PRICING_PATTERNS = [
 const SUPPORT_PATTERNS = [
   /\b(garantia|prazo|como funciona|documentação|documentacao|manual)\b/i,
   /\b(dúvida|duvida|ajuda|suporte|problema|defeito)\b/i,
+  /\b(dress code|traje|roupa|vestimenta|esporte fino|padrinho|madrinha)\b/i,
+  /\b(horário|horario|funcionamento|política|politica|regra|procedimento)\b/i,
 ];
 
 const COMMERCIAL_PATTERNS = [
@@ -57,7 +59,7 @@ export function routingHintsForIntent(intent: UserIntent): string[] {
       ];
     case "support":
       return [
-        "O visitante tem dúvida operacional ou técnica.",
+        "O visitante tem dúvida operacional, logística ou sobre regras/políticas.",
         "Chame searchKnowledge antes de responder perguntas factuais.",
         "Responda apenas com base nos chunks retornados pela busca.",
         "Se a busca não retornar contexto, admita a limitação e sugira contato humano via WhatsApp.",
@@ -65,6 +67,7 @@ export function routingHintsForIntent(intent: UserIntent): string[] {
     case "commercial":
       return [
         "O visitante demonstra interesse comercial.",
+        "Se a mensagem for factual (serviço, horário, regra), chame searchKnowledge antes de responder.",
         "Priorize qualificação e captura de contato.",
         "Sempre busque o próximo passo (WhatsApp ou reunião).",
       ];
@@ -72,6 +75,7 @@ export function routingHintsForIntent(intent: UserIntent): string[] {
 
   return [
     "Conduza a conversa de forma comercial e acolhedora.",
+    "Se a pergunta for factual, chame searchKnowledge antes de responder.",
     "Identifique necessidade e busque qualificar o visitante.",
   ];
 }

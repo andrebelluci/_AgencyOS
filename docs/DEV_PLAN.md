@@ -100,11 +100,12 @@ Fecha o V0.1 para **clientes reais**. Onboarding continua **assistido manualment
 |------|---------|-------------------|
 | **031E-a** | `tenant_settings.assistant_label` — subtítulo do chat (Settings → Widget); placeholder `{{assistant_label}}` na mensagem inicial; exposto em `/api/widget/config` | `0010_assistant_label` |
 | **031E-b** | Auto-offset do launcher em `embed.js` — detecta FABs `fixed`/`sticky` no canto e sobe o botão; override `data-offset-bottom` / `data-auto-offset="false"` | `public/widget/embed.js` |
+| **031F** | RAG FAQ: chunk pergunta+resposta, embeddings ao salvar, busca híbrida, logs de diagnóstico, Sales Agent reforçado | `reindex-faq-knowledge.ts` |
 
 Docs: [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · [OPERATIONS.md](OPERATIONS.md).  
 **V0.2 (#50, #43, …):** consumir config existente; ver [DEVELOPMENT_WAVES_V0.2.md § Entregas V0.1](DEVELOPMENT_WAVES_V0.2.md#entregas-v01-já-feitas--não-reimplementar-na-v02).
 
-**Ordem:** `#34 → (#32 ‖ #33) → #30 → (031A–031D) → #31 → (031E)`
+**Ordem:** `#34 → (#32 ‖ #33) → #30 → (031A–031D) → #31 → (031E) → (031F)`
 
 **Gate deploy (#30):** #33 ✅ (API pública endurecida).  
 **Gate V0.2 (#41+):** #31 ✅ · milestone `V0.2 - Site Conversacional` · ver [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).

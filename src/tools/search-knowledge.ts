@@ -2,6 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 
+import { logStructured } from "@/lib/logging";
+
 import { searchKnowledge as searchKnowledgeService } from "@/modules/knowledge/service";
 import type { KnowledgeSearchResult } from "@/modules/knowledge/types";
 
@@ -35,6 +37,17 @@ export async function searchKnowledge(
       parsed.data.query,
       parsed.data.topK,
     );
+
+    logStructured({
+      level: "info",
+      message: "search_knowledge_tool_called",
+      metric: true,
+      tenant_id: tenantId,
+      query: parsed.data.query,
+      top_k: parsed.data.topK ?? 5,
+      result_count: data.chunks.length,
+      source: data.source,
+    });
 
     return { ok: true, data };
   } catch (error) {

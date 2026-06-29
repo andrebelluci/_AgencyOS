@@ -18,6 +18,7 @@ export type KnowledgeSearchSource = "semantic" | "text";
 export type KnowledgeSearchChunk = {
   id: string;
   documentId: string;
+  documentType: "faq" | "pdf";
   content: string;
   position: number;
   score: number;

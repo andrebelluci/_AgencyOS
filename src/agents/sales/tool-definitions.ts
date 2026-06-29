@@ -78,7 +78,7 @@ export const SALES_TOOL_DEFINITIONS: SalesToolDefinition[] = [
     function: {
       name: "searchKnowledge",
       description:
-        "Busca na base de conhecimento da empresa (FAQ, documentos). Use em perguntas factuais sobre garantia, prazo, processo, políticas ou serviços antes de responder.",
+        "Busca na base de conhecimento da empresa (FAQ e PDF). OBRIGATÓRIO antes de responder perguntas factuais sobre serviços, produtos, preços, horários, políticas, dress code, regras, procedimentos, empresa, garantias ou formas de atendimento.",
       parameters: {
         type: "object",
         properties: {

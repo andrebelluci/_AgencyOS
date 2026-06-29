@@ -3,6 +3,7 @@ import postgres from "postgres";
 
 import { formatVectorForPg } from "@/ai/embeddings";
 import { hasOpenAIConfig } from "@/env";
+import { formatFaqChunkContent } from "@/modules/knowledge/faq-format";
 import { searchKnowledge } from "@/tools/search-knowledge";
 
 export const dynamic = "force-dynamic";
@@ -96,6 +97,35 @@ export async function GET() {
     await seedFaqChunk(sql, tenantAId, "Garantia cimento queimado", targetContent);
     await seedFaqChunk(sql, tenantAId, "Porcelanato", decoyContent);
     await seedFaqChunk(sql, tenantBId, "Pintura epóxi", otherContent);
+
+    const dressCodeContent = formatFaqChunkContent(
+      "Qual roupa devo usar?",
+      "Padrinhos com terno preto, vamos dar a gravata. Madrinhas com as cores da paleta fornecidas pela noiva. Demais convidados, esporte fino.",
+    );
+    await seedFaqChunk(sql, tenantAId, "Qual roupa devo usar?", dressCodeContent);
+
+    const paraphraseResult = await searchKnowledge(tenantAId, {
+      query: "Com que roupa posso ir?",
+      topK: 3,
+    });
+
+    if (!paraphraseResult.ok) {
+      throw new Error(paraphraseResult.error);
+    }
+
+    const dressChunk = paraphraseResult.data.chunks.find((chunk) =>
+      chunk.content.includes("esporte fino"),
+    );
+
+    if (!dressChunk) {
+      throw new Error("Paraphrase search did not return dress code FAQ.");
+    }
+
+    if (dressChunk.documentType !== "faq") {
+      throw new Error("Expected FAQ document type for dress code chunk.");
+    }
+
+    checks.push("search:faq-paraphrase");
 
     const textResult = await searchKnowledge(tenantAId, {
       query: "garantia cimento queimado",

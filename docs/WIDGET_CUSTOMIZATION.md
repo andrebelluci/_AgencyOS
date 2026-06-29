@@ -69,6 +69,14 @@ JSON em `tenant_settings` — sem tabela dedicada (migrável depois).
 
 Prompt e regras reforçam: **RAG antes de serviços/preços**; qualificação quando não há contexto; sem respostas genéricas inventadas.
 
+### FAQ — indexação e embeddings (031F, pós-#31)
+
+- Chunk indexado como `Pergunta:\n…\n\nResposta:\n…` (pergunta + resposta).
+- Embedding gerado ao **criar/editar** FAQ (mesmo pipeline de PDF).
+- Busca **híbrida**: semântica + textual, ranking unificado (FAQ e PDF).
+- FAQs antigas: `npx tsx --env-file=.env scripts/reindex-faq-knowledge.ts` (opcional `--tenant-slug=`).
+- Logs V0.1: `knowledge_search_completed`, `knowledge_search_empty`, `search_knowledge_tool_called`, `faq_indexed`.
+
 ---
 
 ## Integração no site do cliente (`embed.js`)

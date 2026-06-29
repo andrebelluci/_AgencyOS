@@ -8,28 +8,33 @@ description: Pipeline RAG do Agency OS — upload, chunking, embeddings pgvector
 ## Pipeline
 
 ```
-Documento → chunk (500-1000 tokens) → embedding (OpenAI) → knowledge_chunks.embedding → busca top-K
+FAQ → Pergunta + Resposta (chunk único) → embedding (OpenAI) → knowledge_chunks
+PDF → Supabase Storage → extract → chunk → embed → knowledge_chunks
+Query → busca semântica + textual → merge ranking → top-K
 ```
 
-## Tipos V0.1
+## FAQ (V0.1 — 031F)
 
-- `faq` — texto direto, chunk opcional
-- `pdf` — Supabase Storage → extract → chunk → embed
-- `text` — texto livre
+- Chunk: `Pergunta:\n{question}\n\nResposta:\n{answer}`
+- Embedding ao criar/editar (`indexFaqChunk`)
+- Reindex em lote: `npx tsx --env-file=.env scripts/reindex-faq-knowledge.ts`
+- Painel exibe pergunta/resposta; chunk armazena formato completo
 
-## searchKnowledge tool
+## PDF
 
-- Input: `query`, `tenant_id`
-- Cosine similarity via pgvector
-- Top 3-5 chunks
+- Supabase Storage → extract → chunk → embed
+- Path: `{tenant_id}/documents/{file_id}.pdf`
+
+## searchKnowledge
+
+- Input: `query`, `tenant_id`, optional `topK`
+- Semântica (pgvector) + textual (tsvector + title) → merge por score
+- Retorna `documentType`: `faq` | `pdf`
+- Logs: `knowledge_search_completed` / `knowledge_search_empty`
 - Retornar vazio se sem match — agente não inventa
 
 ## Tabelas
 
 `knowledge_documents` + `knowledge_chunks` (embedding vector na coluna)
 
-## Storage
-
-Path: `{tenant_id}/documents/{file_id}.pdf`
-
-Consulte `docs/DATABASE.md` seção MVP e `docs/PROMPT_SYSTEM.md` Knowledge Agent (interno).
+Consulte `docs/WIDGET_CUSTOMIZATION.md` (031F), `docs/DATABASE.md` e `docs/PROMPT_SYSTEM.md`.

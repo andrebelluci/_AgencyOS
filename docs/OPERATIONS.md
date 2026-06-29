@@ -400,7 +400,7 @@ O embed **autoajusta** a posição do botão se houver outro FAB fixo no canto (
 | `Tenant not found` | Conferir slug; em `*.vercel.app` usar `PLATFORM_APEX_TENANT_SLUG` |
 | Chat não responde | Logs Vercel + `OPENAI_API_KEY` + `/api/health` |
 | Lead não aparece | Pedir nome + telefone; conferir `/leads` e logs |
-| FAQ ignorado | Recadastrar FAQ; aguardar embeddings |
+| FAQ ignorado | FAQ antiga sem indexação 031F | `npx tsx --env-file=.env scripts/reindex-faq-knowledge.ts --tenant-slug={slug}` ou editar e salvar FAQ no painel |
 | `database.ok: false` | Pooler IPv4 — [DEPLOY.md § Troubleshooting](./DEPLOY.md#databaseok-false-com-enotfound-dbrefsupabaseco) |
 
 ---
@@ -414,6 +414,7 @@ O embed **autoajusta** a posição do botão se houver outro FAB fixo no canto (
 | Pausar contrato | [Como suspender tenant](#como-suspender-tenant) |
 | Offboarding definitivo | [Como excluir tenant](#como-excluir-tenant) |
 | Migração schema | `npm run db:migrate` com `DATABASE_URL` prod (inclui `0010_assistant_label`) |
+| Reindex FAQs | `npx tsx --env-file=.env scripts/reindex-faq-knowledge.ts` |
 | Rollback deploy | Vercel → Promote deployment anterior |
 | Novo operador plataforma | Adicionar e-mail em `PLATFORM_ADMIN_EMAILS` + redeploy |
 

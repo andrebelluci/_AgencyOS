@@ -18,16 +18,30 @@ import type {
   PdfDocumentItem,
   UpdateFaqInput,
 } from "./types";
+import { parseFaqAnswerFromChunk } from "./faq-format";
 
 const DEFAULT_TOP_K = 5;
 
 type ChunkRow = {
   id: string;
   document_id: string;
+  document_type: "faq" | "pdf";
   content: string;
   position: number;
   score: number;
 };
+
+function mapChunkRow(row: ChunkRow, source: KnowledgeSearchChunk["source"]) {
+  return {
+    id: row.id,
+    documentId: row.document_id,
+    documentType: row.document_type,
+    content: row.content,
+    position: row.position,
+    score: Number(row.score),
+    source,
+  };
+}
 
 async function findFaqChunk(tenantId: string, documentId: string) {
   const [row] = await getDb()
@@ -44,11 +58,11 @@ async function findFaqChunk(tenantId: string, documentId: string) {
   return row;
 }
 
-function toFaqItem(document: KnowledgeDocument, answer: string): FaqItem {
+function toFaqItem(document: KnowledgeDocument, chunkContent: string): FaqItem {
   return {
     id: document.id,
     question: document.title,
-    answer,
+    answer: parseFaqAnswerFromChunk(chunkContent),
     createdAt: document.createdAt,
     updatedAt: document.updatedAt,
   };
@@ -82,7 +96,7 @@ export async function findFaqsByTenant(tenantId: string): Promise<FaqItem[]> {
   return rows.map((row) => ({
     id: row.id,
     question: row.question,
-    answer: row.answer ?? "",
+    answer: parseFaqAnswerFromChunk(row.answer ?? ""),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   }));
@@ -132,21 +146,15 @@ export async function insertFaq(
     throw new Error("Failed to create FAQ document.");
   }
 
-  const [chunk] = await db
-    .insert(knowledgeChunks)
-    .values({
-      tenantId,
-      documentId: document.id,
-      content: input.answer,
-      position: 0,
-    })
-    .returning();
+  const { indexFaqChunk } = await import("./faq-index");
+  const indexed = await indexFaqChunk(
+    tenantId,
+    document.id,
+    input.question,
+    input.answer,
+  );
 
-  if (!chunk) {
-    throw new Error("Failed to create FAQ chunk.");
-  }
-
-  return toFaqItem(document, chunk.content);
+  return toFaqItem(document, indexed.content);
 }
 
 export async function updateFaqById(
@@ -178,28 +186,10 @@ export async function updateFaqById(
     return undefined;
   }
 
-  const chunk = await findFaqChunk(tenantId, id);
+  const { indexFaqChunk } = await import("./faq-index");
+  const indexed = await indexFaqChunk(tenantId, id, question, answer);
 
-  if (chunk) {
-    await getDb()
-      .update(knowledgeChunks)
-      .set({ content: answer })
-      .where(
-        and(
-          eq(knowledgeChunks.id, chunk.id),
-          eq(knowledgeChunks.tenantId, tenantId),
-        ),
-      );
-  } else {
-    await getDb().insert(knowledgeChunks).values({
-      tenantId,
-      documentId: id,
-      content: answer,
-      position: 0,
-    });
-  }
-
-  return toFaqItem(document, answer);
+  return toFaqItem(document, indexed.content);
 }
 
 export async function deleteFaqById(
@@ -385,6 +375,44 @@ export async function insertChunks(
   }
 }
 
+export async function upsertFaqChunkIndexed(
+  tenantId: string,
+  documentId: string,
+  content: string,
+  embedding?: number[],
+): Promise<void> {
+  const existing = await findFaqChunk(tenantId, documentId);
+  const db = getDb();
+
+  if (existing) {
+    if (embedding) {
+      const vector = formatVectorForPg(embedding);
+      await db.execute(sql`
+        UPDATE knowledge_chunks
+        SET content = ${content}, embedding = ${vector}::vector
+        WHERE id = ${existing.id}::uuid
+          AND tenant_id = ${tenantId}::uuid
+      `);
+      return;
+    }
+
+    await db
+      .update(knowledgeChunks)
+      .set({ content })
+      .where(
+        and(
+          eq(knowledgeChunks.id, existing.id),
+          eq(knowledgeChunks.tenantId, tenantId),
+        ),
+      );
+    return;
+  }
+
+  await insertChunks(tenantId, documentId, [
+    { content, position: 0, embedding },
+  ]);
+}
+
 export async function countEmbeddedChunks(tenantId: string): Promise<number> {
   const db = getDb();
   const result = await db.execute<{ count: string }>(sql`
@@ -408,28 +436,25 @@ export async function searchSemanticChunks(
 
   const result = await db.execute<ChunkRow>(sql`
     SELECT
-      id,
-      document_id,
-      content,
-      position,
-      (1 - (embedding <=> ${vector}::vector))::float8 AS score
-    FROM knowledge_chunks
-    WHERE tenant_id = ${tenantId}::uuid
-      AND embedding IS NOT NULL
-    ORDER BY embedding <=> ${vector}::vector
+      c.id,
+      c.document_id,
+      d.type AS document_type,
+      c.content,
+      c.position,
+      (1 - (c.embedding <=> ${vector}::vector))::float8 AS score
+    FROM knowledge_chunks c
+    INNER JOIN knowledge_documents d
+      ON d.id = c.document_id
+      AND d.tenant_id = c.tenant_id
+    WHERE c.tenant_id = ${tenantId}::uuid
+      AND c.embedding IS NOT NULL
+    ORDER BY c.embedding <=> ${vector}::vector
     LIMIT ${topK}
   `);
 
   const rows = result as unknown as ChunkRow[];
 
-  return rows.map((row) => ({
-    id: row.id,
-    documentId: row.document_id,
-    content: row.content,
-    position: row.position,
-    score: Number(row.score),
-    source: "semantic",
-  }));
+  return rows.map((row) => mapChunkRow(row, "semantic"));
 }
 
 export async function searchTextChunks(
@@ -442,35 +467,35 @@ export async function searchTextChunks(
 
   const result = await db.execute<ChunkRow>(sql`
     SELECT
-      id,
-      document_id,
-      content,
-      position,
+      c.id,
+      c.document_id,
+      d.type AS document_type,
+      c.content,
+      c.position,
       GREATEST(
-        CASE WHEN content ILIKE ${pattern} THEN 1.0 ELSE 0.0 END,
+        CASE WHEN c.content ILIKE ${pattern} THEN 1.0 ELSE 0.0 END,
+        CASE WHEN d.title ILIKE ${pattern} THEN 0.95 ELSE 0.0 END,
         ts_rank(
-          to_tsvector('portuguese', content),
+          to_tsvector('portuguese', c.content || ' ' || d.title),
           plainto_tsquery('portuguese', ${query})
         )
       )::float8 AS score
-    FROM knowledge_chunks
-    WHERE tenant_id = ${tenantId}::uuid
+    FROM knowledge_chunks c
+    INNER JOIN knowledge_documents d
+      ON d.id = c.document_id
+      AND d.tenant_id = c.tenant_id
+    WHERE c.tenant_id = ${tenantId}::uuid
       AND (
-        content ILIKE ${pattern}
-        OR to_tsvector('portuguese', content) @@ plainto_tsquery('portuguese', ${query})
+        c.content ILIKE ${pattern}
+        OR d.title ILIKE ${pattern}
+        OR to_tsvector('portuguese', c.content || ' ' || d.title)
+          @@ plainto_tsquery('portuguese', ${query})
       )
-    ORDER BY score DESC, position ASC
+    ORDER BY score DESC, c.position ASC
     LIMIT ${topK}
   `);
 
   const rows = result as unknown as ChunkRow[];
 
-  return rows.map((row) => ({
-    id: row.id,
-    documentId: row.document_id,
-    content: row.content,
-    position: row.position,
-    score: Number(row.score),
-    source: "text",
-  }));
+  return rows.map((row) => mapChunkRow(row, "text"));
 }
