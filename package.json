@@ -20,6 +20,13 @@
     "test:openai-streaming": "tsx --env-file=.env.local scripts/test-openai-streaming-issue-014.ts",
     "test:search-knowledge": "tsx --env-file=.env.local scripts/test-search-knowledge-issue-022.ts",
     "test:pdf-pipeline": "tsx --env-file=.env.local scripts/test-pdf-pipeline-issue-024.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:smoke": "playwright test --grep @smoke",
+    "test:e2e:no-ai": "playwright test --grep @smoke --grep-invert @openai",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:install": "playwright install chromium",
     "db:push": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs push --config=drizzle.config.ts",
     "db:studio": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs studio --config=drizzle.config.ts"
   },
@@ -47,6 +54,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pdf-parse": "^1.1.5",
