@@ -57,6 +57,33 @@ Não buscar 100% coverage no V0.1. Cobrir **caminhos que geram receita**.
 - [ ] FAQ cadastrado refletido na resposta do chat
 - [ ] Agente não inventa fora do contexto
 
+#### F3.1 — RAG First (paráfrase FAQ) — **obrigatório**
+
+Cenário de referência ([ADR-005](decisions/005-rag-first.md)):
+
+**FAQ cadastrada**
+
+- Pergunta: `Qual roupa devo usar?`
+- Resposta: `Padrinhos utilizam terno preto.`
+
+**Pergunta do usuário (paráfrase)**
+
+`Com que roupa posso ir?`
+
+**Resultado esperado**
+
+- O agente invoca `searchKnowledge` (ou equivalente no runtime)
+- Encontra a FAQ equivalente (busca semântica ou textual)
+- Responde utilizando o conhecimento da empresa (ex.: menciona terno preto / dress code cadastrado)
+
+**Resultado não aceitável**
+
+- Responder apenas com conhecimento genérico de mercado (ex.: “depende do tipo de evento…” sem citar a política do tenant)
+- Inventar dress code não presente na base
+- Ignorar FAQ existente quando recuperável
+
+**Evidência:** logs `search_knowledge_tool_called` / `knowledge_search_completed` ou smoke `npm run test:search-knowledge` (check `search:faq-paraphrase` quando disponível).
+
 ### F4 — WhatsApp
 - [ ] Link `wa.me` com mensagem pré-preenchida
 - [ ] Clique registrado (metadata)
@@ -95,7 +122,7 @@ Regressão V0.1: manter **F1–F6** passando (`npm run test:e2e:no-ai` ou `npm r
 - [ ] **RBAC (#45):** Operator acessa leads/conversas; 403 em settings/knowledge write
 - [ ] **Features (#46):** `tenant_features` liga/desliga capability esperada
 - [ ] **Support (#49):** Pergunta garantia/FAQ → Support Agent; venda → Sales
-- [ ] **Citação RAG (#51):** Resposta com FAQ cita fonte visível no chat
+- [ ] **Citação RAG (#51):** Resposta com FAQ cita fonte visível no chat — **complementa [ADR-005](decisions/005-rag-first.md)**; validar que a consulta à base ocorreu antes (F3.1)
 - [ ] **Landing (#47):** Página marketing apex responsiva com CTA
 - [ ] F1–F6 + F7.1 + F7.2 passam
 - [ ] Hardening complementar (quotas tenant) documentado/testado se entregue
@@ -169,6 +196,7 @@ Issue só fecha quando:
 4. ✅ Testes automatizados relevantes passam (ou documentado n/a)
 5. ✅ QA Agent aprovou (browser smoke)
 6. ✅ Sem bug crítico/alto aberto
+7. ✅ Perguntas factuais sobre a empresa respeitam **RAG First** (F3.1 quando aplicável)
 
 ---
 
@@ -213,5 +241,6 @@ Até lá: QA via **MCP Browser do Cursor** (`cursor-ide-browser`) é suficiente.
 
 - [CURSOR_AGENTS.md](CURSOR_AGENTS.md)
 - [BACKLOG.md](BACKLOG.md) — critérios por issue
+- [decisions/005-rag-first.md](decisions/005-rag-first.md) — RAG First (Knowledge First)
 - Skill `.cursor/skills/agency-os-dev-agent/`
 - Skill `.cursor/skills/agency-os-qa-agent/`

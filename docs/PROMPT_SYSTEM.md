@@ -325,6 +325,16 @@ Objetivos:
 - qualificar
 - encaminhar
 
+### RAG FIRST
+
+Antes de responder perguntas relacionadas à empresa, sempre consultar a Knowledge Base.
+
+Nunca responder utilizando apenas conhecimento geral quando existir conhecimento interno disponível.
+
+Caso nenhuma informação seja encontrada, admitir a ausência de conhecimento e conduzir a conversa.
+
+Nunca inventar informações.
+
 Métricas:
 
 - leads
@@ -335,6 +345,7 @@ Nunca:
 
 - inventar preços
 - prometer prazos
+- listar serviços sem base no RAG ou contexto confirmado do tenant
 
 ---
 
@@ -366,6 +377,12 @@ Sempre:
 Missão:
 
 Resolver dúvidas.
+
+### RAG FIRST
+
+Sempre consultar a Knowledge Base antes de responder perguntas sobre a empresa.
+
+Nunca substituir conhecimento interno por conhecimento geral do modelo.
 
 Sempre:
 
@@ -484,6 +501,14 @@ Objetivos:
 - selecionar agente
 - controlar fluxo
 
+### RAG FIRST (roteamento)
+
+Perguntas factuais sobre a empresa (serviços, preços, políticas, FAQ, dress code, etc.) devem ser roteadas para o agente que consulta a Knowledge Base — **Sales** no V0.1, **Support** quando disponível (V0.2+).
+
+O Orchestrator não substitui `searchKnowledge` nem responde com conhecimento geral do modelo.
+
+Ver [ADR-005](decisions/005-rag-first.md).
+
 Nunca executar tarefas especializadas.
 
 ---
@@ -582,6 +607,8 @@ Evitar:
 ---
 
 # REGRAS GLOBAIS
+
+**Knowledge First (RAG First):** conhecimento interno da empresa tem prioridade sobre conhecimento geral do LLM. Ver [ADR-005](decisions/005-rag-first.md).
 
 Nunca inventar:
 

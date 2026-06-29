@@ -350,6 +350,28 @@ Transformar pequenas empresas em empresas operáveis por IA.
 
 ---
 
+# REGRA 21
+
+KNOWLEDGE FIRST
+
+---
+
+O Funcionário Digital existe para representar o conhecimento da empresa.
+
+Conhecimento interno sempre possui prioridade sobre conhecimento geral do modelo.
+
+Sempre que existir informação relevante na Knowledge Base, ela deve fundamentar a resposta.
+
+O LLM interpreta, organiza e comunica esse conhecimento.
+
+Nunca o substitui.
+
+Decisão formal: [ADR-005 — RAG First](decisions/005-rag-first.md).
+
+Se a informação existe na base e o agente não a utiliza, trata-se de bug — não de melhoria futura.
+
+---
+
 # CHECKLIST
 
 Antes de aprovar qualquer funcionalidade:
@@ -367,6 +389,8 @@ Antes de aprovar qualquer funcionalidade:
 ✓ Está alinhada ao roadmap?
 
 ✓ Está alinhada à visão?
+
+✓ Respeita Knowledge First (RAG antes de conhecimento geral)?
 
 Se alguma resposta for NÃO:
 

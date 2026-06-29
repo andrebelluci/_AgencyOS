@@ -3,7 +3,7 @@
 ## Status
 
 Documento mestre de implementação.  
-Última revisão: 2026-06-29 (031E pós-#31 — assistant_label + embed auto-offset).
+Última revisão: 2026-06-29 (D20 — RAG First / ADR-005).
 
 ---
 
@@ -32,6 +32,7 @@ Estas decisões resolvem conflitos entre documentos e não encurtam prazos — a
 | D17 | **Animações: widget vs site hospedeiro** | Launcher, painel, ícone e chat = Agency OS (`embed.js` + `/chat`). Decoração da página (pulse, demo inline, reveal) = CSS do site cliente. Animações ricas do produto (avatar, modos) = V0.2+ no embed, não hack permanente no host. |
 | D18 | **Widget dark mode = V0.2 (ISSUE-045)** | Tema `light` / `dark` / `auto` por tenant + `data-theme` no embed. Iframe **não** herda CSS do site; `auto` usa `prefers-color-scheme` do visitante. Sincronizar tema com página hospedeira fica fora do escopo inicial. |
 | D19 | **031E = V0.1 pós-#31, não V0.2** | `assistant_label` + auto-offset do launcher entregues com 1º cliente real (migração `0010`, commit `4e8c862`). V0.2 **consome** `/api/widget/config`; **não** reimplementa label nem posicionamento. Evoluções (offset no painel, `MutationObserver`) = issue nova se necessário. |
+| D20 | **Knowledge First / RAG First** | [ADR-005](decisions/005-rag-first.md) + NON_NEGOTIABLES REGRA 21. Conhecimento interno da empresa tem prioridade sobre o LLM; FAQ ignorada quando existir na base = bug. Implementação V0.1: 031F; citação visível = #51 (V0.2, complementa — não substitui consulta). |
 
 ---
 
@@ -54,8 +55,8 @@ Detalhamento: [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md).
 ### Diretrizes arquiteturais futuras (pós-V0.1)
 
 - **Modelo de IA substituível** — abstração em `src/ai/`; sem lock-in em fornecedor
-- **Conhecimento = ativo principal** — captura, organização, RAG, evolução contínua
-- **RAG privado por padrão** — resposta da knowledge base da empresa, não da internet
+- **Conhecimento = ativo principal** — captura, organização, RAG, evolução contínua ([ADR-005](decisions/005-rag-first.md))
+- **RAG privado por padrão** — resposta da knowledge base da empresa, não da internet ([ADR-005](decisions/005-rag-first.md))
 - **IA seleciona estados** — não gera HTML/páginas inteiras em tempo real
 - **Digital Twin = destino final** — representação operacional, não chatbot genérico
 
@@ -230,7 +231,7 @@ Detalhamento de campos em DATABASE.md.
 
 **Resiliência (estratégico):** Widget Hardening completo (quotas por tenant, abuse avançado) — parte mínima antecipada em **#33** (Onda 7); restante em V0.2.
 
-**Backlog existente (V0.2):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG, **widget dark mode** — GitHub **#41–#51** · prompts em [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).
+**Backlog existente (V0.2):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, **citação RAG (#51 — complementa [ADR-005](decisions/005-rag-first.md) na UX; não dispensa `searchKnowledge`)**, **widget dark mode** — GitHub **#41–#51** · prompts em [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).
 
 **Já entregue no V0.1 (031E — não repetir na V0.2):** `assistant_label`, auto-offset do launcher, fix auth apex Vercel (`e5433af`). Dark mode (#50) e iFrame (#43) **estendem** `/api/widget/config` e `embed.js`; não recriam campos de personalização.
 
@@ -259,5 +260,6 @@ Visão completa permanece em VISION.md e ROADMAP.md — este documento não a re
 # Referência cruzada
 
 - Issues detalhadas: [BACKLOG.md](BACKLOG.md)
+- Decisões irreversíveis: [decisions/005-rag-first.md](decisions/005-rag-first.md) (RAG First)
 - Agentes de produto: [AGENTS.md](AGENTS.md)
 - Agentes de desenvolvimento: [CURSOR_AGENTS.md](CURSOR_AGENTS.md)

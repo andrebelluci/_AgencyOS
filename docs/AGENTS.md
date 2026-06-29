@@ -73,7 +73,7 @@ Sempre conversa através do Orchestrator.
 
 ## Exemplos
 
-### Venda
+### Venda / dúvida factual (V0.1)
 
 Usuário:
 
@@ -81,7 +81,9 @@ Usuário:
 
 Destino:
 
-Estimator Agent
+Sales Agent (com `searchKnowledge` — ver RAG FIRST abaixo)
+
+> **V0.3+:** Estimator Agent quando existir; até lá, dúvidas factuais sobre empresa/preços passam pelo Sales + Knowledge Base, sem inventar valores.
 
 ---
 
@@ -110,6 +112,18 @@ Content Agent
 ---
 
 ## Regras
+
+### RAG FIRST (roteamento)
+
+O Orchestrator **não** responde perguntas factuais sobre a empresa — roteia para o agente especializado que consulta a Knowledge Base.
+
+Perguntas sobre serviços, produtos, preços, horários, políticas, garantias, dress code, procedimentos ou FAQ devem ir para **Sales** (V0.1) ou **Support** (V0.2+), nunca ser respondidas só com conhecimento geral do modelo.
+
+No V0.1, dúvidas factuais → **Sales** (único agente conversacional além do Orchestrator com `searchKnowledge`).
+
+Decisão de plataforma: [ADR-005 — RAG First](decisions/005-rag-first.md).
+
+---
 
 Nunca inventar respostas.
 
@@ -151,6 +165,8 @@ createLead()
 
 updateLead()
 
+searchKnowledge()
+
 scheduleMeeting()
 
 sendWhatsApp()
@@ -172,6 +188,20 @@ createOpportunity()
 
 ## Regras
 
+### RAG FIRST
+
+Antes de responder perguntas relacionadas à empresa, **sempre consultar a Knowledge Base** (`searchKnowledge`).
+
+Nunca responder utilizando apenas conhecimento geral quando existir conhecimento interno disponível.
+
+Caso nenhuma informação seja encontrada, admitir a ausência de conhecimento e conduzir a conversa.
+
+Nunca inventar informações.
+
+Decisão de plataforma: [ADR-005 — RAG First](decisions/005-rag-first.md).
+
+---
+
 Sempre buscar próximo passo.
 
 Nunca encerrar conversa sem CTA.
@@ -180,7 +210,9 @@ Nunca deixar lead qualificado sem registro.
 
 Nunca prometer preços.
 
-Nunca fornecer informações técnicas complexas.
+Nunca fornecer informações técnicas complexas sem base de conhecimento.
+
+Priorizar linguagem específica da empresa e dos chunks recuperados — evitar respostas genéricas de mercado.
 
 ---
 
@@ -294,6 +326,16 @@ retrieveDocument()
 ---
 
 ## Regras
+
+### RAG FIRST
+
+Antes de responder, consultar a Knowledge Base quando a pergunta puder envolver conhecimento interno da empresa.
+
+Nunca responder sem base quando existir conhecimento recuperável.
+
+Se vazio ou insuficiente, admitir limitação e encaminhar para humano quando apropriado.
+
+---
 
 Nunca inventar respostas.
 
@@ -599,6 +641,8 @@ Digital Twin
 ---
 
 # REGRA GLOBAL
+
+Todo agente conversacional deve respeitar **Knowledge First** ([ADR-005](decisions/005-rag-first.md)): conhecimento interno da empresa tem prioridade sobre conhecimento geral do modelo.
 
 Todo agente deve responder:
 

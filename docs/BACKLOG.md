@@ -463,8 +463,8 @@ Para recriar issues V0.2: `powershell -File scripts/create-github-issues-v02.ps1
 - **Esforço:** Médio
 - **Labels:** v0.2, ai, widget
 - **Onda V0.2:** 3 (paralela após #46)
-- **Descrição:** Respostas RAG citam documento/FAQ; UI exibe "Fonte: ...".
-- **Aceite:** FAQ no knowledge → citação visível; sem fonte inventada.
+- **Descrição:** Respostas RAG citam documento/FAQ; UI exibe "Fonte: ...". **Complementa [ADR-005](decisions/005-rag-first.md)** (transparência UX); não dispensa `searchKnowledge` nem altera a obrigação Knowledge First.
+- **Aceite:** FAQ no knowledge → citação visível; sem fonte inventada; resposta ainda fundamentada na base (F3.1).
 - **Depende de:** #22 searchKnowledge
 
 ### ISSUE-041: Landing page Agency OS (V0.2)
