@@ -33,6 +33,7 @@
   );
   var embedThemeOverride = (script.getAttribute("data-theme") || "").trim().toLowerCase();
   var primaryColor = "#2563eb";
+  var brandingPrimaryColor = null;
   var assistantLabel = "Assistente virtual";
   var widgetTheme = "light";
   var prefersDark = false;
@@ -50,8 +51,13 @@
   var launcher = null;
   var panel = null;
   var backdrop = null;
+  var headerEl = null;
+  var closeBtn = null;
   var iframe = null;
   var styleEl = null;
+  var bodyOverflowBackup = "";
+  var htmlOverflowBackup = "";
+  var mobileMediaQuery = null;
 
   var chatUrl =
     baseUrl + "/chat?key=" + encodeURIComponent(publicKey);
@@ -107,6 +113,85 @@
     if (backdrop) {
       backdrop.setAttribute("data-aos-theme", dark ? "dark" : "light");
     }
+    applyHeaderTheme();
+  }
+
+  function darkenHex(hex, amount) {
+    var h = String(hex || "").replace("#", "").trim();
+    if (h.length === 3) {
+      h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    }
+    if (h.length !== 6 || !/^[0-9a-fA-F]+$/.test(h)) {
+      return hex;
+    }
+    var factor = 1 - amount;
+    var r = Math.round(parseInt(h.slice(0, 2), 16) * factor);
+    var g = Math.round(parseInt(h.slice(2, 4), 16) * factor);
+    var b = Math.round(parseInt(h.slice(4, 6), 16) * factor);
+    return (
+      "#" +
+      [r, g, b]
+        .map(function (channel) {
+          var part = Math.max(0, Math.min(255, channel)).toString(16);
+          return part.length === 1 ? "0" + part : part;
+        })
+        .join("")
+    );
+  }
+
+  function applyHeaderTheme() {
+    if (!headerEl || !closeBtn) {
+      return;
+    }
+
+    var dark = isDarkTheme();
+
+    if (brandingPrimaryColor) {
+      headerEl.style.backgroundColor = darkenHex(brandingPrimaryColor, 0.1);
+      headerEl.style.color = "#ffffff";
+      closeBtn.style.color = "#ffffff";
+      return;
+    }
+
+    if (dark) {
+      headerEl.style.backgroundColor = "#000000";
+      headerEl.style.color = "#f8fafc";
+      closeBtn.style.color = "#f8fafc";
+      return;
+    }
+
+    headerEl.style.backgroundColor = "#ffffff";
+    headerEl.style.color = "#0f172a";
+    closeBtn.style.color = "#64748b";
+  }
+
+  function isMobileViewport() {
+    if (mobileMediaQuery) {
+      return mobileMediaQuery.matches;
+    }
+    return window.innerWidth <= 480;
+  }
+
+  function lockBodyScroll() {
+    bodyOverflowBackup = document.body.style.overflow;
+    htmlOverflowBackup = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+  }
+
+  function unlockBodyScroll() {
+    document.body.style.overflow = bodyOverflowBackup;
+    document.documentElement.style.overflow = htmlOverflowBackup;
+  }
+
+  function clearPanelInlinePosition() {
+    if (!panel) {
+      return;
+    }
+    panel.style.top = "";
+    panel.style.right = "";
+    panel.style.bottom = "";
+    panel.style.left = "";
   }
 
   function bindThemeMediaQuery() {
@@ -133,26 +218,29 @@
     ".aos-embed-root{position:fixed;z-index:" +
     zIndex +
     ";font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,sans-serif}" +
-    ".aos-embed-launcher{position:fixed;width:56px;height:56px;border:none;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(15,23,42,.18);transition:transform .2s ease,box-shadow .2s ease;color:#fff}" +
-    ".aos-embed-launcher:hover{transform:scale(1.05);box-shadow:0 8px 28px rgba(15,23,42,.22)}" +
+    ".aos-embed-launcher{position:fixed;width:56px;height:56px;border:none;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.2);transition:transform .2s ease,box-shadow .2s ease;color:#fff}" +
+    ".aos-embed-launcher:hover{transform:scale(1.05);box-shadow:0 8px 28px rgba(0,0,0,.25)}" +
     ".aos-embed-launcher:focus-visible{outline:3px solid rgba(37,99,235,.45);outline-offset:2px}" +
     ".aos-embed-launcher svg{width:26px;height:26px;fill:currentColor}" +
     ".aos-embed-bottom-right{bottom:20px;right:20px}" +
     ".aos-embed-bottom-left{bottom:20px;left:20px}" +
-    ".aos-embed-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.4);opacity:0;pointer-events:none;transition:opacity .2s ease}" +
+    ".aos-embed-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:0}" +
     ".aos-embed-backdrop.aos-open{opacity:1;pointer-events:auto}" +
-    ".aos-embed-panel{position:fixed;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:16px;box-shadow:0 24px 48px rgba(15,23,42,.2);opacity:0;transform:translateY(12px) scale(.98);pointer-events:none;transition:opacity .2s ease,transform .2s ease,background-color .2s ease}" +
-    ".aos-embed-panel[data-aos-theme=\"dark\"]{background:#0f172a;box-shadow:0 24px 48px rgba(0,0,0,.45)}" +
+    ".aos-embed-panel{position:fixed;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:16px;box-shadow:0 24px 48px rgba(0,0,0,.22);opacity:0;transform:translateY(12px) scale(.98);pointer-events:auto;transition:opacity .2s ease,transform .2s ease,background-color .2s ease;z-index:1}" +
+    ".aos-embed-panel[data-aos-theme=\"dark\"]{background:#0f172a;box-shadow:0 24px 48px rgba(0,0,0,.5)}" +
     ".aos-embed-panel.aos-open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}" +
-    ".aos-embed-panel-bottom-right{bottom:88px;right:20px;width:min(400px,calc(100vw - 32px));height:min(640px,calc(100vh - 112px))}" +
-    ".aos-embed-panel-bottom-left{bottom:88px;left:20px;width:min(400px,calc(100vw - 32px));height:min(640px,calc(100vh - 112px))}" +
-    ".aos-embed-close{align-self:flex-end;margin:8px 8px 0;border:none;background:transparent;color:#64748b;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}" +
-    ".aos-embed-panel[data-aos-theme=\"dark\"] .aos-embed-close{color:#94a3b8}" +
-    ".aos-embed-close:hover{background:#f1f5f9;color:#0f172a}" +
-    ".aos-embed-panel[data-aos-theme=\"dark\"] .aos-embed-close:hover{background:#1e293b;color:#f8fafc}" +
+    ".aos-embed-panel-bottom-right{bottom:88px;right:20px;width:min(400px,calc(100vw - 24px));max-width:calc(100vw - 24px);height:min(640px,calc(100dvh - 112px));max-height:calc(100dvh - 112px)}" +
+    ".aos-embed-panel-bottom-left{bottom:88px;left:20px;width:min(400px,calc(100vw - 24px));max-width:calc(100vw - 24px);height:min(640px,calc(100dvh - 112px));max-height:calc(100dvh - 112px)}" +
+    ".aos-embed-panel-mobile{inset:0!important;width:100%!important;max-width:100%!important;height:100%!important;max-height:100dvh!important;border-radius:0!important;margin:0!important}" +
+    ".aos-embed-header{flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;min-height:48px;padding:0 4px 0 12px;position:relative;z-index:3;background:#fff;cursor:default;border-bottom:1px solid rgba(0,0,0,.06)}" +
+    ".aos-embed-panel[data-aos-theme=\"dark\"] .aos-embed-header{background:#000;border-bottom-color:rgba(255,255,255,.08)}" +
+    ".aos-embed-body{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;overflow:hidden;z-index:1}" +
+    ".aos-embed-close{margin:0;border:none;background:transparent;cursor:pointer;width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;pointer-events:auto}" +
+    ".aos-embed-close:hover{background:rgba(0,0,0,.06)}" +
+    ".aos-embed-panel[data-aos-theme=\"dark\"] .aos-embed-close:hover{background:rgba(255,255,255,.1)}" +
     ".aos-embed-close:focus-visible{outline:2px solid rgba(37,99,235,.45);outline-offset:1px}" +
-    ".aos-embed-frame{flex:1;border:none;width:100%;min-height:0}" +
-    "@media (max-width:480px){.aos-embed-panel-bottom-right,.aos-embed-panel-bottom-left{inset:0;width:100%;height:100%;border-radius:0;bottom:0;right:0;left:0}.aos-embed-backdrop.aos-open{background:rgba(15,23,42,.55)}}";
+    ".aos-embed-frame{flex:1;border:none;width:100%;height:100%;min-height:0;display:block;pointer-events:auto}" +
+    "@media (max-width:480px){.aos-embed-backdrop.aos-open{background:rgba(0,0,0,.55)}}";
 
   function injectStyles() {
     if (styleEl) {
@@ -239,14 +327,45 @@
     return Math.min(neededBottom, maxBottom);
   }
 
-  function applyLauncherOffsets() {
+  function applyPanelLayout() {
     if (!launcher || !panel) {
       return;
     }
 
     var bottom = detectBottomOffset();
     launcher.style.bottom = bottom + "px";
-    panel.style.bottom = bottom + LAUNCHER_SIZE + 12 + "px";
+
+    if (isMobileViewport()) {
+      panel.classList.add("aos-embed-panel-mobile");
+      clearPanelInlinePosition();
+      return;
+    }
+
+    panel.classList.remove("aos-embed-panel-mobile");
+    clearPanelInlinePosition();
+
+    var panelBottom = bottom + LAUNCHER_SIZE + 12;
+    var viewportH = window.innerHeight;
+    var panelHeight = panel.offsetHeight || Math.min(640, viewportH - 112);
+    var maxPanelBottom = Math.max(12, viewportH - panelHeight - 12);
+
+    panel.style.bottom = Math.min(panelBottom, maxPanelBottom) + "px";
+
+    var viewportW = window.innerWidth;
+    var panelWidth = Math.min(400, viewportW - 24);
+    var sideInset = 12;
+
+    if (position === "bottom-left") {
+      panel.style.left = sideInset + "px";
+      panel.style.right = "auto";
+    } else {
+      panel.style.right = sideInset + "px";
+      panel.style.left = "auto";
+    }
+
+    panel.style.width = panelWidth + "px";
+    panel.style.maxWidth = "calc(100vw - 24px)";
+    panel.style.maxHeight = "calc(100dvh - " + (panelBottom + 16) + "px)";
   }
 
   function scheduleOffsetUpdate() {
@@ -254,8 +373,23 @@
       window.clearTimeout(offsetResizeTimer);
     }
     offsetResizeTimer = window.setTimeout(function () {
-      applyLauncherOffsets();
+      applyPanelLayout();
     }, 120);
+  }
+
+  function bindMobileMediaQuery() {
+    if (!window.matchMedia) {
+      return;
+    }
+    mobileMediaQuery = window.matchMedia("(max-width: 480px)");
+    var onMobileChange = function () {
+      applyPanelLayout();
+    };
+    if (mobileMediaQuery.addEventListener) {
+      mobileMediaQuery.addEventListener("change", onMobileChange);
+    } else if (mobileMediaQuery.addListener) {
+      mobileMediaQuery.addListener(onMobileChange);
+    }
   }
 
   function positionClass(prefix) {
@@ -313,12 +447,20 @@
     panel.setAttribute("aria-label", "Chat");
     panel.setAttribute("aria-hidden", "true");
 
-    var closeBtn = document.createElement("button");
+    headerEl = document.createElement("div");
+    headerEl.className = "aos-embed-header";
+
+    closeBtn = document.createElement("button");
     closeBtn.type = "button";
     closeBtn.className = "aos-embed-close";
     closeBtn.setAttribute("aria-label", "Fechar chat");
     closeBtn.innerHTML = closeIconSvg();
     closeBtn.addEventListener("click", close);
+
+    headerEl.appendChild(closeBtn);
+
+    var bodyEl = document.createElement("div");
+    bodyEl.className = "aos-embed-body";
 
     iframe = document.createElement("iframe");
     iframe.className = "aos-embed-frame";
@@ -326,8 +468,9 @@
     iframe.setAttribute("loading", "lazy");
     iframe.setAttribute("allow", "clipboard-write");
 
-    panel.appendChild(closeBtn);
-    panel.appendChild(iframe);
+    bodyEl.appendChild(iframe);
+    panel.appendChild(headerEl);
+    panel.appendChild(bodyEl);
 
     root.appendChild(backdrop);
     root.appendChild(panel);
@@ -336,8 +479,9 @@
 
     document.addEventListener("keydown", onKeyDown);
     bindThemeMediaQuery();
+    bindMobileMediaQuery();
     applyPanelTheme();
-    applyLauncherOffsets();
+    applyPanelLayout();
     window.addEventListener("resize", scheduleOffsetUpdate);
   }
 
@@ -353,8 +497,10 @@
     }
 
     primaryColor = color;
+    brandingPrimaryColor = color;
     launcher.style.backgroundColor = color;
     launcher.style.setProperty("--aos-primary", color);
+    applyHeaderTheme();
   }
 
   function open() {
@@ -368,12 +514,14 @@
     }
 
     applyPanelTheme();
+    applyPanelLayout();
     isOpen = true;
     backdrop.classList.add("aos-open");
     panel.classList.add("aos-open");
     panel.setAttribute("aria-hidden", "false");
     launcher.setAttribute("aria-expanded", "true");
     launcher.setAttribute("aria-label", "Fechar chat");
+    lockBodyScroll();
   }
 
   function close() {
@@ -387,6 +535,7 @@
     panel.setAttribute("aria-hidden", "true");
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-label", "Abrir chat");
+    unlockBodyScroll();
   }
 
   function toggle() {
@@ -414,9 +563,12 @@
     launcher = null;
     panel = null;
     backdrop = null;
+    headerEl = null;
+    closeBtn = null;
     iframe = null;
     styleEl = null;
     isOpen = false;
+    unlockBodyScroll();
     delete window.AgencyOSWidget;
   }
 
