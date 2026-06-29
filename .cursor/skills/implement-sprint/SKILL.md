@@ -20,7 +20,7 @@ Onda 2: #42 → (#43 ‖ #41)
 Onda 3: #45 → #46 → (#49 ‖ #51) → #47
 ```
 
-**Não reimplementar 031E** (`assistant_label`, auto-offset) — já em `main`.
+**Não reimplementar 031E** (`assistant_label`, auto-offset) nem **031F** (RAG FAQ híbrido) — já em `main`. Agentes V0.2 (#49, #51) seguem [ADR-005](docs/decisions/005-rag-first.md).
 
 ## Durante implementação
 

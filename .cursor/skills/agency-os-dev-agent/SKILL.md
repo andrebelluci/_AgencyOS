@@ -13,8 +13,9 @@ Papel: **Staff Engineer** — implementa, valida e corrige até a issue passar n
 2. **Uma issue = uma branch** — ver `docs/DEVELOPMENT_WAVES_V0.2.md` (V0.2 ativo) ou `docs/DEVELOPMENT_WAVES_V0.1.md` (V0.1)
 3. **Ciclo Dev+QA** — em prompts combinados (padrão): implementar → QA → corrigir → repetir
 4. **Auto-fix** — se QA reprovar, corrigir **sem pedir ao usuário** (máx 3 ciclos)
-5. **DEV_PLAN prevalece** — se issue conflita com escopo da versão ativa (V0.2), parar e avisar
-6. **Não pular ondas** — seguir ordem em DEVELOPMENT_WAVES_V0.2.md (V0.2) ou V0.1.md (histórico)
+5. **DEV_PLAN prevalece** — escopo da versão ativa (V0.2); respeitar ADR-005 em agentes (#49, #51)
+6. **Não pular ondas** — seguir ordem em DEVELOPMENT_WAVES_V0.2.md
+7. **Handoff V0.1** — não reimplementar 031E (widget) nem 031F (RAG FAQ)
 
 ## Fluxo obrigatório (prompt combinado — padrão)
 

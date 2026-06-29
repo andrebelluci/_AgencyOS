@@ -13,7 +13,9 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 ## Entregas V0.1 já feitas — não reimplementar na V0.2
 
-Refinamento **031E** (pós-#31, **fora** do milestone V0.2) — descoberto com o 1º cliente real. **Não** estava no backlog V0.2; **não** adianta escopo V0.2.
+Refinamentos **031E** e **031F** (pós-#31, **fora** do milestone V0.2) — descobertos com o 1º cliente real. **Não** adiantam escopo V0.2.
+
+### 031E — Widget e auth (D19)
 
 | Entrega | Onde | Regra para issues V0.2 |
 |---------|------|------------------------|
@@ -22,15 +24,29 @@ Refinamento **031E** (pós-#31, **fora** do milestone V0.2) — descoberto com o
 | **Auto-offset launcher** | `public/widget/embed.js` | **Não** reimplementar detecção de colisão; evoluir só se issue nova (ex.: offset no painel, `MutationObserver`) |
 | **Fix login apex** | `link-user-tenant`, `require-owner` | Owner em `*.vercel.app` usa `users.tenant_id` — não reverter |
 
-Referência: decisão **D19** em [DEV_PLAN.md](DEV_PLAN.md) · detalhes em [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · migração `0010` · commits `e5433af` (auth), `4e8c862` (031E).
+Commits: `e5433af` (auth), `4e8c862` (031E) · migração `0010` · [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md)
 
-> **"Funcionário Digital"** permanece nome do **produto/plataforma** (marketing, docs internos). No widget do tenant manda **`assistant_label`**.
+### 031F — RAG FAQ + Knowledge First (D20 / ADR-005)
+
+| Entrega | Onde | Regra para issues V0.2 |
+|---------|------|------------------------|
+| **Chunk FAQ pergunta+resposta** | `src/modules/knowledge/faq-format.ts`, `faq-index.ts` | #51 citação **usa** metadados existentes; não reindexar do zero |
+| **Embeddings ao salvar FAQ** | `knowledge/service`, `repository` | Manter pipeline ao editar FAQ no painel |
+| **Busca híbrida** | `search-utils.ts`, `searchKnowledge` tool | #49 Support e #51 **consomem** tool atual — não duplicar busca |
+| **Sales/Orchestrator RAG-first** | `agents/sales`, `orchestrator/rules` | #49 Support herda mesma regra ([ADR-005](decisions/005-rag-first.md)) |
+| **Reindex CLI** | `scripts/reindex-faq-knowledge.ts` | Ops apenas — não é escopo de issue V0.2 |
+
+Commit: `17338fa` (031F) · docs: `2408e69` (ADR-005 formalizado) · [OPERATIONS.md](OPERATIONS.md) troubleshooting FAQ
+
+> **ADR-005:** conhecimento interno > LLM genérico. FAQ ignorada quando recuperável = **bug** (REGRA 21). **#51** = citação visível (UX); **#49** = roteamento Support — ambos **complementam**, não substituem `searchKnowledge`.
+
+> **"Funcionário Digital"** = nome do produto/plataforma (marketing). No widget do tenant manda **`assistant_label`**.
 
 ---
 
 ## Progresso atual (atualize após cada merge)
 
-> **📍 Você está aqui (2026-06-28):** V0.2 iniciado. Milestone `V0.2 - Site Conversacional` criado. Issues GitHub abertas.
+> **📍 Você está aqui (2026-06-29):** V0.1 fechado (#31, 031E, 031F, ADR-005 ✅). Milestone V0.2 aberto — nenhuma issue V0.2 mergeada ainda.
 >
 > **Próximo passo de código:** **#50 ISSUE-045 Widget dark mode** — Onda 1.
 >
@@ -177,7 +193,8 @@ git checkout main && git pull && git checkout -b feat/issue-050-widget-dark-mode
 - /chat e embed.js: CSS variables dark/light; auto = prefers-color-scheme
 - data-theme opcional no script embed (override)
 - primary_color como accent em ambos os temas
-- **Reutilizar** assistant_label e demais campos de `/api/widget/config` (031E — ver seção "Entregas V0.1 já feitas")
+- **Reutilizar** assistant_label e demais campos de `/api/widget/config` (031E)
+- **Não alterar** pipeline RAG / searchKnowledge (031F, ADR-005)
 - docs/WIDGET_CUSTOMIZATION.md atualizado (V0.2)
 
 ## Fase 2 — QA
@@ -499,13 +516,15 @@ Skills: agency-os-dev-agent + agency-os-knowledge + agency-os-qa-agent.
 git checkout main && git pull && git checkout -b feat/issue-049-support-agent
 
 ## Fase 1 — Implementar (V0.2)
-- src/agents/support/ — agent, prompt, rules
+- src/agents/support/ — agent, prompt, rules alinhados a [ADR-005](decisions/005-rag-first.md)
 - Orchestrator roteia support vs sales
-- Tools: searchKnowledge; createTicket stub
+- Tools: searchKnowledge (reuso 031F); createTicket stub
+- Support: searchKnowledge obrigatório antes de resposta factual (FAQ/garantia)
 - npm run test:agents
 
 ## Fase 2 — QA
 - Pergunta garantia/FAQ → Support; compra/lead → Sales
+- Cenário F3.1 (paráfrase FAQ) passa com Support Agent
 - npm run build && npm run lint && npm run test:agents
 
 ## Fase 3 — Auto-fix
@@ -529,14 +548,14 @@ Skills: agency-os-dev-agent + agency-os-knowledge + agency-os-widget-ui + agency
 git checkout main && git pull && git checkout -b feat/issue-051-rag-citation
 
 ## Fase 1 — Implementar (V0.2)
-- searchKnowledge retorna sourceTitle/sourceId
-- Sales/Support append citação na resposta
+- searchKnowledge retorna sourceTitle/sourceId (estender metadados 031F se necessário)
+- Sales/Support append citação na resposta — **complementa [ADR-005](decisions/005-rag-first.md)** (UX); não dispensa consulta à base
 - UI chat: linha "Fonte: ..." discreta
-- Sem citação quando RAG vazio
+- Sem citação quando RAG vazio; sem fonte inventada
 
 ## Fase 2 — QA
-- FAQ no knowledge → resposta cita documento
-- npm run build && npm run lint
+- FAQ no knowledge → resposta cita documento **e** conteúdo veio da base (F3.1 + F7.3)
+- npm run build && npm run lint && npm run test:e2e:no-ai
 
 ## Fase 3 — Auto-fix
 Máx 3 ciclos.
@@ -648,7 +667,8 @@ Ver [BACKLOG.md](BACKLOG.md) Fase 3 · [DEV_PLAN.md](DEV_PLAN.md) seção V0.3.
 | Documento | Uso |
 |-----------|-----|
 | [BACKLOG.md](BACKLOG.md) | Aceite por ISSUE-035–045 |
-| [DEV_PLAN.md](DEV_PLAN.md) | Escopo e decisões D8, D12, D14, D18 |
+| [DEV_PLAN.md](DEV_PLAN.md) | Escopo e decisões D8, D12, D14, D18, D19, D20 |
+| [decisions/005-rag-first.md](decisions/005-rag-first.md) | ADR-005 — obrigatório #49, #51 |
 | [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) | Dark mode, hero, iframe |
 | [MULTITENANCY.md](MULTITENANCY.md) | Domínio customizado |
 | [AGENTS.md](AGENTS.md) | Support Agent |

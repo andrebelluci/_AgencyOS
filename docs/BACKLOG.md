@@ -287,7 +287,22 @@ Para recriar issues V0.2: `powershell -File scripts/create-github-issues-v02.ps1
 - **Aceite:** Owner edita nome do assistente em Settings → Widget; widget e `/chat` exibem `assistant_label` (não hardcodar "Funcionário Digital"); mensagem inicial resolve `{{assistant_label}}`; launcher não sobrepõe FAB do site quando auto-offset ativo.
 - **V0.2:** issues #50, #43 **consomem** `/api/widget/config` — não reimplementar label nem offset.
 - **Depende de:** #31
-- **Docs:** [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · [OPERATIONS.md](OPERATIONS.md) · [DEVELOPMENT_WAVES_V0.2.md § 031E](DEVELOPMENT_WAVES_V0.2.md#entregas-v01-já-feitas--não-reimplementar-na-v02)
+- **Docs:** [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · [OPERATIONS.md](OPERATIONS.md) · [DEVELOPMENT_WAVES_V0.2.md § handoff V0.1](DEVELOPMENT_WAVES_V0.2.md#entregas-v01-já-feitas--não-reimplementar-na-v02)
+
+### ISSUE-031F: RAG FAQ + Knowledge First (pós-#31)
+- **Esforço:** Pequeno
+- **Labels:** v0.1, ai, panel
+- **Status:** ✅ Entregue em `main` (`17338fa`) — **não** é escopo V0.2 (decisão D20 / [ADR-005](decisions/005-rag-first.md))
+- **Descrição:**
+  - Chunk FAQ formato `Pergunta:\n…\n\nResposta:\n…` com embedding ao criar/editar.
+  - Busca híbrida (semântica + textual) em `searchKnowledge`.
+  - Logs de diagnóstico: `knowledge_search_completed`, `search_knowledge_tool_called`, `faq_indexed`.
+  - Sales Agent e Orchestrator reforçados: RAG antes de resposta factual.
+  - CLI `scripts/reindex-faq-knowledge.ts` para FAQs antigas.
+- **Aceite:** Paráfrase de FAQ recupera resposta correta (QA F3.1); `npm run test:search-knowledge` passa; FAQ editada no painel reindexa automaticamente.
+- **V0.2:** #49 Support e #51 citação **consomem** `searchKnowledge` — não duplicar pipeline nem dispensar consulta (ADR-005).
+- **Depende de:** #31, #22
+- **Docs:** [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · [OPERATIONS.md](OPERATIONS.md) · [decisions/005-rag-first.md](decisions/005-rag-first.md)
 
 ---
 
@@ -454,8 +469,8 @@ Para recriar issues V0.2: `powershell -File scripts/create-github-issues-v02.ps1
 - **Esforço:** Médio
 - **Labels:** v0.2, ai
 - **Onda V0.2:** 3 (paralela após #46)
-- **Descrição:** Orchestrator roteia suporte/FAQ para Support Agent.
-- **Aceite:** `test:agents` passa; garantia/FAQ → Support; venda → Sales.
+- **Descrição:** Orchestrator roteia suporte/FAQ para Support Agent. Deve respeitar [ADR-005](decisions/005-rag-first.md) (`searchKnowledge` antes de resposta factual).
+- **Aceite:** `test:agents` passa; garantia/FAQ → Support com RAG (F3.1); venda → Sales.
 - **Depende de:** #11 agents; #46 recomendado
 
 ### ISSUE-044: RAG citação de fonte (V0.2)
