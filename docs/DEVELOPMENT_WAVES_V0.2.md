@@ -11,6 +11,23 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 ---
 
+## Entregas V0.1 já feitas — não reimplementar na V0.2
+
+Refinamento **031E** (pós-#31, **fora** do milestone V0.2) — descoberto com o 1º cliente real. **Não** estava no backlog V0.2; **não** adianta escopo V0.2.
+
+| Entrega | Onde | Regra para issues V0.2 |
+|---------|------|------------------------|
+| **`assistant_label`** | `tenant_settings`, Settings → Widget, `/api/widget/config`, cabeçalho `/chat` | #50 dark mode e #43 iFrame **leem** o campo; **não** hardcodar "Funcionário Digital" no widget |
+| **`{{assistant_label}}`** | `initial_message` template | Manter substituição ao alterar mensagem inicial |
+| **Auto-offset launcher** | `public/widget/embed.js` | **Não** reimplementar detecção de colisão; evoluir só se issue nova (ex.: offset no painel, `MutationObserver`) |
+| **Fix login apex** | `link-user-tenant`, `require-owner` | Owner em `*.vercel.app` usa `users.tenant_id` — não reverter |
+
+Referência: decisão **D19** em [DEV_PLAN.md](DEV_PLAN.md) · detalhes em [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · migração `0010` · commits `e5433af` (auth), `4e8c862` (031E).
+
+> **"Funcionário Digital"** permanece nome do **produto/plataforma** (marketing, docs internos). No widget do tenant manda **`assistant_label`**.
+
+---
+
 ## Progresso atual (atualize após cada merge)
 
 > **📍 Você está aqui (2026-06-28):** V0.2 iniciado. Milestone `V0.2 - Site Conversacional` criado. Issues GitHub abertas.
@@ -160,6 +177,7 @@ git checkout main && git pull && git checkout -b feat/issue-050-widget-dark-mode
 - /chat e embed.js: CSS variables dark/light; auto = prefers-color-scheme
 - data-theme opcional no script embed (override)
 - primary_color como accent em ambos os temas
+- **Reutilizar** assistant_label e demais campos de `/api/widget/config` (031E — ver seção "Entregas V0.1 já feitas")
 - docs/WIDGET_CUSTOMIZATION.md atualizado (V0.2)
 
 ## Fase 2 — QA
@@ -328,6 +346,7 @@ git checkout main && git pull && git checkout -b feat/issue-043-iframe-embed
 - Snippet iframe em /settings (além do embed.js)
 - Parâmetros: key, theme, width, height
 - Cross-origin OK; postMessage tema do host fora de escopo
+- **Reutilizar** `/api/widget/config` (assistant_label, primary_color, initial_message — 031E)
 - WIDGET_CUSTOMIZATION.md — seção iframe V0.2
 
 ## Fase 2 — QA

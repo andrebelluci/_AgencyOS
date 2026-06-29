@@ -3,7 +3,7 @@
 ## Status
 
 Documento mestre de implementação.  
-Última revisão: 2026-06-25 (expansão Onda 7 — operação pré-deploy #32–#34).
+Última revisão: 2026-06-29 (031E pós-#31 — assistant_label + embed auto-offset).
 
 ---
 
@@ -31,6 +31,7 @@ Estas decisões resolvem conflitos entre documentos e não encurtam prazos — a
 | D16 | **Superadmin por allowlist** | `PLATFORM_ADMIN_EMAILS` (env). Sem tabela de roles nem RBAC multi-nível no V0.1. |
 | D17 | **Animações: widget vs site hospedeiro** | Launcher, painel, ícone e chat = Agency OS (`embed.js` + `/chat`). Decoração da página (pulse, demo inline, reveal) = CSS do site cliente. Animações ricas do produto (avatar, modos) = V0.2+ no embed, não hack permanente no host. |
 | D18 | **Widget dark mode = V0.2 (ISSUE-045)** | Tema `light` / `dark` / `auto` por tenant + `data-theme` no embed. Iframe **não** herda CSS do site; `auto` usa `prefers-color-scheme` do visitante. Sincronizar tema com página hospedeira fica fora do escopo inicial. |
+| D19 | **031E = V0.1 pós-#31, não V0.2** | `assistant_label` + auto-offset do launcher entregues com 1º cliente real (migração `0010`, commit `4e8c862`). V0.2 **consome** `/api/widget/config`; **não** reimplementa label nem posicionamento. Evoluções (offset no painel, `MutationObserver`) = issue nova se necessário. |
 
 ---
 
@@ -76,6 +77,7 @@ Detalhamento: [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md).
 - Widget: `public/widget/embed.js`
 - Painel: dashboard, leads, conversas, knowledge, settings, código embed
 - Integração: site do cliente cola o script; animações estruturais no embed; decoração da página no host (ver D17, [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md))
+- Widget (031E): `assistant_label` por tenant; auto-offset do launcher no `embed.js`
 - WhatsApp: redirecionamento com mensagem pré-preenchida
 
 ## Onda 7 — Operação e go-live (#30–#34)
@@ -92,7 +94,17 @@ Fecha o V0.1 para **clientes reais**. Onboarding continua **assistido manualment
 
 **Refinamentos pré-#31 (031A–031D):** mensagem inicial (`initial_message`), ações rápidas (`quick_actions` JSON), Sales Agent (RAG-first), `primary_color` no widget — sem alterar arquitetura V0.2.
 
-**Ordem:** `#34 → (#32 ‖ #33) → #30 → (031A–031D) → #31`
+**Refinamento pós-#31 (031E):** descoberto com 1º cliente em produção — **não** adianta V0.2.
+
+| Item | Entrega | Migração / commit |
+|------|---------|-------------------|
+| **031E-a** | `tenant_settings.assistant_label` — subtítulo do chat (Settings → Widget); placeholder `{{assistant_label}}` na mensagem inicial; exposto em `/api/widget/config` | `0010_assistant_label` |
+| **031E-b** | Auto-offset do launcher em `embed.js` — detecta FABs `fixed`/`sticky` no canto e sobe o botão; override `data-offset-bottom` / `data-auto-offset="false"` | `public/widget/embed.js` |
+
+Docs: [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) · [OPERATIONS.md](OPERATIONS.md).  
+**V0.2 (#50, #43, …):** consumir config existente; ver [DEVELOPMENT_WAVES_V0.2.md § Entregas V0.1](DEVELOPMENT_WAVES_V0.2.md#entregas-v01-já-feitas--não-reimplementar-na-v02).
+
+**Ordem:** `#34 → (#32 ‖ #33) → #30 → (031A–031D) → #31 → (031E)`
 
 **Gate deploy (#30):** #33 ✅ (API pública endurecida).  
 **Gate V0.2 (#41+):** #31 ✅ · milestone `V0.2 - Site Conversacional` · ver [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).
@@ -218,6 +230,8 @@ Detalhamento de campos em DATABASE.md.
 **Resiliência (estratégico):** Widget Hardening completo (quotas por tenant, abuse avançado) — parte mínima antecipada em **#33** (Onda 7); restante em V0.2.
 
 **Backlog existente (V0.2):** domínio customizado, Hero, iFrame, busca em conversas, RBAC básico, tenant_features, landing Agency OS, métricas widget→lead→WhatsApp, Support Agent, citação RAG, **widget dark mode** — GitHub **#41–#51** · prompts em [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md).
+
+**Já entregue no V0.1 (031E — não repetir na V0.2):** `assistant_label`, auto-offset do launcher, fix auth apex Vercel (`e5433af`). Dark mode (#50) e iFrame (#43) **estendem** `/api/widget/config` e `embed.js`; não recriam campos de personalização.
 
 > Milestone GitHub `V0.2 — Site Conversacional` agrupa estas issues. Site Conversacional **completo** = V0.4 na visão estratégica.
 

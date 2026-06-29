@@ -1,6 +1,8 @@
-# Widget — personalização V0.1 (ISSUE-031A–031D)
+# Widget — personalização V0.1 (ISSUE-031A–031E)
 
 Configurações em **Settings → Widget** e colunas em `tenant_settings`.
+
+> **031E** (pós-#31): `assistant_label` + auto-offset do launcher — entregue no V0.1 com 1º cliente real. **Não** é escopo V0.2; issues #50/#43 **consomem** esta API. Ver [DEV_PLAN.md D19](DEV_PLAN.md) e [DEVELOPMENT_WAVES_V0.2.md § Entregas V0.1](DEVELOPMENT_WAVES_V0.2.md#entregas-v01-já-feitas--não-reimplementar-na-v02).
 
 ## Nome do assistente (`assistant_label`)
 
