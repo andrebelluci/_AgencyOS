@@ -8,6 +8,7 @@ import {
   deleteMessageById,
   findConversationById,
   findConversationsByTenant,
+  findConversationsByTenantFiltered,
   findMessageById,
   findMessagesByConversation,
   insertConversation,
@@ -16,6 +17,7 @@ import {
   updateMessageById,
 } from "./repository";
 import type {
+  ConversationSearchFilters,
   CreateConversationInput,
   CreateMessageInput,
   UpdateConversationInput,
@@ -34,8 +36,19 @@ async function assertLeadInTenant(
 
 export async function listConversations(
   tenantId: string,
+  filters?: ConversationSearchFilters,
 ): Promise<Conversation[]> {
+  if (filters && hasConversationFilters(filters)) {
+    return findConversationsByTenantFiltered(tenantId, filters);
+  }
+
   return findConversationsByTenant(tenantId);
+}
+
+function hasConversationFilters(filters: ConversationSearchFilters): boolean {
+  return Boolean(
+    filters.query?.trim() || filters.startedFrom || filters.startedTo,
+  );
 }
 
 export async function getConversation(

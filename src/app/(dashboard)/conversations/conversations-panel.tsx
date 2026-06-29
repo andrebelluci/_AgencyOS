@@ -24,6 +24,7 @@ import { ConversationMessage } from "./conversation-message";
 
 type ConversationsPanelProps = {
   conversations: ConversationListItem[];
+  hasActiveFilters?: boolean;
 };
 
 function truncateVisitorId(visitorId: string): string {
@@ -38,7 +39,10 @@ function formatEmpty(value: string | null | undefined): string {
   return value?.trim() ? value : "—";
 }
 
-export function ConversationsPanel({ conversations }: ConversationsPanelProps) {
+export function ConversationsPanel({
+  conversations,
+  hasActiveFilters = false,
+}: ConversationsPanelProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [messages, setMessages] = useState<MessageListItem[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -89,9 +93,15 @@ export function ConversationsPanel({ conversations }: ConversationsPanelProps) {
   if (conversations.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-10 text-center">
-        <p className="text-sm font-medium">Nenhuma conversa ainda</p>
+        <p className="text-sm font-medium">
+          {hasActiveFilters
+            ? "Nenhuma conversa encontrada"
+            : "Nenhuma conversa ainda"}
+        </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          As conversas do assistente virtual aparecerão aqui.
+          {hasActiveFilters
+            ? "Tente ajustar a busca ou o período selecionado."
+            : "As conversas do assistente virtual aparecerão aqui."}
         </p>
       </div>
     );

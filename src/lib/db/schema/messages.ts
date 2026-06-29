@@ -27,5 +27,9 @@ export const messages = pgTable(
   (table) => [
     index("messages_tenant_id_idx").on(table.tenantId),
     index("messages_conversation_id_idx").on(table.conversationId),
+    index("messages_tenant_conversation_idx").on(
+      table.tenantId,
+      table.conversationId,
+    ),
   ],
 );

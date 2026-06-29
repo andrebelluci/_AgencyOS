@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, exists, gte, ilike, lte, or } from "drizzle-orm";
 
 import {
   conversations,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/db";
 
 import type {
+  ConversationSearchFilters,
   CreateConversationInput,
   CreateMessageInput,
   UpdateConversationInput,
@@ -20,11 +21,51 @@ import type {
 export async function findConversationsByTenant(
   tenantId: string,
 ): Promise<Conversation[]> {
-  return getDb()
+  return findConversationsByTenantFiltered(tenantId);
+}
+
+export async function findConversationsByTenantFiltered(
+  tenantId: string,
+  filters: ConversationSearchFilters = {},
+): Promise<Conversation[]> {
+  const db = getDb();
+  const conditions = [eq(conversations.tenantId, tenantId)];
+
+  if (filters.startedFrom) {
+    conditions.push(gte(conversations.startedAt, filters.startedFrom));
+  }
+
+  if (filters.startedTo) {
+    conditions.push(lte(conversations.startedAt, filters.startedTo));
+  }
+
+  const trimmedQuery = filters.query?.trim();
+  if (trimmedQuery) {
+    const pattern = `%${trimmedQuery}%`;
+    conditions.push(
+      or(
+        ilike(conversations.visitorId, pattern),
+        exists(
+          db
+            .select({ id: messages.id })
+            .from(messages)
+            .where(
+              and(
+                eq(messages.conversationId, conversations.id),
+                eq(messages.tenantId, tenantId),
+                ilike(messages.content, pattern),
+              ),
+            ),
+        ),
+      )!,
+    );
+  }
+
+  return db
     .select()
     .from(conversations)
-    .where(eq(conversations.tenantId, tenantId))
-    .orderBy(desc(conversations.createdAt));
+    .where(and(...conditions))
+    .orderBy(desc(conversations.startedAt));
 }
 
 export async function findConversationById(

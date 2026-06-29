@@ -34,6 +34,10 @@ export const conversations = pgTable(
   },
   (table) => [
     index("conversations_tenant_id_idx").on(table.tenantId),
+    index("conversations_tenant_started_at_idx").on(
+      table.tenantId,
+      table.startedAt,
+    ),
     index("conversations_lead_id_idx").on(table.leadId),
     index("conversations_visitor_id_idx").on(table.visitorId),
   ],

@@ -1,9 +1,17 @@
+import { Suspense } from "react";
+
 import { requireOwnerTenant } from "@/lib/auth/require-owner";
 import { listConversations } from "@/modules/conversations/service";
 import { listLeads } from "@/modules/leads/service";
 import type { ConversationListItem } from "@/modules/conversations/types";
 
+import { ConversationsFilters } from "./conversations-filters";
 import { ConversationsPanel } from "./conversations-panel";
+import {
+  hasActiveConversationFilters,
+  parseConversationsSearchParams,
+  type ConversationsPageSearchParams,
+} from "./search-params";
 
 function formatConversationDate(date: Date): string {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -13,10 +21,20 @@ function formatConversationDate(date: Date): string {
   }).format(date);
 }
 
-export default async function ConversationsPage() {
+type ConversationsPageProps = {
+  searchParams: Promise<ConversationsPageSearchParams>;
+};
+
+export default async function ConversationsPage({
+  searchParams,
+}: ConversationsPageProps) {
+  const params = await searchParams;
   const { tenant } = await requireOwnerTenant();
+  const { filters, ui } = parseConversationsSearchParams(params);
+  const hasFilters = hasActiveConversationFilters(filters);
+
   const [conversations, leads] = await Promise.all([
-    listConversations(tenant.id),
+    listConversations(tenant.id, filters),
     listLeads(tenant.id),
   ]);
 
@@ -43,7 +61,14 @@ export default async function ConversationsPage() {
         </p>
       </div>
 
-      <ConversationsPanel conversations={conversationItems} />
+      <Suspense fallback={null}>
+        <ConversationsFilters defaultValues={ui} />
+      </Suspense>
+
+      <ConversationsPanel
+        conversations={conversationItems}
+        hasActiveFilters={hasFilters}
+      />
     </div>
   );
 }

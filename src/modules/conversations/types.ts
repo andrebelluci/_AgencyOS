@@ -23,6 +23,12 @@ export type UpdateMessageInput = {
   content: string;
 };
 
+export type ConversationSearchFilters = {
+  query?: string;
+  startedFrom?: Date;
+  startedTo?: Date;
+};
+
 export type ConversationListItem = Conversation & {
   startedAtLabel: string;
   leadName: string | null;
