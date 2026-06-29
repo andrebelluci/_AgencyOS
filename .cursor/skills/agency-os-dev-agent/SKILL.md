@@ -16,6 +16,21 @@ Papel: **Staff Engineer** — implementa, valida e corrige até a issue passar n
 5. **DEV_PLAN prevalece** — escopo da versão ativa (V0.2); respeitar ADR-005 em agentes (#49, #51)
 6. **Não pular ondas** — seguir ordem em DEVELOPMENT_WAVES_V0.2.md
 7. **Handoff V0.1** — não reimplementar 031E (widget) nem 031F (RAG FAQ)
+8. **Ambientes** — dev e prod são **bases Supabase separadas**; ver abaixo
+
+## Ambientes — dev vs prod (OBRIGATÓRIO)
+
+| Fase | Banco | Onde |
+|------|-------|------|
+| Implementar + QA da issue | **dev** (`.env.local`) | `localhost:3000`, Playwright, `db:migrate` |
+| Após merge | **prod** (operador) | `db:migrate` manual + Vercel Production |
+
+**Regras:**
+- Nunca `db:seed` / `provision:tenant` de teste contra **prod**
+- Confirmar project ref de `NEXT_PUBLIC_SUPABASE_URL` antes de migrate
+- QA de issue = **só local + dev**; smoke em URL prod só em gate documentado (F7, OPERATIONS)
+
+Detalhes: [DEPLOY.md § Matriz](docs/DEPLOY.md#matriz-de-ambientes-obrigatório-antes-do-31) · [DEVELOPMENT_WAVES_V0.2.md § Ambientes](docs/DEVELOPMENT_WAVES_V0.2.md#ambientes--supabase-dev-vs-produção)
 
 ## Fluxo obrigatório (prompt combinado — padrão)
 
@@ -94,7 +109,8 @@ Só se issue **Grande** ou ambígua — issues Pequenas/Médias: implementar dir
 
 | Ação | Comando |
 |------|---------|
-| Próxima issue | `gh issue list --milestone "V0.1 - Funcionario Digital" --state open` |
+| Próxima issue V0.2 | `gh issue list --milestone "V0.2 - Site Conversacional" --state open` |
+| Próxima issue V0.1 | `gh issue list --milestone "V0.1 - Funcionario Digital" --state open` |
 | Ver issue | `gh issue view N` |
 
 ## Quando escalar ao usuário

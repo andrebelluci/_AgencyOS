@@ -38,6 +38,15 @@ Estratégia de qualidade para **V0.1** (concluído) e **V0.2** (ativo). Compleme
 
 Não buscar 100% coverage no V0.1. Cobrir **caminhos que geram receita**.
 
+### Ambientes (dev vs prod)
+
+| QA de issue (Dev Agent) | Smoke gate / onboarding |
+|-------------------------|-------------------------|
+| **Local** + Supabase **dev** + Playwright | URL **prod** + Supabase **prod** (operador) |
+| `npm run test:e2e:no-ai` | F7.3, checklist [OPERATIONS.md](OPERATIONS.md) |
+
+Nunca validar issue do dia a dia contra banco de produção. Matriz: [DEPLOY.md](DEPLOY.md).
+
 ---
 
 ## Fluxos obrigatórios de teste (smoke V0.1)

@@ -22,6 +22,12 @@ Onda 3: #45 → #46 → (#49 ‖ #51) → #47
 
 **Não reimplementar 031E** (`assistant_label`, auto-offset) nem **031F** (RAG FAQ híbrido) — já em `main`. Agentes V0.2 (#49, #51) seguem [ADR-005](docs/decisions/005-rag-first.md).
 
+## Ambientes
+
+- **Dev:** `.env.local` → Supabase dev — implementar e testar issues aqui
+- **Prod:** só pós-merge (operador migra + Vercel Production) — ver [DEPLOY.md](docs/DEPLOY.md)
+- **Nunca** seed/provision de teste em prod
+
 ## Durante implementação
 
 - Seguir estrutura de pastas em DEV_PLAN.md

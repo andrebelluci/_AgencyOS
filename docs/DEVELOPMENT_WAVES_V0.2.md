@@ -11,7 +11,40 @@ Cada prompt é **um bloco Dev+QA** (copiar e colar). Cada issue termina com rela
 
 ---
 
-## Entregas V0.1 já feitas — não reimplementar na V0.2
+## Ambientes — Supabase dev vs produção
+
+O Agency OS usa **dois projetos Supabase** (duas bases isoladas). Matriz completa: [DEPLOY.md § Matriz de ambientes](DEPLOY.md#matriz-de-ambientes-obrigatório-antes-do-31) · runbook: [OPERATIONS.md](OPERATIONS.md).
+
+| Onde roda | Config | Banco (`DATABASE_URL`) | Dados |
+|-----------|--------|------------------------|-------|
+| **Local** | `.env.local` | Supabase **dev** | `npm run db:seed`, testes, quebrar à vontade |
+| **Vercel Preview** | env Preview | Supabase **dev** (nunca prod) | PRs / branches |
+| **Vercel Production** | env Production | Supabase **prod** | Clientes reais, leads reais |
+
+### Regras para issues V0.2 (Dev + QA)
+
+1. **Implementar e validar** sempre em **local + banco dev** (`npm run dev`, `.env.local`, `pk_dev_local` ou tenant seed).
+2. **Migração nova** (ex.: `widget_theme` na #50): `npm run db:migrate` com `DATABASE_URL` **dev** na branch; commitar arquivo em `drizzle/migrations/`.
+3. **Após merge em `main`:** operador aplica a mesma migração em **prod** (`DATABASE_URL` prod — ver [OPERATIONS.md](OPERATIONS.md)); deploy Vercel Production puxa o código.
+4. **Proibido** em QA de issue: `db:seed`, `provision:tenant` de teste ou scripts destrutivos apontando para **prod**.
+5. **Validar separação:** project ref em `NEXT_PUBLIC_SUPABASE_URL` de `.env.local` ≠ Vercel Production.
+6. **Playwright / `test:e2e`:** só contra **localhost + dev** ([TEST.md](TEST.md)).
+7. **Smoke em URL prod** (F7, onboarding): só em gate explícito pós-merge — não substitui QA local da issue.
+
+> Preview Vercel com banco prod = **proibido** (PR pode migrar ou sujar dados de cliente).
+
+### Bloco ambiente (copiar em prompts Dev V0.2)
+
+```
+## Ambiente — OBRIGATÓRIO
+- Trabalhar com .env.local → Supabase DEV (não prod)
+- Migração: npm run db:migrate (dev) antes do QA
+- QA: localhost:3000 + npm run test:e2e:no-ai
+- NÃO rodar db:seed/provision contra prod
+- Pós-merge: documentar se operador precisa db:migrate em prod
+```
+
+---
 
 Refinamentos **031E** e **031F** (pós-#31, **fora** do milestone V0.2) — descobertos com o 1º cliente real. **Não** adiantam escopo V0.2.
 
@@ -185,6 +218,11 @@ Skills: agency-os-dev-agent + agency-os-widget-ui + agency-os-qa-agent.
 ## Git
 git checkout main && git pull && git checkout -b feat/issue-050-widget-dark-mode
 
+## Ambiente — OBRIGATÓRIO
+- .env.local → Supabase DEV (project ref ≠ prod)
+- npm run db:migrate (dev) após criar migration widget_theme
+- NÃO rodar db:seed/provision contra prod
+
 ## Fase 1 — Implementar (V0.2)
 - tenant_settings.widget_theme: light | dark | auto
 - Migration Drizzle + RLS
@@ -202,9 +240,9 @@ git checkout main && git pull && git checkout -b feat/issue-050-widget-dark-mode
 - Contraste legível (WCAG AA spot check)
 - Settings persiste tema; widget reflete sem redeploy
 - `assistant_label` e `primary_color` intactos após mudança de tema (031E)
-- npm run db:migrate (migration widget_theme)
+- npm run db:migrate (confirma migration aplicada no **dev**)
 - npm run build && npm run lint
-- npm run test:e2e:no-ai (regressão V0.1 — ver docs/TEST.md)
+- npm run test:e2e:no-ai (localhost + banco dev — ver TEST.md)
 
 ## Fase 3 — Auto-fix
 Máx 3 ciclos.
@@ -671,6 +709,9 @@ Ver [BACKLOG.md](BACKLOG.md) Fase 3 · [DEV_PLAN.md](DEV_PLAN.md) seção V0.3.
 | [decisions/005-rag-first.md](decisions/005-rag-first.md) | ADR-005 — obrigatório #49, #51 |
 | [WIDGET_CUSTOMIZATION.md](WIDGET_CUSTOMIZATION.md) | Dark mode, hero, iframe |
 | [MULTITENANCY.md](MULTITENANCY.md) | Domínio customizado |
+| [DEPLOY.md](DEPLOY.md) | Matriz dev vs prod, migrações, Vercel env |
+| [OPERATIONS.md](OPERATIONS.md) | Runbook prod pós-merge |
+| [TEST.md](TEST.md) | Playwright sempre em local + dev |
 | [AGENTS.md](AGENTS.md) | Support Agent |
 | [DEVELOPMENT_WAVES_V0.1.md](DEVELOPMENT_WAVES_V0.1.md) | Histórico V0.1 |
 

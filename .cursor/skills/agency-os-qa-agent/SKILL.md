@@ -67,8 +67,10 @@ npm run test:e2e:report
 
 ### Passo 3 — Ambiente
 
-- `.env.local` com Supabase + `DATABASE_URL` + opcional `OPENAI_API_KEY`
-- `npm run db:seed` — tenant `development`, `pk_dev_local`, login `owner@belluci.dev`
+- `.env.local` com Supabase **dev** + `DATABASE_URL` **dev** (nunca prod em QA de issue)
+- Validar: project ref em `NEXT_PUBLIC_SUPABASE_URL` ≠ Vercel Production ([DEPLOY.md](docs/DEPLOY.md))
+- `npm run db:migrate` — só com `DATABASE_URL` apontando para **dev** durante desenvolvimento
+- `npm run db:seed` — tenant `development`, `pk_dev_local`, login `owner@belluci.dev` (**dev only**)
 - **Dev server:** em máquinas lentas, subir antes em terminal separado: `npm run dev`
   - Depois: `$env:PLAYWRIGHT_SKIP_WEBSERVER="1"; npm run test:e2e:no-ai` (PowerShell)
 - Playwright sobe `npm run dev` automaticamente se a porta estiver livre (`playwright.config.ts`)
@@ -146,6 +148,8 @@ browser_tabs (list) → browser_navigate → browser_lock → snapshot/click/fil
 
 ## Referências
 
-- `docs/QA_PLAN.md` — F1–F6, pirâmide de testes
+- `docs/QA_PLAN.md` — F1–F6, F7, pirâmide de testes
+- `docs/DEPLOY.md` — matriz dev vs prod
+- `docs/TEST.md` — Playwright em local + dev
 - `docs/DEVELOPMENT_WAVES_V0.1.md` — smoke gates
 - `playwright.config.ts` — reporters, webServer, timeouts
