@@ -106,27 +106,25 @@ browser_tabs (list) → browser_navigate → browser_lock → snapshot/click/fil
 
 ---
 
-## Estrutura de testes (a criar com código)
+## Estrutura de testes
 
 ```
 tests/
-├── unit/
-│   ├── tools/
-│   ├── tenant/
-│   └── agents/
-├── integration/
-│   ├── leads.test.ts
-│   └── chat-api.test.ts
-└── e2e/
-    ├── widget-chat.spec.ts
-    ├── lead-capture.spec.ts
-    └── dashboard.spec.ts
+├── e2e/                          # Playwright — smoke F1–F6
+│   ├── constants.ts
+│   ├── fixtures/
+│   ├── pages/
+│   ├── f1-widget-chat.spec.ts
+│   ├── f2-lead-capture.spec.ts
+│   ├── f3-knowledge.spec.ts
+│   ├── f4-whatsapp.spec.ts
+│   ├── f5-auth-panel.spec.ts
+│   └── f6-multi-tenant.spec.ts
+├── unit/                         # (futuro — Vitest)
+└── integration/                  # (futuro — Vitest + DB)
 ```
 
-Introduzir conforme blocos do DEV_PLAN:
-- **Bloco 2:** `tests/unit/tools/`
-- **Bloco 3:** `tests/e2e/widget-chat.spec.ts`
-- **Bloco 5:** smoke completo F1–F6
+Comandos: `npm run test:e2e` · `npm run test:e2e:smoke` · `npm run test:e2e:report` · ver [TEST.md](TEST.md)
 
 ---
 
@@ -146,11 +144,18 @@ Issue só fecha quando:
 ## Comandos para o usuário
 
 ```
+# Smoke Playwright V0.1 (regressão)
+npm run test:e2e:smoke
+
+# Relatório HTML
+npm run test:e2e:report
+
 # Fluxo completo (um paste)
 "Dev Agent: implemente e valide ISSUE-045"  → ver prompt #50 em DEVELOPMENT_WAVES_V0.2.md
 
 # Só validar (issue já implementada)
 "QA Agent: valide ISSUE-017 na branch feat/issue-017-widget-config"
+"QA Agent: rode smoke F1–F6 com Playwright"
 ```
 
 Smoke gates (várias issues): Onda 5/6 V0.1 — ver DEVELOPMENT_WAVES_V0.1.md; Ondas 1–3 V0.2 — ver DEVELOPMENT_WAVES_V0.2.md.

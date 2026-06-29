@@ -30,6 +30,7 @@ Em caso de conflito, prevalece nesta ordem:
 | [CURSOR_AGENTS.md](CURSOR_AGENTS.md) | Regras e skills do **Cursor** (dev) | Configurar o IDE |
 | [CURSOR_SKILLS_STRATEGY.md](CURSOR_SKILLS_STRATEGY.md) | Pesquisa e inventário de skills | Escolher extensões Cursor |
 | [QA_PLAN.md](QA_PLAN.md) | Testes, Dev/QA agents, smoke V0.1 | Validar issues |
+| [TEST.md](TEST.md) | **Como rodar Playwright E2E** | **Dia a dia / antes de merge** |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Arquitetura alvo da plataforma | Design de sistema |
 | [MULTITENANCY.md](MULTITENANCY.md) | Isolamento por tenant | Toda feature nova |
 | [DATABASE.md](DATABASE.md) | Modelo completo + schema MVP | Migrations, queries |
