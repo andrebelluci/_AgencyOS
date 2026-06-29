@@ -44,7 +44,31 @@
   var SIDE_PROBE = 140;
   var BOTTOM_BAND = 220;
   var STACK_GAP = 16;
+  var FAB_MAX_HEIGHT = 80;
+  var FAB_MAX_WIDTH = 280;
+  var maxAutoOffset = parseInt(
+    script.getAttribute("data-max-offset") || "140",
+    10,
+  );
+  if (isNaN(maxAutoOffset) || maxAutoOffset < MIN_BOTTOM) {
+    maxAutoOffset = 140;
+  }
+  var OFFSET_HYSTERESIS = 10;
   var offsetResizeTimer = null;
+  var frozenLauncherBottom = null;
+  var lastAppliedBottom = null;
+  var offsetObserver = null;
+  var onVisualViewportChange = null;
+  var bodyPaddingRightBackup = "";
+  var scrollLockY = 0;
+  var offsetIgnoreSelectors = (
+    script.getAttribute("data-offset-ignore") || ""
+  )
+    .split(",")
+    .map(function (part) {
+      return part.trim();
+    })
+    .filter(Boolean);
 
   var isOpen = false;
   var root = null;
@@ -173,14 +197,22 @@
   }
 
   function lockBodyScroll() {
+    scrollLockY = window.scrollY || window.pageYOffset || 0;
+    var scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
     bodyOverflowBackup = document.body.style.overflow;
+    bodyPaddingRightBackup = document.body.style.paddingRight;
     htmlOverflowBackup = document.documentElement.style.overflow;
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = scrollbarWidth + "px";
+    }
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
   }
 
   function unlockBodyScroll() {
     document.body.style.overflow = bodyOverflowBackup;
+    document.body.style.paddingRight = bodyPaddingRightBackup;
     document.documentElement.style.overflow = htmlOverflowBackup;
   }
 
@@ -215,15 +247,15 @@
   }
 
   var css =
-    ".aos-embed-root{position:fixed;z-index:" +
+    ".aos-embed-root{position:fixed;inset:0;z-index:" +
     zIndex +
-    ";font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,sans-serif}" +
-    ".aos-embed-launcher{position:fixed;width:56px;height:56px;border:none;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.2);transition:transform .2s ease,box-shadow .2s ease;color:#fff}" +
+    ";font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,sans-serif;isolation:isolate;pointer-events:none}" +
+    ".aos-embed-launcher{position:fixed;width:56px;height:56px;margin:0;padding:0;border:none;border-radius:9999px;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.2);transition:transform .2s ease,box-shadow .2s ease;color:#fff;pointer-events:auto;-webkit-tap-highlight-color:transparent}" +
     ".aos-embed-launcher:hover{transform:scale(1.05);box-shadow:0 8px 28px rgba(0,0,0,.25)}" +
     ".aos-embed-launcher:focus-visible{outline:3px solid rgba(37,99,235,.45);outline-offset:2px}" +
     ".aos-embed-launcher svg{width:26px;height:26px;fill:currentColor}" +
-    ".aos-embed-bottom-right{bottom:20px;right:20px}" +
-    ".aos-embed-bottom-left{bottom:20px;left:20px}" +
+    ".aos-embed-bottom-right{right:max(20px,env(safe-area-inset-right,0px))}" +
+    ".aos-embed-bottom-left{left:max(20px,env(safe-area-inset-left,0px))}" +
     ".aos-embed-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:0}" +
     ".aos-embed-backdrop.aos-open{opacity:1;pointer-events:auto}" +
     ".aos-embed-panel{position:fixed;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:16px;box-shadow:0 24px 48px rgba(0,0,0,.22);opacity:0;transform:translateY(12px) scale(.98);pointer-events:auto;transition:opacity .2s ease,transform .2s ease,background-color .2s ease;z-index:1}" +
@@ -277,11 +309,151 @@
     if (parseFloat(style.opacity || "1") === 0) {
       return false;
     }
+    if (style.pointerEvents === "none") {
+      return false;
+    }
 
     return style.position === "fixed" || style.position === "sticky";
   }
 
+  function matchesOffsetIgnoreSelector(el) {
+    if (!el || !el.matches) {
+      return false;
+    }
+    var i;
+    for (i = 0; i < offsetIgnoreSelectors.length; i += 1) {
+      try {
+        if (el.matches(offsetIgnoreSelectors[i])) {
+          return true;
+        }
+      } catch (_error) {
+        /* invalid selector on script tag */
+      }
+    }
+    return false;
+  }
+
+  function isIgnorableOffsetElement(el) {
+    if (!el) {
+      return false;
+    }
+    if (el.getAttribute("data-aos-offset-ignore") === "true") {
+      return true;
+    }
+    if (matchesOffsetIgnoreSelector(el)) {
+      return true;
+    }
+
+    var id = (el.id || "").toLowerCase();
+    var className = (el.className || "").toString().toLowerCase();
+    var aria = (el.getAttribute("aria-label") || "").toLowerCase();
+    var role = (el.getAttribute("role") || "").toLowerCase();
+
+    if (
+      id.indexOf("cookie") !== -1 ||
+      id.indexOf("consent") !== -1 ||
+      id.indexOf("gdpr") !== -1 ||
+      className.indexOf("cookie") !== -1 ||
+      className.indexOf("consent") !== -1 ||
+      className.indexOf("gdpr") !== -1 ||
+      className.indexOf("onetrust") !== -1 ||
+      className.indexOf("termly") !== -1 ||
+      aria.indexOf("cookie") !== -1 ||
+      aria.indexOf("consent") !== -1
+    ) {
+      return true;
+    }
+    if (
+      id === "back-to-top" ||
+      aria.indexOf("voltar ao topo") !== -1 ||
+      aria.indexOf("back to top") !== -1
+    ) {
+      return true;
+    }
+    if (
+      className.indexOf("blessing-screen") !== -1 ||
+      className.indexOf("site-florals") !== -1 ||
+      className.indexOf("intro-screen") !== -1
+    ) {
+      return true;
+    }
+    if (role === "dialog" || role === "alertdialog") {
+      return true;
+    }
+
+    return false;
+  }
+
+  function isFullscreenOverlay(rect, viewportW, viewportH) {
+    return (
+      rect.width >= viewportW * 0.85 && rect.height >= viewportH * 0.85
+    );
+  }
+
+  function isPeerFab(rect) {
+    if (rect.height > FAB_MAX_HEIGHT || rect.height < 20) {
+      return false;
+    }
+    if (rect.width > FAB_MAX_WIDTH) {
+      return false;
+    }
+    return true;
+  }
+
+  function forEachOffsetCandidate(callback) {
+    if (!document.body) {
+      return;
+    }
+
+    var stack = [document.body];
+    while (stack.length > 0) {
+      var node = stack.pop();
+      if (!node || node.nodeType !== 1) {
+        continue;
+      }
+
+      callback(node);
+
+      if (node.shadowRoot) {
+        var shadowChild = node.shadowRoot.firstElementChild;
+        while (shadowChild) {
+          stack.push(shadowChild);
+          shadowChild = shadowChild.nextElementSibling;
+        }
+      }
+
+      var child = node.firstElementChild;
+      while (child) {
+        stack.push(child);
+        child = child.nextElementSibling;
+      }
+    }
+  }
+
+  function formatLauncherBottom(px) {
+    return "calc(" + px + "px + env(safe-area-inset-bottom, 0px))";
+  }
+
+  function dispatchOffsetChange(bottom) {
+    publishLauncherOffset(bottom);
+    try {
+      window.dispatchEvent(
+        new CustomEvent("agencyos:launcher-offset", {
+          detail: {
+            bottom: bottom,
+            size: LAUNCHER_SIZE,
+          },
+        }),
+      );
+    } catch (_error) {
+      /* CustomEvent unavailable */
+    }
+  }
+
   function detectBottomOffset() {
+    if (isOpen && frozenLauncherBottom !== null) {
+      return frozenLauncherBottom;
+    }
     if (!isNaN(manualOffsetBottom) && manualOffsetBottom >= 0) {
       return manualOffsetBottom;
     }
@@ -293,38 +465,66 @@
     var viewportW = window.innerWidth;
     var viewportH = window.innerHeight;
     var neededBottom = MIN_BOTTOM;
-    var nodes = document.body ? document.body.getElementsByTagName("*") : [];
 
-    for (var i = 0; i < nodes.length; i += 1) {
-      var el = nodes[i];
+    forEachOffsetCandidate(function (el) {
       if (isEmbedNode(el)) {
-        continue;
+        return;
+      }
+      if (isIgnorableOffsetElement(el)) {
+        return;
       }
       if (!isVisibleFixedElement(el)) {
-        continue;
+        return;
       }
 
       var rect = el.getBoundingClientRect();
+      if (isFullscreenOverlay(rect, viewportW, viewportH)) {
+        return;
+      }
+      if (!isPeerFab(rect)) {
+        return;
+      }
       if (rect.bottom < viewportH - BOTTOM_BAND) {
-        continue;
+        return;
       }
 
       if (sideRight) {
         if (rect.right < viewportW - SIDE_PROBE) {
-          continue;
+          return;
         }
       } else if (rect.left > SIDE_PROBE) {
-        continue;
+        return;
       }
 
       var stackBottom = viewportH - rect.top + STACK_GAP;
       if (stackBottom > neededBottom) {
         neededBottom = stackBottom;
       }
-    }
+    });
 
-    var maxBottom = Math.max(MIN_BOTTOM, viewportH - LAUNCHER_SIZE - 20);
-    return Math.min(neededBottom, maxBottom);
+    return Math.min(neededBottom, maxAutoOffset);
+  }
+
+  function publishLauncherOffset(bottom) {
+    if (!document.documentElement) {
+      return;
+    }
+    document.documentElement.style.setProperty(
+      "--aos-embed-launcher-bottom",
+      bottom + "px",
+    );
+    document.documentElement.style.setProperty(
+      "--aos-embed-launcher-size",
+      LAUNCHER_SIZE + "px",
+    );
+    document.documentElement.style.setProperty(
+      "--aos-embed-launcher-stack",
+      "calc(" +
+        bottom +
+        "px + " +
+        LAUNCHER_SIZE +
+        "px + env(safe-area-inset-bottom, 0px))",
+    );
   }
 
   function applyPanelLayout() {
@@ -333,7 +533,20 @@
     }
 
     var bottom = detectBottomOffset();
-    launcher.style.bottom = bottom + "px";
+    if (
+      autoOffset &&
+      isNaN(manualOffsetBottom) &&
+      lastAppliedBottom !== null &&
+      Math.abs(bottom - lastAppliedBottom) < OFFSET_HYSTERESIS
+    ) {
+      bottom = lastAppliedBottom;
+    }
+    if (bottom !== lastAppliedBottom) {
+      lastAppliedBottom = bottom;
+      dispatchOffsetChange(bottom);
+    }
+
+    launcher.style.bottom = formatLauncherBottom(bottom);
 
     if (isMobileViewport()) {
       panel.classList.add("aos-embed-panel-mobile");
@@ -369,6 +582,9 @@
   }
 
   function scheduleOffsetUpdate() {
+    if (isOpen) {
+      return;
+    }
     if (offsetResizeTimer) {
       window.clearTimeout(offsetResizeTimer);
     }
@@ -377,12 +593,54 @@
     }, 120);
   }
 
+  function bindOffsetObservers() {
+    if (!autoOffset || (!isNaN(manualOffsetBottom) && manualOffsetBottom >= 0)) {
+      return;
+    }
+
+    if (typeof MutationObserver !== "undefined" && document.body && !offsetObserver) {
+      offsetObserver = new MutationObserver(scheduleOffsetUpdate);
+      offsetObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["class", "style", "hidden", "aria-hidden"],
+      });
+    }
+
+    if (window.visualViewport && !onVisualViewportChange) {
+      onVisualViewportChange = scheduleOffsetUpdate;
+      window.visualViewport.addEventListener("resize", onVisualViewportChange);
+      window.visualViewport.addEventListener("scroll", onVisualViewportChange);
+    }
+
+    window.addEventListener("orientationchange", scheduleOffsetUpdate);
+    window.addEventListener("agencyos:recalculate-offset", scheduleOffsetUpdate);
+  }
+
+  function unbindOffsetObservers() {
+    if (offsetObserver) {
+      offsetObserver.disconnect();
+      offsetObserver = null;
+    }
+    if (window.visualViewport && onVisualViewportChange) {
+      window.visualViewport.removeEventListener("resize", onVisualViewportChange);
+      window.visualViewport.removeEventListener("scroll", onVisualViewportChange);
+      onVisualViewportChange = null;
+    }
+    window.removeEventListener("orientationchange", scheduleOffsetUpdate);
+    window.removeEventListener("agencyos:recalculate-offset", scheduleOffsetUpdate);
+  }
+
   function bindMobileMediaQuery() {
     if (!window.matchMedia) {
       return;
     }
     mobileMediaQuery = window.matchMedia("(max-width: 480px)");
     var onMobileChange = function () {
+      if (isOpen) {
+        return;
+      }
       applyPanelLayout();
     };
     if (mobileMediaQuery.addEventListener) {
@@ -483,6 +741,7 @@
     applyPanelTheme();
     applyPanelLayout();
     window.addEventListener("resize", scheduleOffsetUpdate);
+    bindOffsetObservers();
   }
 
   function onKeyDown(event) {
@@ -513,6 +772,7 @@
       iframe.src = buildChatUrl();
     }
 
+    frozenLauncherBottom = detectBottomOffset();
     applyPanelTheme();
     applyPanelLayout();
     isOpen = true;
@@ -536,6 +796,8 @@
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-label", "Abrir chat");
     unlockBodyScroll();
+    frozenLauncherBottom = null;
+    scheduleOffsetUpdate();
   }
 
   function toggle() {
@@ -549,6 +811,7 @@
   function destroy() {
     document.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("resize", scheduleOffsetUpdate);
+    unbindOffsetObservers();
     if (offsetResizeTimer) {
       window.clearTimeout(offsetResizeTimer);
       offsetResizeTimer = null;
@@ -568,7 +831,14 @@
     iframe = null;
     styleEl = null;
     isOpen = false;
+    frozenLauncherBottom = null;
     unlockBodyScroll();
+    lastAppliedBottom = null;
+    if (document.documentElement) {
+      document.documentElement.style.removeProperty("--aos-embed-launcher-bottom");
+      document.documentElement.style.removeProperty("--aos-embed-launcher-size");
+      document.documentElement.style.removeProperty("--aos-embed-launcher-stack");
+    }
     delete window.AgencyOSWidget;
   }
 
@@ -612,6 +882,8 @@
         scheduleOffsetUpdate();
         window.setTimeout(scheduleOffsetUpdate, 600);
         window.setTimeout(scheduleOffsetUpdate, 2000);
+        window.setTimeout(scheduleOffsetUpdate, 5000);
+        window.setTimeout(scheduleOffsetUpdate, 10000);
       })
       .catch(function () {
         /* branding is optional */
@@ -626,6 +898,20 @@
     close: close,
     toggle: toggle,
     destroy: destroy,
+    recalculateOffset: function () {
+      if (!isOpen) {
+        applyPanelLayout();
+      }
+    },
+    getLauncherBottom: function () {
+      if (frozenLauncherBottom !== null) {
+        return frozenLauncherBottom;
+      }
+      if (lastAppliedBottom !== null) {
+        return lastAppliedBottom;
+      }
+      return detectBottomOffset();
+    },
     getPublicKey: function () {
       return publicKey;
     },

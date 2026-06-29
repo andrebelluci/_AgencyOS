@@ -116,14 +116,33 @@ O script injeta o launcher e um painel com iframe apontando para `/chat?key=…`
 
 ### Posição do botão flutuante (auto-offset)
 
-Por padrão, o embed **detecta** outros elementos `fixed`/`sticky` no canto inferior (ex.: botão WhatsApp do site) e **sobe** o launcher para não sobrepor.
+Por padrão, o embed **detecta** outros FABs pequenos (`fixed`/`sticky`, até ~280×80px) no canto inferior (ex.: grupo WhatsApp) e **sobe** o launcher para não sobrepor. **Ignora** automaticamente: banners de cookie, `#back-to-top`, overlays fullscreen (intro, decoração) e elementos com `data-aos-offset-ignore="true"`.
 
 | Atributo | Default | Descrição |
 |----------|---------|-----------|
 | `data-auto-offset` | `true` (implícito) | `false` desliga a detecção |
 | `data-offset-bottom` | — | Offset fixo em px (sobrescreve auto) |
+| `data-max-offset` | `140` | Teto do auto-offset em px |
+| `data-offset-ignore` | — | Seletores CSS extras a ignorar (vírgula) |
 | `data-position` | `bottom-right` | `bottom-left` também suportado |
 | `data-theme` | — | Override opcional: `light`, `dark` ou `auto` (sobrescreve Settings) |
+
+O embed publica no `:root` as variáveis `--aos-embed-launcher-bottom`, `--aos-embed-launcher-size` e `--aos-embed-launcher-stack` (offset + tamanho + safe-area) para o site empilhar botões próprios (ex.: voltar ao topo) sem chute fixo em `58px`.
+
+**Blindagem automática (embed):** ignora overlays fullscreen, cookie/consent/GDPR, `#back-to-top`, dialogs; só empilha FABs pequenos; teto `data-max-offset`; congela offset com chat aberto; `MutationObserver` + `visualViewport` + retentativas até 10s para widgets tardios; open shadow DOM; `env(safe-area-inset-*)` no iOS; histerese anti-tremor; evento `agencyos:launcher-offset`.
+
+**API JS (opcional no site):**
+
+```js
+window.AgencyOSWidget.getLauncherBottom(); // px lógicos do fundo
+window.AgencyOSWidget.recalculateOffset(); // após injetar FAB próprio
+window.dispatchEvent(new Event("agencyos:recalculate-offset"));
+window.addEventListener("agencyos:launcher-offset", (e) => {
+  console.log(e.detail.bottom, e.detail.size);
+});
+```
+
+**O site ainda deve:** posicionar botões próprios com `--aos-embed-launcher-stack` (ou ouvir o evento), não sobrescrever `.aos-embed-launcher`, e restaurar `overflow` após intros modais.
 
 Exemplo com tema escuro forçado no site:
 
