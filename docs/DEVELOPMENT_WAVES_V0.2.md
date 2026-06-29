@@ -79,16 +79,18 @@ Commit: `17338fa` (031F) · docs: `2408e69` (ADR-005 formalizado) · [OPERATIONS
 
 ## Progresso atual (atualize após cada merge)
 
-> **📍 Você está aqui (2026-06-29):** V0.1 fechado (#31, 031E, 031F, ADR-005 ✅). Milestone V0.2 aberto — nenhuma issue V0.2 mergeada ainda.
+> **📍 Você está aqui (2026-06-29):** Onda 1 em andamento — **#50 ✅** (dark mode mergeado + QA manual). **Próximo:** **#44 ISSUE-038** (busca em conversas).
 >
-> **Próximo passo de código:** **#50 ISSUE-045 Widget dark mode** — Onda 1.
+> **Extra pós-#50 (em `main`, sem issue):** fixes `embed.js` — auto-offset blindado (`9a423e0`), painel fechado não bloqueia cliques (`f65f1c4`). Validado em dharmalabs.local.
 >
 > **Sequência V0.2:** Onda 1 `#50 → #44 → #48` · Onda 2 `#42 → (#43 ‖ #41)` · Onda 3 `#45 → #46 → (#49 ‖ #51) → #47` + hardening complementar
+>
+> **Atenção numeração:** ISSUE-038 (BACKLOG) = GitHub **#44**. ISSUE-045 (BACKLOG) = GitHub **#50**. GitHub **#38** = hardening V0.1 (já fechado). GitHub **#45** = RBAC (Onda 3).
 
 | GitHub | BACKLOG | Título | Onda | Branch esperada | Status |
 |--------|---------|--------|------|-----------------|--------|
-| **#50** | ISSUE-045 | Widget dark mode | 1 | `feat/issue-050-widget-dark-mode` | ⬜ **PRÓXIMO** |
-| #44 | ISSUE-038 | Busca e filtro em conversas | 1 | `feat/issue-044-conversations-search` | ⬜ Bloqueada por #50 |
+| **#50** | ISSUE-045 | Widget dark mode | 1 | `feat/issue-050-widget-dark-mode` | ✅ Mergeado (`91bdd90`) |
+| **#44** | ISSUE-038 | Busca e filtro em conversas | 1 | `feat/issue-044-conversations-search` | ⬜ **PRÓXIMO** |
 | #48 | ISSUE-042 | Métricas conversão widget→lead→WhatsApp | 1 | `feat/issue-048-conversion-metrics` | ⬜ Bloqueada por #44 |
 | #42 | ISSUE-036 | Hero conversacional | 2 | `feat/issue-042-hero-conversational` | ⬜ Bloqueada por Onda 1 |
 | #43 | ISSUE-037 | iFrame embed alternativo | 2 | `feat/issue-043-iframe-embed` | ⬜ Paralela após #42 |

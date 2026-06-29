@@ -5,7 +5,7 @@ Documento índice. Cada versão tem seu próprio arquivo de ondas e prompts.
 | Versão | Arquivo | Status |
 |--------|---------|--------|
 | **V0.1** | [DEVELOPMENT_WAVES_V0.1.md](DEVELOPMENT_WAVES_V0.1.md) | ✅ Concluído (#1–#39, Onda 7) |
-| **V0.2** | [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md) | 🟡 **Ativo** — iniciar em #50 (handoff 031E + 031F + ADR-005 documentado) |
+| **V0.2** | [DEVELOPMENT_WAVES_V0.2.md](DEVELOPMENT_WAVES_V0.2.md) | 🟡 **Ativo** — Onda 1: #50 ✅ → **#44** próximo |
 | **V0.3** | `DEVELOPMENT_WAVES_V0.3.md` | ⬜ Futuro (ISSUE-046+) |
 
 ## Regra de ouro
