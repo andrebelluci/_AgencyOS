@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+
 import {
   DEV_ASSISTANT_LABEL,
   DEV_COMPANY_NAME,
@@ -20,17 +22,38 @@ test.describe("F5 — Auth + Painel @f5 @smoke", () => {
   });
 });
 
+async function restoreDevSettings(page: Page): Promise<void> {
+  await page.goto("/settings");
+  await expect(
+    page.getByRole("heading", { name: "Configurações" }),
+  ).toBeVisible();
+  await page.getByLabel("Nome da empresa").clear();
+  await page.getByLabel("Nome da empresa").fill(DEV_COMPANY_NAME);
+  await page.getByLabel("Nome do assistente").clear();
+  await page.getByLabel("Nome do assistente").fill(DEV_ASSISTANT_LABEL);
+  await page.getByRole("button", { name: "Salvar" }).click();
+  await expect(
+    page.getByText("Configurações salvas com sucesso."),
+  ).toBeVisible({ timeout: 30_000 });
+}
+
 test.describe("F5 — Settings @f5 @smoke", () => {
+  test.describe.configure({ mode: "serial" });
+
+  test.beforeEach(async ({ page }) => {
+    await restoreDevSettings(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await restoreDevSettings(page);
+  });
+
   test("settings persist after save", async ({ page }) => {
     const marker = `E2E Settings ${Date.now()}`;
 
     await page.goto("/settings");
-    await expect(
-      page.getByRole("heading", { name: "Configurações" }),
-    ).toBeVisible();
-
     const companyInput = page.getByLabel("Nome da empresa");
-    const previousCompany = await companyInput.inputValue();
+    await companyInput.clear();
     await companyInput.fill(marker);
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(
@@ -39,12 +62,6 @@ test.describe("F5 — Settings @f5 @smoke", () => {
 
     await page.reload();
     await expect(companyInput).toHaveValue(marker);
-
-    await companyInput.fill(previousCompany);
-    await page.getByRole("button", { name: "Salvar" }).click();
-    await expect(
-      page.getByText("Configurações salvas com sucesso."),
-    ).toBeVisible({ timeout: 30_000 });
   });
 
   test("assistant label persists after save", async ({ page }) => {
@@ -52,8 +69,7 @@ test.describe("F5 — Settings @f5 @smoke", () => {
 
     await page.goto("/settings");
     const labelInput = page.getByLabel("Nome do assistente");
-    const previousLabel = await labelInput.inputValue();
-
+    await labelInput.clear();
     await labelInput.fill(marker);
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(
@@ -62,12 +78,6 @@ test.describe("F5 — Settings @f5 @smoke", () => {
 
     await page.reload();
     await expect(labelInput).toHaveValue(marker);
-
-    await labelInput.fill(previousLabel || DEV_ASSISTANT_LABEL);
-    await page.getByRole("button", { name: "Salvar" }).click();
-    await expect(
-      page.getByText("Configurações salvas com sucesso."),
-    ).toBeVisible({ timeout: 30_000 });
   });
 
   test("saved assistant label appears on chat page", async ({
@@ -78,8 +88,7 @@ test.describe("F5 — Settings @f5 @smoke", () => {
 
     await page.goto("/settings");
     const labelInput = page.getByLabel("Nome do assistente");
-    const previousLabel = await labelInput.inputValue();
-
+    await labelInput.clear();
     await labelInput.fill(marker);
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(
@@ -93,11 +102,5 @@ test.describe("F5 — Settings @f5 @smoke", () => {
     await expect(
       page.getByRole("heading", { name: DEV_COMPANY_NAME }),
     ).toBeVisible();
-
-    await page.goto("/settings");
-    await page.getByLabel("Nome do assistente").fill(
-      previousLabel || DEV_ASSISTANT_LABEL,
-    );
-    await page.getByRole("button", { name: "Salvar" }).click();
   });
 });

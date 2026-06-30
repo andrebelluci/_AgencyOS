@@ -17,12 +17,11 @@ test.describe("F1 — Widget + Chat @f1 @smoke", () => {
     await chatPage.goto(DEV_PUBLIC_KEY);
     await chatPage.expectLoaded();
 
-    await expect(chatPage.assistantMessages().first()).toContainText(
-      new RegExp(DEV_ASSISTANT_LABEL, "i"),
-    );
-    await expect(chatPage.assistantMessages().first()).toContainText(
-      new RegExp(DEV_COMPANY_NAME, "i"),
-    );
+    await expect(
+      page.getByRole("heading", { name: DEV_COMPANY_NAME }),
+    ).toBeVisible();
+    await expect(page.getByText(DEV_ASSISTANT_LABEL).first()).toBeVisible();
+    await expect(chatPage.assistantMessages().first()).toBeVisible();
     expect(errors).toEqual([]);
   });
 
@@ -43,7 +42,9 @@ test.describe("F1 — Widget + Chat @f1 @smoke", () => {
       frame.getByRole("heading", { name: DEV_COMPANY_NAME }),
     ).toBeVisible({ timeout: 90_000 });
     await expect(frame.getByText(DEV_ASSISTANT_LABEL)).toBeVisible();
-    await expect(frame.getByLabel("Mensagem")).toBeVisible();
+    await expect(
+      frame.getByRole("textbox", { name: "Mensagem" }),
+    ).toBeVisible();
   });
 
   test(

@@ -17,11 +17,11 @@ export class ChatPage {
       .getByRole("heading", { name: DEV_COMPANY_NAME })
       .waitFor();
     await this.page.getByText(DEV_ASSISTANT_LABEL).first().waitFor();
-    await this.page.getByLabel("Mensagem").waitFor();
+    await this.messageInput().waitFor();
   }
 
   messageInput() {
-    return this.page.getByLabel("Mensagem");
+    return this.page.getByRole("textbox", { name: "Mensagem" });
   }
 
   sendButton() {

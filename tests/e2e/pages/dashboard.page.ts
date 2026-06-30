@@ -9,7 +9,12 @@ export class DashboardPage {
 
   async expectLoaded() {
     await this.page.getByRole("heading", { name: "Dashboard" }).waitFor();
-    await this.page.getByText("Total de conversas").waitFor();
-    await this.page.getByText("Total de leads").waitFor();
+    await this.page
+      .getByText("Total de conversas", { exact: true })
+      .waitFor();
+    await this.page.getByText("Total de leads", { exact: true }).waitFor();
+    await this.page
+      .getByRole("heading", { name: "Funil de conversão" })
+      .waitFor();
   }
 }
