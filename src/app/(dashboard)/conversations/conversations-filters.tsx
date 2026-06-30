@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,10 +32,6 @@ export function ConversationsFilters({
   const [isPending, startTransition] = useTransition();
   const [values, setValues] = useState(defaultValues);
   const maxDate = getTodayDateInputValue();
-
-  useEffect(() => {
-    setValues(defaultValues);
-  }, [defaultValues.q, defaultValues.from, defaultValues.to]);
 
   const handleDateChange = (field: "from" | "to", rawValue: string) => {
     setValues((current) => ({

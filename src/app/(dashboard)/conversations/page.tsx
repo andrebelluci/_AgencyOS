@@ -62,7 +62,10 @@ export default async function ConversationsPage({
       </div>
 
       <Suspense fallback={null}>
-        <ConversationsFilters defaultValues={ui} />
+        <ConversationsFilters
+          key={`${ui.q}|${ui.from}|${ui.to}`}
+          defaultValues={ui}
+        />
       </Suspense>
 
       <ConversationsPanel
