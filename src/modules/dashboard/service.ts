@@ -4,8 +4,13 @@ import {
   countConversationsByTenant,
   countLeadsByTenant,
   countLeadsThisWeekByTenant,
+  fetchConversionFunnelMetrics,
 } from "./repository";
-import type { DashboardMetrics } from "./types";
+import type {
+  ConversionFunnelMetrics,
+  ConversionPeriod,
+  DashboardMetrics,
+} from "./types";
 
 export async function getDashboardMetrics(
   tenantId: string,
@@ -21,4 +26,11 @@ export async function getDashboardMetrics(
     totalLeads,
     leadsThisWeek,
   };
+}
+
+export async function getConversionFunnelMetrics(
+  tenantId: string,
+  period: ConversionPeriod,
+): Promise<ConversionFunnelMetrics> {
+  return fetchConversionFunnelMetrics(tenantId, period);
 }

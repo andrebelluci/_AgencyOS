@@ -6,6 +6,7 @@ import { requireOwnerTenant } from "@/lib/auth/require-owner";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/dashboard/conversion", label: "Conversão" },
   { href: "/leads", label: "Leads" },
   { href: "/conversations", label: "Conversas" },
   { href: "/knowledge", label: "Conhecimento" },
