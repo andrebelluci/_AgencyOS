@@ -11,6 +11,7 @@
     "db:generate": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs generate --config=drizzle.config.ts",
     "db:migrate": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs migrate --config=drizzle.config.ts",
     "db:seed": "tsx --env-file=.env.local scripts/seed-dev-tenant.ts",
+    "db:seed-demo": "tsx --env-file=.env.local scripts/seed-demo-metrics.ts",
     "db:add-admin-dev": "tsx --env-file=.env.local scripts/add-admin-dev.ts",
     "provision:tenant": "tsx --env-file=.env.local scripts/provision-tenant.ts",
     "db:test-rls": "tsx --env-file=.env.local scripts/test-rls-wave1.ts",
