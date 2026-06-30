@@ -90,6 +90,83 @@ Valores: `light`, `dark`, `auto`. Sem o atributo, usa o tema salvo em Settings.
 
 O painel do embed (chrome fora do iframe) acompanha o mesmo tema resolvido.
 
+## Hero conversacional (`hero_flow`) — V0.2 (ISSUE-036)
+
+Modo **inline** na hero do site: fluxo guiado por estados pré-definidos (serviço → cidade → prazo → contato), **sem LLM** gerando layout ou HTML. Transições e CTAs vêm de regras em `tenant_settings.hero_flow` (JSON).
+
+### Ativar
+
+- Coluna `hero_flow` em `tenant_settings` (migration `0013_hero_flow.sql`)
+- Se `null`, o sistema usa o fluxo padrão com serviços do tenant
+- `enabled: false` desliga o modo hero na API (`403`)
+
+### Passos padrão
+
+| Campo | Tipo | Pergunta |
+|-------|------|----------|
+| `service` | escolha | Qual serviço você procura? |
+| `city` | texto | Em qual cidade está sua obra? |
+| `deadline` | escolha | Qual seu prazo? |
+| `name` | texto | Qual seu nome? |
+| `phone` | texto | Qual seu WhatsApp? |
+
+Ao concluir: lead `qualificado` com `source: hero`, mensagens em `conversations`/`messages`, CTA WhatsApp se configurado.
+
+### Snippet iframe (hero inline)
+
+```html
+<iframe
+  src="https://app.agencyos.com.br/chat?key=PUBLIC_KEY&mode=hero&inline=1"
+  title="Atendimento"
+  style="width:100%;max-width:480px;height:min(520px,70vh);border:0;border-radius:12px"
+  allow="clipboard-write"
+></iframe>
+```
+
+Parâmetros:
+
+| Query | Descrição |
+|-------|-----------|
+| `key` | `public_key` do tenant |
+| `mode=hero` | Ativa fluxo conversacional guiado |
+| `inline=1` | Layout compacto para embutir na hero |
+| `theme` | Override opcional: `light`, `dark`, `auto` |
+
+### API pública
+
+- `POST /api/chat/hero` — `action: start | answer`, persiste mensagens
+- `GET /api/chat/hero?public_key=&conversation_id=` — restaura estado
+
+Demo local: `/demo/hero` (tenant dev `pk_dev_local`).
+
+### Exemplo de configuração JSON
+
+```json
+{
+  "enabled": true,
+  "welcomeMessage": "Olá! Vou fazer algumas perguntas rápidas.",
+  "completionMessage": "Perfeito! Fale conosco pelo WhatsApp.",
+  "steps": [
+    {
+      "id": "service",
+      "type": "choice",
+      "field": "service",
+      "question": "Qual serviço você procura?",
+      "optionsSource": "services"
+    },
+    {
+      "id": "city",
+      "type": "text",
+      "field": "city",
+      "question": "Em qual cidade está sua obra?",
+      "placeholder": "Ex: Campinas"
+    }
+  ]
+}
+```
+
+`optionsSource: "services"` usa a lista de serviços do tenant em Settings.
+
 ## Sales Agent (031C)
 
 Prompt e regras reforçam: **RAG antes de serviços/preços**; qualificação quando não há contexto; sem respostas genéricas inventadas.

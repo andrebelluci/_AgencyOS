@@ -1,4 +1,5 @@
 import { ChatPageClient } from "@/components/chat/chat-page-client";
+import { HeroChatPageClient } from "@/components/chat/hero-chat-page-client";
 import { getTenant } from "@/lib/tenant/get-tenant";
 import {
   parseWidgetThemeOverride,
@@ -8,7 +9,7 @@ import { getTenantSettings } from "@/modules/settings/service";
 import { buildChatWidgetConfigFromSettings } from "@/modules/widget/service";
 
 type ChatWidgetPageProps = {
-  searchParams: Promise<{ theme?: string }>;
+  searchParams: Promise<{ theme?: string; mode?: string; inline?: string }>;
 };
 
 export default async function ChatWidgetPage({
@@ -24,15 +25,22 @@ export default async function ChatWidgetPage({
     settings,
   );
 
-  return (
-    <ChatPageClient
-      config={{
-        ...baseConfig,
-        theme: resolveEffectiveWidgetTheme(
-          settings?.widgetTheme,
-          themeOverride,
-        ),
-      }}
-    />
-  );
+  const config = {
+    ...baseConfig,
+    theme: resolveEffectiveWidgetTheme(
+      settings?.widgetTheme,
+      themeOverride,
+    ),
+  };
+
+  if (params.mode === "hero") {
+    return (
+      <HeroChatPageClient
+        config={config}
+        inline={params.inline === "1" || params.inline === "true"}
+      />
+    );
+  }
+
+  return <ChatPageClient config={config} />;
 }

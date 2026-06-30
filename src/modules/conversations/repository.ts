@@ -94,6 +94,7 @@ export async function insertConversation(
       visitorId: input.visitorId,
       leadId: input.leadId ?? null,
       status: input.status,
+      metadata: input.metadata ?? {},
     })
     .returning();
 

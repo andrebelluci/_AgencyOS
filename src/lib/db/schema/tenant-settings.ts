@@ -1,5 +1,6 @@
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+import type { HeroFlowConfig } from "@/lib/widget/hero-flow";
 import type { QuickActionConfig } from "@/lib/widget/quick-actions";
 
 import { tenants } from "./tenants";
@@ -26,6 +27,7 @@ export const tenantSettings = pgTable("tenant_settings", {
     .$type<QuickActionConfig[]>()
     .default([])
     .notNull(),
+  heroFlow: jsonb("hero_flow").$type<HeroFlowConfig | null>(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

@@ -1,10 +1,12 @@
 import "server-only";
 
 import type { TenantSettings } from "@/lib/db";
+import type { HeroFlowConfig } from "@/lib/widget/hero-flow";
 import {
   DEFAULT_ASSISTANT_LABEL,
   resolveInitialMessage,
 } from "@/lib/widget/initial-message";
+import { resolveHeroFlowConfig } from "@/lib/widget/hero-flow";
 import { parseWidgetTheme } from "@/lib/widget/theme";
 import { resolveEnabledQuickActions } from "@/lib/widget/resolve-quick-actions";
 import { getTenantSettings } from "@/modules/settings/service";
@@ -85,9 +87,11 @@ export function buildChatWidgetConfigFromSettings(
   theme: WidgetPublicConfig["theme"];
   whatsapp: string | null;
   quickActions: WidgetPublicConfig["quick_actions"];
+  heroFlow: HeroFlowConfig;
 } {
   const companyName = settings?.companyName ?? tenantName;
   const publicConfig = toPublicConfig(publicKey, tenantName, settings);
+  const services = settings?.services ?? [];
 
   return {
     publicKey,
@@ -98,5 +102,6 @@ export function buildChatWidgetConfigFromSettings(
     theme: publicConfig.theme,
     whatsapp: settings?.whatsapp ?? null,
     quickActions: publicConfig.quick_actions,
+    heroFlow: resolveHeroFlowConfig(settings?.heroFlow, services),
   };
 }

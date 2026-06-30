@@ -10,6 +10,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import postgres from "postgres";
 
 import { DEFAULT_INITIAL_MESSAGE_TEMPLATE } from "../src/lib/widget/initial-message";
+import { buildDefaultHeroFlowConfig } from "../src/lib/widget/hero-flow";
 
 const DEV_TENANT_SLUG = "development";
 const DEV_PUBLIC_KEY = "pk_dev_local";
@@ -110,8 +111,17 @@ async function ensureTenantSettings(
   `;
 
   if (existing[0]) {
+    const heroFlow = buildDefaultHeroFlowConfig(DEV_SERVICES);
+    await sql`
+      UPDATE tenant_settings
+      SET hero_flow = ${sql.json(heroFlow)}
+      WHERE tenant_id = ${tenantId}
+        AND hero_flow IS NULL
+    `;
     return;
   }
+
+  const heroFlow = buildDefaultHeroFlowConfig(DEV_SERVICES);
 
   await sql`
     INSERT INTO tenant_settings (
@@ -123,7 +133,8 @@ async function ensureTenantSettings(
       initial_message,
       quick_actions,
       primary_color,
-      whatsapp
+      whatsapp,
+      hero_flow
     )
     VALUES (
       ${tenantId},
@@ -134,7 +145,8 @@ async function ensureTenantSettings(
       ${DEFAULT_INITIAL_MESSAGE_TEMPLATE},
       ${sql.json([])},
       ${"#1e40af"},
-      ${"5519999999999"}
+      ${"5519999999999"},
+      ${sql.json(heroFlow)}
     )
   `;
 }

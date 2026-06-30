@@ -1,5 +1,6 @@
 import type { ResolvedQuickAction } from "@/lib/widget/quick-actions";
 import type { WidgetTheme } from "@/lib/widget/theme";
+import type { HeroFlowConfig } from "@/lib/widget/hero-flow";
 
 export type ChatUiMessage = {
   id: string;
@@ -17,4 +18,8 @@ export type ChatWidgetConfig = {
   theme: WidgetTheme;
   whatsapp?: string | null;
   quickActions?: ResolvedQuickAction[];
+};
+
+export type HeroChatConfig = ChatWidgetConfig & {
+  heroFlow: HeroFlowConfig;
 };

@@ -5,6 +5,7 @@ const TENANT_EXEMPT_PREFIXES = [
   "/api/chat",
   "/api/widget",
   "/auth",
+  "/demo",
 ] as const;
 
 const TENANT_EXEMPT_EXACT = ["/", "/login"] as const;

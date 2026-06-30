@@ -4,6 +4,7 @@ export type CreateConversationInput = {
   visitorId: string;
   leadId?: string | null;
   status?: Conversation["status"];
+  metadata?: Conversation["metadata"];
 };
 
 export type UpdateConversationInput = {
