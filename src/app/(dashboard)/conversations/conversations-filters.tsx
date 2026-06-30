@@ -1,13 +1,18 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+
+import {
+  clampDateInputValue,
+  getTodayDateInputValue,
+} from "./search-params";
 
 export type ConversationsFilterValues = {
   q: string;
@@ -25,16 +30,29 @@ export function ConversationsFilters({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [values, setValues] = useState(defaultValues);
+  const maxDate = getTodayDateInputValue();
+
+  useEffect(() => {
+    setValues(defaultValues);
+  }, [defaultValues.q, defaultValues.from, defaultValues.to]);
+
+  const handleDateChange = (field: "from" | "to", rawValue: string) => {
+    setValues((current) => ({
+      ...current,
+      [field]: clampDateInputValue(rawValue),
+    }));
+  };
 
   const hasActiveFilters = Boolean(
     defaultValues.q.trim() || defaultValues.from || defaultValues.to,
   );
 
-  const applyFilters = (formData: FormData) => {
+  const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
-    const q = String(formData.get("q") ?? "").trim();
-    const from = String(formData.get("from") ?? "").trim();
-    const to = String(formData.get("to") ?? "").trim();
+    const q = values.q.trim();
+    const from = clampDateInputValue(values.from);
+    const to = clampDateInputValue(values.to);
 
     if (q) {
       params.set("q", q);
@@ -71,7 +89,7 @@ export function ConversationsFilters({
       className="flex flex-col gap-4 rounded-lg border bg-card p-4"
       onSubmit={(event) => {
         event.preventDefault();
-        applyFilters(new FormData(event.currentTarget));
+        applyFilters();
       }}
     >
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto_auto_auto] md:items-end">
@@ -86,7 +104,10 @@ export function ConversationsFilters({
               id="conversations-search"
               name="q"
               type="search"
-              defaultValue={defaultValues.q}
+              value={values.q}
+              onChange={(event) =>
+                setValues((current) => ({ ...current, q: event.target.value }))
+              }
               placeholder="Texto em mensagens ou ID do visitante"
               className="pl-8"
               disabled={isPending}
@@ -100,7 +121,9 @@ export function ConversationsFilters({
             id="conversations-from"
             name="from"
             type="date"
-            defaultValue={defaultValues.from}
+            value={values.from}
+            max={maxDate}
+            onChange={(event) => handleDateChange("from", event.target.value)}
             disabled={isPending}
             className={cn("min-w-36")}
           />
@@ -112,7 +135,9 @@ export function ConversationsFilters({
             id="conversations-to"
             name="to"
             type="date"
-            defaultValue={defaultValues.to}
+            value={values.to}
+            max={maxDate}
+            onChange={(event) => handleDateChange("to", event.target.value)}
             disabled={isPending}
             className={cn("min-w-36")}
           />

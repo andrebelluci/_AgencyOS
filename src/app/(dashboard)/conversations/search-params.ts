@@ -2,6 +2,25 @@ import type { ConversationSearchFilters } from "@/modules/conversations/types";
 
 const DATE_PARAM_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+export function getTodayDateInputValue(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+export function clampDateInputValue(value: string): string {
+  const trimmed = value.trim();
+  if (!DATE_PARAM_PATTERN.test(trimmed)) {
+    return "";
+  }
+
+  const today = getTodayDateInputValue();
+  return trimmed > today ? today : trimmed;
+}
+
 export type ConversationsPageSearchParams = {
   q?: string;
   from?: string;
@@ -15,8 +34,8 @@ export function parseConversationsSearchParams(
   ui: { q: string; from: string; to: string };
 } {
   const q = params.q?.trim() ?? "";
-  const from = params.from?.trim() ?? "";
-  const to = params.to?.trim() ?? "";
+  const from = clampDateInputValue(params.from ?? "");
+  const to = clampDateInputValue(params.to ?? "");
 
   const filters: ConversationSearchFilters = {};
 
