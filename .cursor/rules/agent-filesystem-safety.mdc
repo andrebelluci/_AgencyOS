@@ -1,0 +1,42 @@
+---
+description: Proíbe comandos destrutivos no filesystem — nunca rmdir/rm recursivo sem aprovação explícita
+alwaysApply: true
+---
+
+# Segurança de filesystem — NON_NEGOTIABLE
+
+## Incidente real (não repetir)
+
+Um agente rodou `rmdir /s /q` numa pasta com nome corrompido (`dashboard\    `). Isso apagou **todo o perfil do usuário em `D:\andre\`** (Desktop, Documentos, Imagens, Downloads) e quase todo o disco `D:`. Código só sobreviveu via GitHub.
+
+## Comandos PROIBIDOS (nunca executar)
+
+Sem aprovação **explícita** do usuário na mesma conversa:
+
+| Proibido | Plataforma |
+|----------|------------|
+| `rmdir /s`, `rd /s`, `del /s /q` | Windows cmd |
+| `Remove-Item -Recurse -Force` | PowerShell |
+| `rm -rf`, `rm -r` | Unix / Git Bash |
+| `fs.rmSync` / `fs.rmdirSync` recursivo | Node.js |
+| `git clean -fdx`, `git reset --hard` | Git destrutivo |
+| `format`, `diskpart`, `cipher /w` | Disco |
+
+Também proibido: qualquer delete recursivo em caminhos **fora** de `node_modules/`, `.next/` ou artefatos de build óbvios — mesmo “para limpar”.
+
+## Se encontrar pasta estranha ou loop recursivo
+
+1. **Pare** — não tente remover automaticamente.
+2. **Informe** o usuário (caminho exato, tamanho se possível).
+3. **Sugira** que o usuário remova manualmente ou aprove um plano específico.
+4. Nunca assuma que “limpar antes do commit” justifica delete em massa.
+
+## Alternativas seguras
+
+- `git status` / `git clean -n` (dry-run) para mostrar o que seria removido — **sem executar** `-f` ou `-x`.
+- Remover **um arquivo** específico que o usuário pediu, com caminho literal confirmado.
+- `rmdir` **sem** `/s` apenas em diretório vazio conhecido, dentro do repo, se o usuário pediu.
+
+## Regra de ouro
+
+Na dúvida, **não delete**. Pergunte. Perda de dados local é irreversível; “limpar workspace” nunca vale o risco.
