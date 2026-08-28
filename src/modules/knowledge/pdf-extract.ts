@@ -1,11 +1,23 @@
 import "server-only";
 
-import { ensurePdfDomPolyfill } from "./pdf-dom-polyfill";
+import { CanvasFactory, getData } from "pdf-parse/worker";
+import { PDFParse } from "pdf-parse";
+
+let workerReady = false;
+
+function ensurePdfWorker(): void {
+  if (workerReady) {
+    return;
+  }
+
+  PDFParse.setWorker(getData());
+  workerReady = true;
+}
 
 export async function extractPdfText(buffer: Buffer): Promise<string> {
-  await ensurePdfDomPolyfill();
-  const { PDFParse } = await import("pdf-parse");
-  const parser = new PDFParse({ data: buffer });
+  ensurePdfWorker();
+
+  const parser = new PDFParse({ data: buffer, CanvasFactory });
 
   try {
     const result = await parser.getText();
